@@ -1,11 +1,13 @@
 import { BaseClient, type RequestOptions } from '../client/base';
 import type { QueryOptions, FilterOptions } from '../types';
 
-export type SpatialQueryOptions = QueryOptions & FilterOptions & Record<string, unknown> & {
-  lat: number;
-  lon: number;
-  limit?: number;
-};
+export type SpatialQueryOptions = QueryOptions &
+  FilterOptions &
+  Record<string, unknown> & {
+    lat: number;
+    lon: number;
+    limit?: number;
+  };
 
 export type RadiusQueryOptions = SpatialQueryOptions & {
   radiusMeters: number;

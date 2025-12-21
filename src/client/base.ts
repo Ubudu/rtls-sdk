@@ -19,7 +19,8 @@ export interface RequestOptions {
 
 export class BaseClient {
   protected readonly client: Client<paths>;
-  protected readonly options: Required<Pick<RtlsClientOptions, 'baseUrl' | 'timeoutMs'>> & RtlsClientOptions;
+  protected readonly options: Required<Pick<RtlsClientOptions, 'baseUrl' | 'timeoutMs'>> &
+    RtlsClientOptions;
 
   constructor(options: RtlsClientOptions = {}) {
     this.options = {
@@ -63,14 +64,18 @@ export class BaseClient {
       return timeoutSignal;
     }
     if ('any' in AbortSignal) {
-      return (AbortSignal as typeof AbortSignal & { any: (signals: AbortSignal[]) => AbortSignal }).any([userSignal, timeoutSignal]);
+      return (
+        AbortSignal as typeof AbortSignal & { any: (signals: AbortSignal[]) => AbortSignal }
+      ).any([userSignal, timeoutSignal]);
     }
     return timeoutSignal;
   }
 
-  protected async handleResponse<T>(
-    response: { data?: T; error?: unknown; response: Response }
-  ): Promise<T> {
+  protected async handleResponse<T>(response: {
+    data?: T;
+    error?: unknown;
+    response: Response;
+  }): Promise<T> {
     if (response.error !== undefined || !response.response.ok) {
       const status = response.response.status;
       let body = response.error;
@@ -94,7 +99,10 @@ export class BaseClient {
   }
 
   protected async request<T>(
-    executor: (options: { signal?: AbortSignal; headers?: Record<string, string> }) => Promise<{ data?: T; error?: unknown; response: Response }>,
+    executor: (options: {
+      signal?: AbortSignal;
+      headers?: Record<string, string>;
+    }) => Promise<{ data?: T; error?: unknown; response: Response }>,
     requestOptions?: RequestOptions
   ): Promise<T> {
     const signal = this.mergeSignals(requestOptions?.signal, requestOptions?.timeoutMs);

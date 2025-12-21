@@ -50,7 +50,10 @@ export class VenuesResource {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/venues/{namespace}/{venueId}/maps', {
-          params: { path: { namespace, venueId: Number(venueId) }, query: params as Record<string, unknown> },
+          params: {
+            path: { namespace, venueId: Number(venueId) },
+            query: params as Record<string, unknown>,
+          },
           ...fetchOpts,
         }),
       requestOptions
@@ -68,7 +71,10 @@ export class VenuesResource {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/venues/{namespace}/{venueId}/pois', {
-          params: { path: { namespace, venueId: String(venueId) }, query: params as Record<string, unknown> },
+          params: {
+            path: { namespace, venueId: String(venueId) },
+            query: params as Record<string, unknown>,
+          },
           ...fetchOpts,
         }),
       requestOptions
@@ -87,7 +93,10 @@ export class VenuesResource {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/venues/{namespace}/{venueId}/maps/{mapId}/pois', {
-          params: { path: { namespace, venueId: Number(venueId), mapId: Number(mapId) }, query: params as never },
+          params: {
+            path: { namespace, venueId: Number(venueId), mapId: Number(mapId) },
+            query: params as never,
+          },
           ...fetchOpts,
         }),
       requestOptions
@@ -105,7 +114,10 @@ export class VenuesResource {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/venues/{namespace}/{venueId}/paths', {
-          params: { path: { namespace, venueId: String(venueId) }, query: params as Record<string, unknown> },
+          params: {
+            path: { namespace, venueId: String(venueId) },
+            query: params as Record<string, unknown>,
+          },
           ...fetchOpts,
         }),
       requestOptions
@@ -117,9 +129,8 @@ export class VenuesResource {
     options?: Omit<ListVenuesOptions, 'page' | 'limit'> & { pageSize?: number }
   ): AsyncGenerator<Record<string, unknown>, void, unknown> {
     const { pageSize, ...filterOptions } = options ?? {};
-    return paginate(
-      (page, limit) => this.list(namespace, { ...filterOptions, page, limit }),
-      { pageSize }
-    );
+    return paginate((page, limit) => this.list(namespace, { ...filterOptions, page, limit }), {
+      pageSize,
+    });
   }
 }

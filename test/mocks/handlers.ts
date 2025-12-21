@@ -44,7 +44,7 @@ export const handlers = [
 
   // Asset update
   http.patch(`${BASE_URL}/assets/:namespace/:mac`, async ({ request, params }) => {
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({
       mac_address: params.mac,
       ...body,
@@ -58,9 +58,7 @@ export const handlers = [
 
   // Positions
   http.get(`${BASE_URL}/cache/:namespace/positions`, () => {
-    return HttpResponse.json([
-      { mac_address: 'AABBCCDDEEFF', lat: 48.8566, lon: 2.3522 },
-    ]);
+    return HttpResponse.json([{ mac_address: 'AABBCCDDEEFF', lat: 48.8566, lon: 2.3522 }]);
   }),
 
   http.get(`${BASE_URL}/cache/:namespace/positions/:mac`, ({ params }) => {

@@ -76,10 +76,7 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>[]>;
   }
 
-  async get(
-    id: string,
-    requestOptions?: RequestOptions
-  ): Promise<Record<string, unknown>> {
+  async get(id: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>> {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/dashboards/{id}', {
@@ -120,10 +117,7 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>>;
   }
 
-  async delete(
-    id: string,
-    requestOptions?: RequestOptions
-  ): Promise<void> {
+  async delete(id: string, requestOptions?: RequestOptions): Promise<void> {
     await this.client['request'](
       (fetchOpts) =>
         this.client.raw.DELETE('/dashboards/{id}', {

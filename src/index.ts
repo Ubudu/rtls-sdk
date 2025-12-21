@@ -1,5 +1,10 @@
 // Main client
-export { RtlsClient, createRtlsClient, type RtlsClientOptions, type RequestOptions } from './client';
+export {
+  RtlsClient,
+  createRtlsClient,
+  type RtlsClientOptions,
+  type RequestOptions,
+} from './client';
 
 // Error classes
 export {

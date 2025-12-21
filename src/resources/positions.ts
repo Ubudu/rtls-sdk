@@ -77,7 +77,8 @@ export class PositionsResource {
     },
     requestOptions?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
-    const { key, queryString, mapUuids, timestampFrom, timestampTo, ...queryOptions } = options ?? {};
+    const { key, queryString, mapUuids, timestampFrom, timestampTo, ...queryOptions } =
+      options ?? {};
 
     return this.client['request'](
       (fetchOpts) =>

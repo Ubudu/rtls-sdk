@@ -41,7 +41,8 @@ describe('pagination utilities', () => {
 
   describe('paginate', () => {
     it('should iterate through pages', async () => {
-      const mockFetcher = vi.fn()
+      const mockFetcher = vi
+        .fn()
         .mockResolvedValueOnce({
           data: [{ id: 1 }, { id: 2 }],
           hasNext: true,
@@ -63,7 +64,8 @@ describe('pagination utilities', () => {
 
   describe('collectAll', () => {
     it('should collect all items', async () => {
-      const mockFetcher = vi.fn()
+      const mockFetcher = vi
+        .fn()
         .mockResolvedValueOnce({
           data: [{ id: 1 }, { id: 2 }],
           hasNext: true,

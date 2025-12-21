@@ -96,9 +96,10 @@ export class NetworkError extends RtlsError {
 }
 
 export function createError(status: number, body: unknown, message?: string): RtlsError {
-  const defaultMessage = typeof body === 'object' && body !== null && 'error' in body
-    ? String((body as { error: unknown }).error)
-    : `HTTP ${status} error`;
+  const defaultMessage =
+    typeof body === 'object' && body !== null && 'error' in body
+      ? String((body as { error: unknown }).error)
+      : `HTTP ${status} error`;
 
   const errorMessage = message ?? defaultMessage;
 

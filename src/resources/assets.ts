@@ -165,10 +165,9 @@ export class AssetsResource {
     options?: Omit<ListAssetsOptions, 'page' | 'limit'> & { pageSize?: number }
   ): AsyncGenerator<Record<string, unknown>, void, unknown> {
     const { pageSize, ...filterOptions } = options ?? {};
-    return paginate(
-      (page, limit) => this.list(namespace, { ...filterOptions, page, limit }),
-      { pageSize }
-    );
+    return paginate((page, limit) => this.list(namespace, { ...filterOptions, page, limit }), {
+      pageSize,
+    });
   }
 
   async getAll(
@@ -176,9 +175,9 @@ export class AssetsResource {
     options?: Omit<ListAssetsOptions, 'page' | 'limit'> & { pageSize?: number; maxItems?: number }
   ): Promise<Record<string, unknown>[]> {
     const { pageSize, maxItems, ...filterOptions } = options ?? {};
-    return collectAll(
-      (page, limit) => this.list(namespace, { ...filterOptions, page, limit }),
-      { pageSize, maxItems }
-    );
+    return collectAll((page, limit) => this.list(namespace, { ...filterOptions, page, limit }), {
+      pageSize,
+      maxItems,
+    });
   }
 }
