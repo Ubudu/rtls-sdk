@@ -1,15 +1,19 @@
 # @ubudu/rtls-sdk
 
-Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com) - Real-Time Location System for indoor positioning and asset tracking.
+Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs).
+
+[![npm version](https://badge.fury.io/js/%40ubudu%2Frtls-sdk.svg)](https://www.npmjs.com/package/@ubudu/rtls-sdk)
+[![CI](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml)
 
 ## Features
 
 - Full TypeScript support with auto-generated types from OpenAPI spec
-- Works in Node.js and browsers
-- Async pagination helpers
-- Fluent filter API
+- Works in Node.js (>=18) and modern browsers
+- Simple, ergonomic API design
+- Built-in pagination helpers and async iterators
 - Comprehensive error handling
-- ESM and CommonJS support
+- Request timeout and cancellation support
+- Tree-shakeable ESM and CJS builds
 
 ## Installation
 
@@ -20,25 +24,23 @@ npm install @ubudu/rtls-sdk
 ## Quick Start
 
 ```typescript
-import { RtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from '@ubudu/rtls-sdk';
 
-const client = new RtlsClient({
-  apiKey: 'your-api-key',
+const rtls = createRtlsClient({
+  apiKey: process.env.UBUDU_API_KEY,
 });
 
-// List assets in a namespace
-const assets = await client.assets.list('your-namespace');
-console.log(assets.data);
-
-// Get real-time positions
-const positions = await client.positions.list('your-namespace');
-
-// Use filters
-import { filters } from '@ubudu/rtls-sdk';
-
-const lowBatteryAssets = await client.assets.list('your-namespace', {
-  ...filters.lessThan('battery', 20),
+// List assets
+const { data: assets } = await rtls.assets.list('my-namespace', {
+  page: 1,
+  limit: 20,
 });
+
+// Get single asset
+const asset = await rtls.assets.get('my-namespace', 'AABBCCDDEEFF');
+
+// Get positions
+const positions = await rtls.positions.listCached('my-namespace');
 ```
 
 ## Authentication
