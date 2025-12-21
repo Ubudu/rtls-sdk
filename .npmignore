@@ -1,0 +1,14 @@
+src/
+test/
+coverage/
+vitest.config.ts
+.eslintrc.cjs
+.prettierrc
+tsconfig.json
+tsup.config.ts
+.github/
+.idea/
+.vscode/
+*.tgz
+WORK_PACKAGE.md
+examples/

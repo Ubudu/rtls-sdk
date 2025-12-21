@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.1.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run generate
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        run: npm version ${{ inputs.version }} --no-git-tag-version
+
+      - name: Commit and tag
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore: release v${{ inputs.version }}"
+          git tag "v${{ inputs.version }}"
+
+      - name: Push changes
+        run: |
+          git push origin main
+          git push origin "v${{ inputs.version }}"
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ inputs.version }}"
+          generate_release_notes: true
