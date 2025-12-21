@@ -8,7 +8,14 @@
     "type": "git",
     "url": "https://github.com/ubudu/rtls-sdk.git"
   },
-  "keywords": ["ubudu", "rtls", "real-time-location", "indoor-positioning", "asset-tracking", "typescript"],
+  "keywords": [
+    "ubudu",
+    "rtls",
+    "real-time-location",
+    "indoor-positioning",
+    "asset-tracking",
+    "typescript"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -28,7 +35,11 @@
       }
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "sideEffects": false,
   "scripts": {
     "generate": "openapi-typescript \"https://rtls.ubudu.com/api/docs/swagger.json\" -o src/generated/schema.ts",
@@ -37,6 +48,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "lint": "eslint src test --ext .ts",
     "lint:fix": "eslint src test --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -53,6 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "@vitest/coverage-v8": "^2.0.0",
+    "dotenv": "^17.2.3",
     "eslint": "^8.56.0",
     "msw": "^2.1.0",
     "openapi-typescript": "^7.4.0",

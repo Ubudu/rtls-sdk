@@ -19,9 +19,10 @@ npm run generate
 npm run build
 
 # Run tests
-npm run test              # Single run
+npm run test              # Single run (unit tests with MSW mocks)
 npm run test:watch        # Watch mode
 npm run test:coverage     # With coverage report
+npm run test:integration  # Integration tests against live API (requires .env)
 
 # Code quality
 npm run lint              # Check linting
@@ -76,7 +77,24 @@ docs/
 ## Documentation
 
 - [docs/development/01_WORK_PACKAGE.md](docs/development/01_WORK_PACKAGE.md) - SDK implementation tasks (47 tasks across 9 phases). Execute sequentially, running verification commands after each task.
+- [docs/development/02_API_VALIDATION_WORKPACKAGE.md](docs/development/02_API_VALIDATION_WORKPACKAGE.md) - API validation work package (68 tasks across 11 phases). Tests every endpoint against live API and documents discrepancies.
 - [docs/guides/release-setup.md](docs/guides/release-setup.md) - Configure CI/CD for GitHub mirroring and npm publishing.
+
+## Integration Testing
+
+Integration tests require API credentials in a `.env` file (not committed):
+
+```bash
+# Copy the example and fill in your credentials
+cp .env.example .env
+
+# Run integration tests
+npm run test:integration
+```
+
+Required environment variables:
+- `APP_NAMESPACE` - Your application namespace
+- `RTLS_API_KEY` - Your API key for authentication
 
 ## API Specification
 
