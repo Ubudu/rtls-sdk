@@ -10,8 +10,9 @@ Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs
 - Full TypeScript support with auto-generated types from OpenAPI spec
 - Works in Node.js (>=18) and modern browsers
 - Simple, ergonomic API design
-- Built-in pagination helpers and async iterators
-- Comprehensive error handling
+- Built-in async iterators for memory-efficient processing
+- Type-safe filter DSL
+- Comprehensive error handling with typed error classes
 - Request timeout and cancellation support
 - Tree-shakeable ESM and CJS builds
 
@@ -26,58 +27,72 @@ npm install @ubudu/rtls-sdk
 ```typescript
 import { createRtlsClient } from '@ubudu/rtls-sdk';
 
-const rtls = createRtlsClient({
-  apiKey: process.env.UBUDU_API_KEY,
+const client = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
 });
+
+// Check API health
+const health = await client.health();
 
 // List assets
-const { data: assets } = await rtls.assets.list('my-namespace', {
-  page: 1,
-  limit: 20,
-});
+const assets = await client.assets.list('my-namespace');
 
-// Get single asset
-const asset = await rtls.assets.get('my-namespace', 'AABBCCDDEEFF');
+// Get real-time positions
+const positions = await client.positions.listCached('my-namespace');
 
-// Get positions
-const positions = await rtls.positions.listCached('my-namespace');
-```
-
-## Authentication
-
-The SDK supports two authentication methods:
-
-```typescript
-// API Key authentication
-const client = new RtlsClient({
-  apiKey: 'your-api-key',
-});
-
-// Bearer token authentication
-const client = new RtlsClient({
-  accessToken: 'your-access-token',
+// Spatial query
+const nearbyZones = await client.spatial.nearestZones('my-namespace', {
+  lat: 48.8566,
+  lon: 2.3522,
+  limit: 5,
 });
 ```
 
-## Pagination
+## Documentation
 
-The SDK provides utilities for handling paginated responses:
+- [Getting Started](docs/guides/getting-started.md) - Installation and first API calls
+- [Asset Tracking](docs/guides/asset-tracking.md) - Asset CRUD, positions, history
+- [Zone & Geofencing](docs/guides/zone-geofencing.md) - Spatial queries and presence
+- [Navigation](docs/guides/navigation.md) - POIs, paths, indoor routing
+- [Error Handling](docs/guides/error-handling.md) - Error types and retry strategies
+- [Advanced Patterns](docs/guides/advanced-patterns.md) - Pagination, filtering, patterns
+- [API Reference](docs/api/README.md) - Complete API documentation
 
-```typescript
-import { paginate, collectAll } from '@ubudu/rtls-sdk';
+## Examples
 
-// Async iterator for memory-efficient processing
-for await (const asset of paginate((page, limit) =>
-  client.assets.list('namespace', { page, limit })
-)) {
-  console.log(asset);
-}
+Run the examples in the [examples/](examples/) directory:
 
-// Collect all items at once
-const allAssets = await collectAll((page, limit) =>
-  client.assets.list('namespace', { page, limit })
-);
+```bash
+cd examples
+npm install
+cp .env.example .env  # Add your credentials
+
+# TypeScript examples
+npm run ts:getting-started
+npm run ts:asset-tracking
+npm run ts:zone-geofencing
+npm run ts:navigation
+npm run ts:error-handling
+npm run ts:pagination
+
+# JavaScript examples
+npm run js:all
 ```
+
+## Resources
+
+The SDK provides access to these API resources:
+
+| Resource | Description |
+|----------|-------------|
+| `client.assets` | Asset CRUD, history, statistics |
+| `client.positions` | Real-time and historical positions |
+| `client.venues` | Venues, maps, POIs, paths |
+| `client.zones` | Zone management and presence |
+| `client.spatial` | Spatial queries (containing point, nearest, within radius) |
+| `client.alerts` | Alert rules |
+| `client.dashboards` | Dashboard configuration |
+| `client.navigation` | Indoor routing |
 
 ## Filtering
 
@@ -87,9 +102,8 @@ Build type-safe filters using the filter helpers:
 import { filters, combineFilters } from '@ubudu/rtls-sdk';
 
 const query = combineFilters(
-  filters.equals('status', 'active'),
-  filters.greaterThan('battery', 50),
-  filters.contains('name', 'forklift'),
+  filters.equals('user_type', 'forklift'),
+  filters.contains('user_name', 'warehouse'),
 );
 
 const assets = await client.assets.list('namespace', query);
@@ -114,6 +128,19 @@ const assets = await client.assets.list('namespace', query);
 | `exists` | `exists` | Field exists |
 | `between` | `between` | Value in range |
 
+## Async Iteration
+
+Memory-efficient processing of large datasets:
+
+```typescript
+for await (const asset of client.assets.iterate('namespace')) {
+  console.log(asset.user_name);
+
+  // Can break early
+  if (someCondition) break;
+}
+```
+
 ## Error Handling
 
 The SDK provides typed errors for different failure scenarios:
@@ -124,7 +151,9 @@ import {
   AuthenticationError,
   NotFoundError,
   ValidationError,
-  RateLimitError
+  RateLimitError,
+  TimeoutError,
+  NetworkError,
 } from '@ubudu/rtls-sdk';
 
 try {
@@ -135,44 +164,21 @@ try {
   } else if (error instanceof AuthenticationError) {
     console.log('Check your API key');
   } else if (error instanceof RateLimitError) {
-    console.log(`Retry after ${error.retryAfter} seconds`);
+    console.log(`Retry after ${error.retryAfter}ms`);
   } else if (error instanceof RtlsError) {
     console.log(`API error: ${error.status} - ${error.message}`);
   }
 }
 ```
 
-## Resources
-
-The SDK exposes the following resource namespaces:
-
-- `client.assets` - Asset management
-- `client.positions` - Real-time and historical positions
-- `client.zones` - Zone definitions and geofencing
-- `client.venues` - Venue configuration
-- `client.pois` - Points of interest
-- `client.alerts` - Alert rules and history
-- `client.navigation` - Indoor navigation and routing
-
 ## Configuration Options
 
 ```typescript
-const client = new RtlsClient({
-  baseUrl: 'https://rtls.ubudu.com/api',  // API base URL
-  apiKey: 'your-api-key',                  // API key authentication
-  accessToken: 'your-token',               // Bearer token authentication
-  timeoutMs: 30000,                         // Request timeout (default: 30s)
-  headers: { 'X-Custom': 'value' },        // Additional headers
-  fetch: customFetch,                       // Custom fetch implementation
+const client = createRtlsClient({
+  apiKey: 'your-api-key',           // Required: API key
+  baseUrl: 'https://rtls.ubudu.com/api', // Optional: API base URL
+  timeoutMs: 30000,                  // Optional: Request timeout (default: 30s)
 });
-```
-
-## Low-Level Access
-
-For advanced use cases, access the underlying `openapi-fetch` client:
-
-```typescript
-const response = await client.raw.GET('/health');
 ```
 
 ## Requirements
@@ -191,7 +197,7 @@ For contributors and maintainers, see [CLAUDE.md](CLAUDE.md) for development gui
 | Done | [WP1: SDK Implementation](docs/development/01_WORK_PACKAGE.md) | Core SDK implementation (47 tasks) |
 | Done | [WP2: API Validation](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | Live API testing (68 tasks) |
 | Done | [WP3: SDK Alignment](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | v1.0.0 breaking changes (28 tasks) |
-| Pending | [WP4: SDK Documentation](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | Examples & guides (52 tasks) |
+| Done | [WP4: SDK Documentation](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | Examples & guides (52 tasks) |
 
 ### Quick Start (Development)
 
@@ -209,5 +215,6 @@ MIT
 
 ## Links
 
+- [Documentation](docs/README.md)
 - [API Documentation](https://rtls.ubudu.com/api/docs)
 - [Ubudu Website](https://www.ubudu.com)
