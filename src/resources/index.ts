@@ -5,7 +5,7 @@ export {
   type PositionHistoryOptions,
   type PublishPositionData,
 } from './positions';
-export { ZonesResource, type ListZonesOptions, type ZonePresenceOptions } from './zones';
+export { ZonesResource, type ZonePresenceOptions } from './zones';
 export { VenuesResource, type ListVenuesOptions } from './venues';
 export { AlertsResource, type GetAlertsOptions } from './alerts';
 export {

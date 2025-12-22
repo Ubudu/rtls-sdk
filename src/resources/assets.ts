@@ -1,29 +1,36 @@
 import { BaseClient, type RequestOptions } from '../client/base';
-import type { QueryOptions, FilterOptions, PaginatedResponse } from '../types';
-import { buildQueryParams, paginate, collectAll } from '../utils';
+import type { QueryOptions, FilterOptions } from '../types';
+import { buildQueryParams, extractDataArray } from '../utils';
 
 export type ListAssetsOptions = QueryOptions & FilterOptions & Record<string, unknown>;
 
 export class AssetsResource {
   constructor(private client: BaseClient) {}
 
+  /**
+   * List all assets for a namespace.
+   * API returns direct array, not paginated.
+   */
   async list(
     namespace: string,
     options?: ListAssetsOptions,
     requestOptions?: RequestOptions
-  ): Promise<PaginatedResponse<Record<string, unknown>>> {
+  ): Promise<Record<string, unknown>[]> {
     const params = buildQueryParams(options);
-
-    return this.client['request'](
+    const response = await this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/assets/{app_namespace}', {
           params: { path: { app_namespace: namespace }, query: params as Record<string, unknown> },
           ...fetchOpts,
         }),
       requestOptions
-    ) as unknown as Promise<PaginatedResponse<Record<string, unknown>>>;
+    );
+    return extractDataArray<Record<string, unknown>>(response);
   }
 
+  /**
+   * Get a single asset by MAC address.
+   */
   async get(
     namespace: string,
     macAddress: string,
@@ -39,6 +46,9 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>>;
   }
 
+  /**
+   * Create a new asset.
+   */
   async create(
     namespace: string,
     macAddress: string,
@@ -56,6 +66,9 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>>;
   }
 
+  /**
+   * Update an existing asset.
+   */
   async update(
     namespace: string,
     macAddress: string,
@@ -73,6 +86,9 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>>;
   }
 
+  /**
+   * Delete an asset.
+   */
   async delete(
     namespace: string,
     macAddress: string,
@@ -88,6 +104,9 @@ export class AssetsResource {
     );
   }
 
+  /**
+   * Batch save multiple assets.
+   */
   async batchSave(
     namespace: string,
     assets: Record<string, unknown>[],
@@ -104,6 +123,9 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>>;
   }
 
+  /**
+   * Batch delete multiple assets.
+   */
   async batchDelete(
     namespace: string,
     macAddresses: string[],
@@ -120,6 +142,9 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>>;
   }
 
+  /**
+   * Get asset history.
+   */
   async getHistory(
     namespace: string,
     macAddress: string,
@@ -139,6 +164,9 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>[]>;
   }
 
+  /**
+   * Get asset statistics.
+   */
   async getStats(
     namespace: string,
     options: { startTime: number; endTime: number },
@@ -160,24 +188,29 @@ export class AssetsResource {
     ) as Promise<Record<string, unknown>>;
   }
 
-  iterate(
+  /**
+   * Iterate over all assets.
+   * Since API returns all assets at once, yields each asset.
+   */
+  async *iterate(
     namespace: string,
-    options?: Omit<ListAssetsOptions, 'page' | 'limit'> & { pageSize?: number }
+    options?: ListAssetsOptions,
+    requestOptions?: RequestOptions
   ): AsyncGenerator<Record<string, unknown>, void, unknown> {
-    const { pageSize, ...filterOptions } = options ?? {};
-    return paginate((page, limit) => this.list(namespace, { ...filterOptions, page, limit }), {
-      pageSize,
-    });
+    const assets = await this.list(namespace, options, requestOptions);
+    for (const asset of assets) {
+      yield asset;
+    }
   }
 
+  /**
+   * Get all assets as array.
+   */
   async getAll(
     namespace: string,
-    options?: Omit<ListAssetsOptions, 'page' | 'limit'> & { pageSize?: number; maxItems?: number }
+    options?: ListAssetsOptions,
+    requestOptions?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
-    const { pageSize, maxItems, ...filterOptions } = options ?? {};
-    return collectAll((page, limit) => this.list(namespace, { ...filterOptions, page, limit }), {
-      pageSize,
-      maxItems,
-    });
+    return this.list(namespace, options, requestOptions);
   }
 }

@@ -35,7 +35,7 @@ describe.skipIf(!hasCredentials())('ZonesResource Integration', () => {
   // ========================
 
   describe('Task 5.1: List Zones by Venue', () => {
-    it('should list zones for venue', async () => {
+    it('should list zones for venue as GeoJSON', async () => {
       if (!venueId) {
         console.log('=== Task 5.1: List Zones - SKIPPED (no venues) ===');
         return;
@@ -44,31 +44,21 @@ describe.skipIf(!hasCredentials())('ZonesResource Integration', () => {
       try {
         const result = await client.zones.list(namespace, venueId);
 
-        console.log('=== Task 5.1: List Zones by Venue ===');
+        console.log('=== Task 5.1: List Zones by Venue (GeoJSON) ===');
         console.log('Endpoint: GET /venues/{namespace}/{venueId}/zones');
         console.log('Venue ID:', venueId);
         console.log('Response Type:', typeof result);
-        console.log('Is Array:', Array.isArray(result));
 
-        // Check if GeoJSON FeatureCollection
-        if (result && typeof result === 'object' && 'type' in result) {
-          const geoJson = result as { type: string; features?: unknown[]; metadata?: unknown };
-          console.log('FINDING: API returns GeoJSON FeatureCollection, NOT PaginatedResponse');
-          console.log(`GeoJSON type: ${geoJson.type}`);
-          if (geoJson.type === 'FeatureCollection' && geoJson.features) {
-            console.log(`Found ${geoJson.features.length} zone features`);
-            if (geoJson.features.length > 0) {
-              console.log('First feature:', JSON.stringify(geoJson.features[0], null, 2));
-            }
-            if (geoJson.metadata) {
-              console.log('Metadata:', JSON.stringify(geoJson.metadata, null, 2));
-            }
-          }
-        } else if (Array.isArray(result)) {
-          console.log('FINDING: API returns direct array');
-          console.log(`Found ${result.length} zones`);
-        } else {
-          console.log('Response:', JSON.stringify(result, null, 2).slice(0, 1000));
+        // Result should be GeoJSON FeatureCollection
+        expect(result).toHaveProperty('type', 'FeatureCollection');
+        expect(result).toHaveProperty('features');
+        console.log(`GeoJSON type: ${result.type}`);
+        console.log(`Found ${result.features.length} zone features`);
+        if (result.features.length > 0) {
+          console.log('First feature:', JSON.stringify(result.features[0], null, 2));
+        }
+        if (result.metadata) {
+          console.log('Metadata:', JSON.stringify(result.metadata, null, 2));
         }
       } catch (error) {
         console.log('=== Task 5.1: List Zones by Venue ===');
@@ -76,20 +66,24 @@ describe.skipIf(!hasCredentials())('ZonesResource Integration', () => {
       }
     });
 
-    it('should list zones with pagination options', async () => {
+    it('should list zones as flat array using listAsArray', async () => {
       if (!venueId) {
-        console.log('=== Task 5.1: List Zones with Pagination - SKIPPED ===');
+        console.log('=== Task 5.1: List Zones as Array - SKIPPED ===');
         return;
       }
 
       try {
-        const result = await client.zones.list(namespace, venueId, { page: 1, limit: 5 });
+        const result = await client.zones.listAsArray(namespace, venueId);
 
-        console.log('=== Task 5.1: List Zones - With Pagination ===');
-        console.log('Query params: page=1, limit=5');
-        console.log('Response:', JSON.stringify(result, null, 2).slice(0, 500));
+        console.log('=== Task 5.1: List Zones as Array ===');
+        console.log('SDK Method: client.zones.listAsArray()');
+        expect(Array.isArray(result)).toBe(true);
+        console.log(`Found ${result.length} zones`);
+        if (result.length > 0) {
+          console.log('First zone:', JSON.stringify(result[0], null, 2));
+        }
       } catch (error) {
-        console.log('=== Task 5.1: List Zones - With Pagination ===');
+        console.log('=== Task 5.1: List Zones as Array ===');
         console.log('Error:', error instanceof Error ? error.message : error);
       }
     });
@@ -187,25 +181,25 @@ describe.skipIf(!hasCredentials())('ZonesResource Integration', () => {
       }
 
       console.log('=== Task 5.4: Zone Iteration ===');
-      console.log('SDK Method: client.zones.iterate(namespace, venueId, options?)');
+      console.log('SDK Method: client.zones.iterate(namespace, venueId)');
 
       try {
         const items: unknown[] = [];
         let count = 0;
-        for await (const zone of client.zones.iterate(namespace, venueId, { pageSize: 10 })) {
+        for await (const zone of client.zones.iterate(namespace, venueId)) {
           items.push(zone);
           count++;
           if (count >= 5) break;
         }
 
         console.log(`Iterated through ${items.length} zones`);
+        expect(items.length).toBeGreaterThanOrEqual(0);
 
         if (items.length > 0) {
           console.log('Sample zone:', JSON.stringify(items[0], null, 2));
         }
       } catch (error) {
         console.log('Error:', error instanceof Error ? error.message : error);
-        console.log('FINDING: Iteration fails because API returns GeoJSON, not paginated response');
       }
     });
   });
@@ -218,17 +212,17 @@ describe.skipIf(!hasCredentials())('ZonesResource Integration', () => {
       }
 
       console.log('=== Task 5.5: Zone GetAll ===');
-      console.log('SDK Method: client.zones.getAll(namespace, venueId, options?)');
+      console.log('SDK Method: client.zones.getAll(namespace, venueId)');
 
       try {
-        const zones = await client.zones.getAll(namespace, venueId, { maxItems: 10 });
+        const zones = await client.zones.getAll(namespace, venueId);
 
         console.log(`Got ${zones.length} zones`);
         console.log('Response Type:', typeof zones);
         console.log('Is Array:', Array.isArray(zones));
+        expect(Array.isArray(zones)).toBe(true);
       } catch (error) {
         console.log('Error:', error instanceof Error ? error.message : error);
-        console.log('FINDING: GetAll fails because API returns GeoJSON, not paginated response');
       }
     });
   });

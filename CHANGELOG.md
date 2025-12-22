@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-12-22
+
+### Added
+- GeoJSON type definitions for zones, POIs, and paths
+- Flat type exports (`Zone`, `POI`, `PathNode`, `PathSegment`)
+- Spatial response types with proper structures
+- Response normalizer utilities (`normalizeListResponse`, `extractDataArray`)
+- GeoJSON extraction utilities (`extractZonesFromGeoJSON`, `extractPoisFromGeoJSON`, etc.)
+- Convenience methods for flat array access (`listAsArray`, `listPoisAsArray`, etc.)
+- Path handling for venues (`listPaths`, `listPathNodes`, `listPathSegments`)
+
+### Changed
+- Zones now return GeoJSON FeatureCollection (API-aligned)
+- POIs now return GeoJSON FeatureCollection (API-aligned)
+- Paths now return GeoJSON FeatureCollection with nodes and segments
+- Assets, venues, and maps now return direct arrays (API-aligned)
+- Spatial endpoints now return structured results with metadata
+- `analyzeCustomZones` and `analyzeCustomPois` now require `reference_point` in request body
+- Dashboard `create` method now correctly maps `namespace` to `application_namespace`
+
+### Fixed
+- Dashboard create endpoint field mapping for `application_namespace`
+- Type conflicts between generated and custom zone/POI types
+
 ## [0.1.0] - YYYY-MM-DD
 
 ### Added

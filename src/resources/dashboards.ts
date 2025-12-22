@@ -91,10 +91,17 @@ export class DashboardsResource {
     data: CreateDashboardData,
     requestOptions?: RequestOptions
   ): Promise<Record<string, unknown>> {
+    // Transform SDK field names to API field names
+    const apiData = {
+      name: data.name,
+      application_namespace: data.namespace, // API expects application_namespace
+      data: data.data ?? {},
+    };
+
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.POST('/dashboards', {
-          body: data as never,
+          body: apiData as never,
           ...fetchOpts,
         }),
       requestOptions

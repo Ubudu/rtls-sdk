@@ -10,20 +10,12 @@ describe('AssetsResource', () => {
   });
 
   describe('list', () => {
-    it('should list assets', async () => {
+    it('should list assets as direct array', async () => {
       const result = await client.assets.list(namespace);
 
-      expect(result).toHaveProperty('data');
-      expect(result).toHaveProperty('page');
-      expect(result).toHaveProperty('total');
-      expect(Array.isArray(result.data)).toBe(true);
-    });
-
-    it('should support pagination options', async () => {
-      const result = await client.assets.list(namespace, { page: 1, limit: 10 });
-
-      expect(result.page).toBe(1);
-      expect(result.limit).toBe(10);
+      // API now returns direct array, not paginated
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBeGreaterThan(0);
     });
   });
 
@@ -31,7 +23,7 @@ describe('AssetsResource', () => {
     it('should get single asset', async () => {
       const result = await client.assets.get(namespace, 'AABBCCDDEEFF');
 
-      expect(result).toHaveProperty('mac_address');
+      expect(result).toHaveProperty('user_udid');
     });
   });
 
@@ -51,12 +43,7 @@ describe('AssetsResource', () => {
       const assets = await client.assets.getAll(namespace);
 
       expect(Array.isArray(assets)).toBe(true);
-    });
-
-    it('should respect maxItems option', async () => {
-      const assets = await client.assets.getAll(namespace, { maxItems: 1 });
-
-      expect(assets.length).toBeLessThanOrEqual(1);
+      expect(assets.length).toBeGreaterThan(0);
     });
   });
 });

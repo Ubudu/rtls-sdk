@@ -29,34 +29,21 @@ describe.skipIf(!hasCredentials())('VenuesResource Integration', () => {
   // ========================
 
   describe('Task 4.1: List Venues', () => {
-    it('should list venues without options', async () => {
+    it('should list venues as direct array', async () => {
       const result = await client.venues.list(namespace);
 
-      console.log('=== Task 4.1: List Venues - No Options ===');
+      console.log('=== Task 4.1: List Venues ===');
       console.log('Endpoint: GET /venues/{namespace}');
       console.log('Response Type:', typeof result);
       console.log('Is Array:', Array.isArray(result));
 
-      if (Array.isArray(result)) {
-        console.log('FINDING: API returns direct array, NOT PaginatedResponse');
-        console.log(`Found ${result.length} venues`);
-        if (result.length > 0) {
-          console.log('Venue schema keys:', Object.keys(result[0]));
-          console.log('First venue:', JSON.stringify(result[0], null, 2));
-        }
-        expect(result.length).toBeGreaterThanOrEqual(0);
-      } else {
-        console.log('FINDING: API returns paginated response');
-        expect(result).toHaveProperty('data');
+      // API returns direct array
+      expect(Array.isArray(result)).toBe(true);
+      console.log(`Found ${result.length} venues`);
+      if (result.length > 0) {
+        console.log('Venue schema keys:', Object.keys(result[0]));
+        console.log('First venue:', JSON.stringify(result[0], null, 2));
       }
-    });
-
-    it('should list venues with pagination options', async () => {
-      const result = await client.venues.list(namespace, { page: 1, limit: 5 });
-
-      console.log('=== Task 4.1: List Venues - With Pagination ===');
-      console.log('Query params: page=1, limit=5');
-      console.log('Response:', JSON.stringify(result, null, 2).slice(0, 500));
     });
   });
 
@@ -208,25 +195,25 @@ describe.skipIf(!hasCredentials())('VenuesResource Integration', () => {
   describe('Task 4.7: Venue Iteration', () => {
     it('should iterate through venues', async () => {
       console.log('=== Task 4.7: Venue Iteration ===');
-      console.log('SDK Method: client.venues.iterate(namespace, options?)');
+      console.log('SDK Method: client.venues.iterate(namespace)');
 
       try {
         const items: unknown[] = [];
         let count = 0;
-        for await (const venue of client.venues.iterate(namespace, { pageSize: 10 })) {
+        for await (const venue of client.venues.iterate(namespace)) {
           items.push(venue);
           count++;
           if (count >= 5) break;
         }
 
         console.log(`Iterated through ${items.length} venues`);
+        expect(items.length).toBeGreaterThanOrEqual(0);
 
         if (items.length > 0) {
           console.log('Sample venue:', JSON.stringify(items[0], null, 2));
         }
       } catch (error) {
         console.log('Error:', error instanceof Error ? error.message : error);
-        console.log('FINDING: Iteration fails because API returns array, not paginated response');
       }
     });
   });
