@@ -12,9 +12,7 @@ import {
   combineFilters,
   extractZonesFromGeoJSON,
   extractPoisFromGeoJSON,
-  extractPathNodesFromGeoJSON,
   RtlsError,
-  NotFoundError,
 } from '../../src';
 
 describe('Examples Integration Tests', () => {

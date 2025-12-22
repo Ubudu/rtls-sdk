@@ -226,11 +226,12 @@ async function listPaths(): Promise<PathFeatureCollection | null> {
 
   if (nodes.length > 0) {
     const firstNode = nodes[0];
+    const props = firstNode.properties as { id: number; name?: string; node_type?: string; level: number };
     console.log('\n   First Path Node:');
-    console.log(`   - ID: ${firstNode.properties.id}`);
-    console.log(`   - Name: ${firstNode.properties.name}`);
-    console.log(`   - Node Type: ${firstNode.properties.node_type}`);
-    console.log(`   - Level: ${firstNode.properties.level}`);
+    console.log(`   - ID: ${props.id}`);
+    console.log(`   - Name: ${props.name ?? 'N/A'}`);
+    console.log(`   - Node Type: ${props.node_type ?? 'N/A'}`);
+    console.log(`   - Level: ${props.level}`);
   }
   console.log();
 

@@ -213,14 +213,11 @@ async function filterAssets(): Promise<void> {
 
   // Get all assets and show types distribution
   const allAssets = await client.assets.list(NAMESPACE);
-  const typeCount = allAssets.reduce(
-    (acc, a) => {
-      const type = (a as { user_type: string }).user_type || 'unknown';
-      acc[type] = (acc[type] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  const typeCount: Record<string, number> = {};
+  for (const a of allAssets) {
+    const type = (a as { user_type: string }).user_type || 'unknown';
+    typeCount[type] = (typeCount[type] || 0) + 1;
+  }
 
   console.log('   Asset types distribution:');
   Object.entries(typeCount).forEach(([type, count]) => {

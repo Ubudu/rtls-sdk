@@ -76,14 +76,11 @@ async function collectAllResults(): Promise<void> {
   console.log(`   Total assets collected: ${allAssets.length}`);
 
   // Show type distribution
-  const types = allAssets.reduce(
-    (acc, a) => {
-      const type = (a as { user_type: string }).user_type || 'unknown';
-      acc[type] = (acc[type] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  const types: Record<string, number> = {};
+  for (const a of allAssets) {
+    const type = (a as { user_type: string }).user_type || 'unknown';
+    types[type] = (types[type] || 0) + 1;
+  }
 
   console.log('   Asset types:');
   Object.entries(types).forEach(([type, count]) => {

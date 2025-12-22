@@ -21,8 +21,8 @@ import { createRtlsClient, RtlsError, AuthenticationError } from '@ubudu/rtls-sd
 // Configuration
 // =============================================================================
 
-const NAMESPACE = process.env.APP_NAMESPACE;
-const API_KEY = process.env.RTLS_API_KEY;
+const NAMESPACE = process.env.APP_NAMESPACE!;
+const API_KEY = process.env.RTLS_API_KEY!;
 
 if (!NAMESPACE || !API_KEY) {
   console.error('Error: Missing required environment variables');
