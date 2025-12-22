@@ -148,9 +148,9 @@ describe.skipIf(!hasCredentials())('SpatialResource Integration', () => {
     it('should analyze custom zones', async () => {
       const customZones = [
         {
-          type: 'Feature',
+          type: 'Feature' as const,
           geometry: {
-            type: 'Polygon',
+            type: 'Polygon' as const,
             coordinates: [
               [
                 [testLon - 0.001, testLat - 0.001],
@@ -168,18 +168,18 @@ describe.skipIf(!hasCredentials())('SpatialResource Integration', () => {
       ];
 
       try {
-        const result = await client.spatial.analyzeCustomZones(namespace, customZones);
+        const result = await client.spatial.analyzeCustomZones(namespace, {
+          reference_point: { lat: testLat, lon: testLon },
+          zones: customZones,
+        });
 
         console.log('=== Task 8.4: Analyze Custom Zones ===');
         console.log('Endpoint: POST /spatial/zones/{namespace}/analyze-custom');
-        console.log('Request: GeoJSON Features array');
+        console.log('Request: { reference_point, zones: GeoJSON Features array }');
         console.log('Response Type:', typeof result);
-        console.log('Is Array:', Array.isArray(result));
         console.log('Response:', JSON.stringify(result, null, 2).slice(0, 1000));
 
-        if (Array.isArray(result)) {
-          console.log(`Analyzed ${result.length} custom zones`);
-        }
+        expect(result).toBeDefined();
       } catch (error) {
         console.log('=== Task 8.4: Analyze Custom Zones ===');
         console.log('Error:', error instanceof Error ? error.message : error);
@@ -250,10 +250,10 @@ describe.skipIf(!hasCredentials())('SpatialResource Integration', () => {
     it('should analyze custom POIs', async () => {
       const customPois = [
         {
-          type: 'Feature',
+          type: 'Feature' as const,
           geometry: {
-            type: 'Point',
-            coordinates: [testLon, testLat],
+            type: 'Point' as const,
+            coordinates: [testLon, testLat] as [number, number],
           },
           properties: {
             name: 'Test Custom POI',
@@ -263,18 +263,18 @@ describe.skipIf(!hasCredentials())('SpatialResource Integration', () => {
       ];
 
       try {
-        const result = await client.spatial.analyzeCustomPois(namespace, customPois);
+        const result = await client.spatial.analyzeCustomPois(namespace, {
+          reference_point: { lat: testLat, lon: testLon },
+          pois: customPois,
+        });
 
         console.log('=== Task 8.7: Analyze Custom POIs ===');
         console.log('Endpoint: POST /spatial/pois/{namespace}/analyze-custom');
-        console.log('Request: GeoJSON Point Features array');
+        console.log('Request: { reference_point, pois: GeoJSON Point Features array }');
         console.log('Response Type:', typeof result);
-        console.log('Is Array:', Array.isArray(result));
         console.log('Response:', JSON.stringify(result, null, 2).slice(0, 1000));
 
-        if (Array.isArray(result)) {
-          console.log(`Analyzed ${result.length} custom POIs`);
-        }
+        expect(result).toBeDefined();
       } catch (error) {
         console.log('=== Task 8.7: Analyze Custom POIs ===');
         console.log('Error:', error instanceof Error ? error.message : error);

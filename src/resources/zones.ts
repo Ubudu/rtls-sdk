@@ -1,8 +1,6 @@
 import { BaseClient, type RequestOptions } from '../client/base';
-import type { QueryOptions, FilterOptions, PaginatedResponse } from '../types';
-import { buildQueryParams, paginate, collectAll } from '../utils';
-
-export type ListZonesOptions = QueryOptions & FilterOptions & Record<string, unknown>;
+import type { ZoneFeatureCollection, Zone } from '../types';
+import { extractZonesFromGeoJSON } from '../utils/geojson';
 
 export interface ZonePresenceOptions {
   timestampFrom: number;
@@ -15,49 +13,78 @@ export interface ZonePresenceOptions {
 export class ZonesResource {
   constructor(private client: BaseClient) {}
 
+  /**
+   * List zones for a venue as GeoJSON FeatureCollection.
+   * @returns GeoJSON FeatureCollection with zone polygons
+   */
   async list(
     namespace: string,
     venueId: string | number,
-    options?: ListZonesOptions,
     requestOptions?: RequestOptions
-  ): Promise<PaginatedResponse<Record<string, unknown>>> {
-    const params = buildQueryParams(options);
-
+  ): Promise<ZoneFeatureCollection> {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/venues/{namespace}/{venueId}/zones', {
           params: {
             path: { namespace, venueId: String(venueId) },
-            query: params as Record<string, unknown>,
           },
           ...fetchOpts,
         }),
       requestOptions
-    ) as unknown as Promise<PaginatedResponse<Record<string, unknown>>>;
+    ) as unknown as Promise<ZoneFeatureCollection>;
   }
 
+  /**
+   * List zones for a venue as flat array.
+   * Convenience method that extracts properties from GeoJSON features.
+   * @returns Array of Zone objects
+   */
+  async listAsArray(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Zone[]> {
+    const geoJson = await this.list(namespace, venueId, requestOptions);
+    return extractZonesFromGeoJSON(geoJson);
+  }
+
+  /**
+   * List zones for a specific map as GeoJSON FeatureCollection.
+   */
   async listByMap(
     namespace: string,
     venueId: string | number,
     mapId: string | number,
-    options?: ListZonesOptions,
     requestOptions?: RequestOptions
-  ): Promise<PaginatedResponse<Record<string, unknown>>> {
-    const params = buildQueryParams(options);
-
+  ): Promise<ZoneFeatureCollection> {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/venues/{namespace}/{venueId}/maps/{mapId}/zones', {
           params: {
             path: { namespace, venueId: Number(venueId), mapId: Number(mapId) },
-            query: params as never,
           },
           ...fetchOpts,
         }),
       requestOptions
-    ) as unknown as Promise<PaginatedResponse<Record<string, unknown>>>;
+    ) as unknown as Promise<ZoneFeatureCollection>;
   }
 
+  /**
+   * List zones for a specific map as flat array.
+   */
+  async listByMapAsArray(
+    namespace: string,
+    venueId: string | number,
+    mapId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Zone[]> {
+    const geoJson = await this.listByMap(namespace, venueId, mapId, requestOptions);
+    return extractZonesFromGeoJSON(geoJson);
+  }
+
+  /**
+   * Get zone presence data from Elasticsearch.
+   */
   async getPresence(
     namespace: string,
     options: ZonePresenceOptions,
@@ -82,27 +109,30 @@ export class ZonesResource {
     ) as unknown as Promise<Record<string, unknown>[]>;
   }
 
-  iterate(
+  /**
+   * Get all zones as async generator.
+   * Since API returns all zones at once (no pagination), yields all in one batch.
+   */
+  async *iterate(
     namespace: string,
     venueId: string | number,
-    options?: Omit<ListZonesOptions, 'page' | 'limit'> & { pageSize?: number }
-  ): AsyncGenerator<Record<string, unknown>, void, unknown> {
-    const { pageSize, ...filterOptions } = options ?? {};
-    return paginate(
-      (page, limit) => this.list(namespace, venueId, { ...filterOptions, page, limit }),
-      { pageSize }
-    );
+    requestOptions?: RequestOptions
+  ): AsyncGenerator<Zone, void, unknown> {
+    const zones = await this.listAsArray(namespace, venueId, requestOptions);
+    for (const zone of zones) {
+      yield zone;
+    }
   }
 
+  /**
+   * Get all zones as array.
+   * Convenience method equivalent to listAsArray.
+   */
   async getAll(
     namespace: string,
     venueId: string | number,
-    options?: Omit<ListZonesOptions, 'page' | 'limit'> & { pageSize?: number; maxItems?: number }
-  ): Promise<Record<string, unknown>[]> {
-    const { pageSize, maxItems, ...filterOptions } = options ?? {};
-    return collectAll(
-      (page, limit) => this.list(namespace, venueId, { ...filterOptions, page, limit }),
-      { pageSize, maxItems }
-    );
+    requestOptions?: RequestOptions
+  ): Promise<Zone[]> {
+    return this.listAsArray(namespace, venueId, requestOptions);
   }
 }

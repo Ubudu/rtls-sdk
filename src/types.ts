@@ -8,10 +8,14 @@ export type AssetPosition = components['schemas'] extends { AssetPosition: infer
 export type CachedAssetPosition = components['schemas'] extends { CachedAssetPosition: infer T }
   ? T
   : Record<string, unknown>;
-export type Zone = components['schemas'] extends { Zone: infer T } ? T : Record<string, unknown>;
+export type GeneratedZone = components['schemas'] extends { Zone: infer T }
+  ? T
+  : Record<string, unknown>;
 export type Venue = components['schemas'] extends { Venue: infer T } ? T : Record<string, unknown>;
 export type MapData = components['schemas'] extends { Map: infer T } ? T : Record<string, unknown>;
-export type POI = components['schemas'] extends { POI: infer T } ? T : Record<string, unknown>;
+export type GeneratedPOI = components['schemas'] extends { POI: infer T }
+  ? T
+  : Record<string, unknown>;
 export type Dashboard = components['schemas'] extends { Dashboard: infer T }
   ? T
   : Record<string, unknown>;
@@ -77,3 +81,60 @@ export interface QueryOptions {
 export type FilterOptions = {
   [K in `${string}:${FilterOperator}`]?: string | number | boolean;
 };
+
+// GeoJSON types
+export * from './types/geojson';
+
+// Spatial response types
+export * from './types/spatial';
+
+// Flat zone type (extracted from GeoJSON feature)
+export interface Zone {
+  id: number;
+  name: string;
+  level: number;
+  color: string; // Mapped from rgb_color
+  tags: string[];
+  type: string;
+  geometry?: {
+    type: 'Polygon';
+    coordinates: number[][][];
+  };
+}
+
+// Flat POI type (extracted from GeoJSON feature)
+export interface POI {
+  id: number;
+  name: string;
+  description: string;
+  level: number;
+  color: string;
+  tags: string[];
+  lat: number;
+  lng: number;
+}
+
+// Flat path node type
+export interface PathNode {
+  id: number;
+  externalId: number;
+  nodeType: 'waypoint' | 'entrance' | 'exit' | 'elevator' | 'stairs';
+  name: string;
+  level: number;
+  isActive: boolean;
+  crossLevelConnections: number[];
+  tags: string[];
+  lat: number;
+  lng: number;
+}
+
+// Flat path segment type
+export interface PathSegment {
+  id: number;
+  startNodeId: number;
+  endNodeId: number;
+  isBidirectional: boolean;
+  weight: number;
+  level: number;
+  coordinates: [number, number][];
+}
