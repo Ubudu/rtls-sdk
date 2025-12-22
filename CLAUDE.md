@@ -76,9 +76,27 @@ docs/
 
 ## Documentation
 
-- [docs/development/01_WORK_PACKAGE.md](docs/development/01_WORK_PACKAGE.md) - SDK implementation tasks (47 tasks across 9 phases). Execute sequentially, running verification commands after each task.
-- [docs/development/02_API_VALIDATION_WORKPACKAGE.md](docs/development/02_API_VALIDATION_WORKPACKAGE.md) - API validation work package (68 tasks across 11 phases). Tests every endpoint against live API and documents discrepancies.
-- [docs/guides/release-setup.md](docs/guides/release-setup.md) - Configure CI/CD for GitHub mirroring and npm publishing.
+### Work Packages
+
+| # | Document | Status | Description |
+|---|----------|--------|-------------|
+| 1 | [01_WORK_PACKAGE.md](docs/development/01_WORK_PACKAGE.md) | COMPLETED | SDK implementation (47 tasks, 9 phases) |
+| 2 | [02_API_VALIDATION_WORKPACKAGE.md](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing (68 tasks, 11 phases) |
+| 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | PENDING | SDK alignment for v1.0.0 (28 tasks, 11 phases) |
+
+### Reports (from WP #2)
+
+- [API_VALIDATION_RESULTS.md](docs/development/API_VALIDATION_RESULTS.md) - Test results for each endpoint
+- [API_SCHEMA_REPORT.md](docs/development/API_SCHEMA_REPORT.md) - Actual vs expected schemas
+- [SDK_FIX_RECOMMENDATIONS.md](docs/development/SDK_FIX_RECOMMENDATIONS.md) - Required SDK changes
+
+### API Documentation Proposals
+
+- [04_SWAGGER_DOCUMENTATION_CHANGES.md](docs/development/04_SWAGGER_DOCUMENTATION_CHANGES.md) - Proposed Swagger spec updates for RTLS API team
+
+### Guides
+
+- [docs/guides/release-setup.md](docs/guides/release-setup.md) - CI/CD for GitHub mirroring and npm publishing
 
 ## Integration Testing
 

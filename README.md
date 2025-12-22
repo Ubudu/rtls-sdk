@@ -180,6 +180,28 @@ const response = await client.raw.GET('/health');
 - Node.js >= 18
 - TypeScript >= 5.0 (for TypeScript users)
 
+## Development
+
+For contributors and maintainers, see [CLAUDE.md](CLAUDE.md) for development guidance.
+
+### Work Packages
+
+| Status | Work Package | Description |
+|--------|--------------|-------------|
+| Done | [WP1: SDK Implementation](docs/development/01_WORK_PACKAGE.md) | Core SDK implementation (47 tasks) |
+| Done | [WP2: API Validation](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | Live API testing (68 tasks) |
+| Pending | [WP3: SDK Alignment](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | v1.0.0 breaking changes (28 tasks) |
+
+### Quick Start (Development)
+
+```bash
+npm install          # Install dependencies
+npm run generate     # Generate types from OpenAPI spec
+npm run build        # Build the SDK
+npm run test         # Run unit tests
+npm run test:integration  # Run integration tests (requires .env)
+```
+
 ## License
 
 MIT
