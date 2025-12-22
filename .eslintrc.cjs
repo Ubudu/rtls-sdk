@@ -21,4 +21,12 @@ module.exports = {
     'no-console': 'warn',
   },
   ignorePatterns: ['dist/', 'node_modules/', 'src/generated/', 'examples/'],
+  overrides: [
+    {
+      files: ['test/integration/**/*.ts'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
 };

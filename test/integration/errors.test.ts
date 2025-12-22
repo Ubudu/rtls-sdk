@@ -3,7 +3,6 @@ import {
   createRtlsClient,
   RtlsClient,
   AuthenticationError,
-  NotFoundError,
   ValidationError,
   RtlsError,
 } from '../../src';

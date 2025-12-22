@@ -83,7 +83,7 @@ docs/
 | 1 | [01_WORK_PACKAGE.md](docs/development/01_WORK_PACKAGE.md) | COMPLETED | SDK implementation (47 tasks, 9 phases) |
 | 2 | [02_API_VALIDATION_WORKPACKAGE.md](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing (68 tasks, 11 phases) |
 | 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment for v1.0.0 (28 tasks, 11 phases) |
-| 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | PENDING | Examples & documentation (52 tasks, 12 phases) |
+| 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Examples & documentation (52 tasks, 12 phases) |
 
 ### Reports (from WP #2)
 
@@ -97,7 +97,13 @@ docs/
 
 ### Guides
 
-- [docs/guides/release-setup.md](docs/guides/release-setup.md) - CI/CD for GitHub mirroring and npm publishing
+- [Getting Started](docs/guides/getting-started.md) - Installation, configuration, first API calls
+- [Asset Tracking](docs/guides/asset-tracking.md) - Asset CRUD, positions, history, statistics
+- [Zone & Geofencing](docs/guides/zone-geofencing.md) - Zones, spatial queries, presence detection
+- [Navigation](docs/guides/navigation.md) - POIs, paths, indoor routing
+- [Error Handling](docs/guides/error-handling.md) - Error types, retry strategies
+- [Advanced Patterns](docs/guides/advanced-patterns.md) - Pagination, filtering, batch processing
+- [Release Setup](docs/guides/release-setup.md) - CI/CD for GitHub mirroring and npm publishing
 
 ## Integration Testing
 

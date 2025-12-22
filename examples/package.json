@@ -1,0 +1,31 @@
+{
+  "name": "@ubudu/rtls-sdk-examples",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example scripts for Ubudu RTLS SDK",
+  "type": "module",
+  "scripts": {
+    "ts:getting-started": "npx tsx typescript/01-getting-started.ts",
+    "ts:asset-tracking": "npx tsx typescript/02-asset-tracking.ts",
+    "ts:zone-geofencing": "npx tsx typescript/03-zone-geofencing.ts",
+    "ts:navigation": "npx tsx typescript/04-navigation.ts",
+    "ts:error-handling": "npx tsx typescript/05-error-handling.ts",
+    "ts:pagination": "npx tsx typescript/06-pagination-filtering.ts",
+    "ts:all": "npm run ts:getting-started && npm run ts:asset-tracking && npm run ts:zone-geofencing && npm run ts:navigation && npm run ts:error-handling && npm run ts:pagination",
+    "js:getting-started": "node javascript/01-getting-started.js",
+    "js:asset-tracking": "node javascript/02-asset-tracking.js",
+    "js:zone-geofencing": "node javascript/03-zone-geofencing.js",
+    "js:navigation": "node javascript/04-navigation.js",
+    "js:error-handling": "node javascript/05-error-handling.js",
+    "js:pagination": "node javascript/06-pagination-filtering.js",
+    "js:all": "npm run js:getting-started && npm run js:asset-tracking && npm run js:zone-geofencing && npm run js:navigation && npm run js:error-handling && npm run js:pagination",
+    "all": "npm run ts:all && npm run js:all"
+  },
+  "dependencies": {
+    "@ubudu/rtls-sdk": "file:.."
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "dotenv": "^16.3.1"
+  }
+}
