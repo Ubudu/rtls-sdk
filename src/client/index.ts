@@ -7,6 +7,7 @@ import { AlertsResource } from '../resources/alerts';
 import { DashboardsResource } from '../resources/dashboards';
 import { NavigationResource } from '../resources/navigation';
 import { SpatialResource } from '../resources/spatial';
+import type { RtlsContext } from '../context';
 
 export { type RtlsClientOptions, type RequestOptions } from './base';
 
@@ -157,6 +158,74 @@ export class RtlsClient extends BaseClient {
         }),
       requestOptions
     ) as unknown as Promise<{ message: string; tagCount: number }>;
+  }
+
+  // ─── Scoped Client Factories (Immutable) ─────────────────────────────────
+
+  /**
+   * Create a new client instance scoped to a specific namespace.
+   * The new client inherits all other settings from the parent.
+   * @param namespace - The namespace to scope to
+   * @returns New RtlsClient instance (original unchanged)
+   */
+  forNamespace(namespace: string): RtlsClient {
+    return new RtlsClient({
+      ...this.options,
+      namespace,
+      venueId: this._context.venueId,
+      mapId: this._context.mapId,
+      level: this._context.level,
+    });
+  }
+
+  /**
+   * Create a new client instance scoped to a specific venue.
+   * The new client inherits namespace and other settings from the parent.
+   * @param venueId - The venue ID to scope to
+   * @param options - Optional map ID and level overrides
+   * @returns New RtlsClient instance (original unchanged)
+   */
+  forVenue(venueId: number, options?: { mapId?: number; level?: number }): RtlsClient {
+    return new RtlsClient({
+      ...this.options,
+      namespace: this._context.namespace,
+      venueId,
+      mapId: options?.mapId ?? this._context.mapId,
+      level: options?.level ?? this._context.level,
+    });
+  }
+
+  /**
+   * Create a new client instance scoped to a specific map.
+   * The new client inherits namespace, venue, and other settings from the parent.
+   * @param mapId - The map ID to scope to
+   * @param options - Optional level override
+   * @returns New RtlsClient instance (original unchanged)
+   */
+  forMap(mapId: number, options?: { level?: number }): RtlsClient {
+    return new RtlsClient({
+      ...this.options,
+      namespace: this._context.namespace,
+      venueId: this._context.venueId,
+      mapId,
+      level: options?.level ?? this._context.level,
+    });
+  }
+
+  /**
+   * Create a new client instance with merged context.
+   * Values in the provided context override the parent's values.
+   * @param context - Context values to set/override
+   * @returns New RtlsClient instance (original unchanged)
+   */
+  withContext(context: Partial<RtlsContext>): RtlsClient {
+    return new RtlsClient({
+      ...this.options,
+      namespace: context.namespace ?? this._context.namespace,
+      venueId: context.venueId ?? this._context.venueId,
+      mapId: context.mapId ?? this._context.mapId,
+      level: context.level ?? this._context.level,
+    });
   }
 }
 
