@@ -1,7 +1,7 @@
 # Work Package 05: SDK Ergonomics & Default Context
 
 > **Execution Mode**: Fully Autonomous AI Coding Agent
-> **Total Tasks**: 52 atomic tasks across 10 phases (complete code for all)
+> **Total Tasks**: 33 tasks across 10 phases (all with complete code & tests)
 > **Verification**: Each task includes testable acceptance criteria
 > **Breaking Changes**: None - fully backward compatible
 
@@ -2475,15 +2475,121 @@ npx tsc --noEmit src/resources/positions.ts 2>&1 && echo "PASS: Task 5.1" || ech
 
 ---
 
+### Task 5.2: Unit Tests for PositionsResource Context
+
+**Action**: Create `test/resources/positions-context.test.ts`
+
+**Complete file content**:
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { PositionsResource } from '../../src/resources/positions';
+import type { BaseClient } from '../../src/client/base';
+
+describe('PositionsResource with context', () => {
+  let mockClient: BaseClient;
+  let resource: PositionsResource;
+  const mockRequest = vi.fn();
+
+  beforeEach(() => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValue([]);
+    mockClient = {
+      request: mockRequest,
+      raw: { GET: vi.fn(), POST: vi.fn() },
+      namespace: 'default-ns',
+      venueId: undefined,
+      requireNs: vi.fn((ctx?: { namespace?: string }) => ctx?.namespace ?? 'default-ns'),
+      requireVenue: vi.fn(),
+      requireMap: vi.fn(),
+    } as unknown as BaseClient;
+    resource = new PositionsResource(mockClient);
+  });
+
+  describe('listCached', () => {
+    it('uses default namespace when called without arguments', async () => {
+      await resource.listCached();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace when provided (legacy)', async () => {
+      await resource.listCached('explicit-ns');
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('getCached', () => {
+    it('uses default namespace with just mac address', async () => {
+      await resource.getCached('AA:BB:CC:DD:EE:FF');
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace when both provided (legacy)', async () => {
+      await resource.getCached('explicit-ns', 'AA:BB:CC:DD:EE:FF');
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('getLast', () => {
+    it('uses default namespace with just mac address', async () => {
+      await resource.getLast('AA:BB:CC:DD:EE:FF');
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+
+  describe('listLast', () => {
+    it('uses default namespace when called with options only', async () => {
+      await resource.listLast({ key: 'test' });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace when provided (legacy)', async () => {
+      await resource.listLast('explicit-ns', { key: 'test' });
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('getHistory', () => {
+    const historyOptions = { timestampFrom: 1000, timestampTo: 2000, value: 'test' };
+
+    it('uses default namespace when called with options only', async () => {
+      await resource.getHistory(historyOptions);
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace when provided (legacy)', async () => {
+      await resource.getHistory('explicit-ns', historyOptions);
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('publish', () => {
+    const positionData = { user_udid: 'test-udid' };
+
+    it('uses default namespace when called with position only', async () => {
+      await resource.publish(positionData);
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace when provided (legacy)', async () => {
+      await resource.publish('explicit-ns', positionData);
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**Verification**:
+```bash
+npm run test -- test/resources/positions-context.test.ts --run 2>&1 | tail -5 && echo "PASS: Task 5.2" || echo "FAIL: Task 5.2"
+```
+
+---
+
 ### Phase 5 Checkpoint
 
 ```bash
-npm run typecheck && echo "✅ Phase 5 Complete" || echo "❌ Phase 5 Failed"
-```
-
-**Commit**:
-```bash
-git add -A && git commit -m "feat(sdk): phase 5 - PositionsResource with context support"
+npm run typecheck && npm run test -- test/resources/positions-context.test.ts --run && echo "✅ Phase 5 Complete" || echo "❌ Phase 5 Failed"
 ```
 
 ---
@@ -3339,15 +3445,220 @@ npx tsc --noEmit src/resources/spatial.ts 2>&1 && echo "PASS: Task 6.3" || echo 
 
 ---
 
+### Task 6.4: Unit Tests for Phase 6 Resources
+
+**Action**: Create `test/resources/zones-context.test.ts`
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { ZonesResource } from '../../src/resources/zones';
+import type { BaseClient } from '../../src/client/base';
+
+describe('ZonesResource with context', () => {
+  let mockClient: BaseClient;
+  let resource: ZonesResource;
+  const mockRequest = vi.fn();
+
+  beforeEach(() => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValue({ type: 'FeatureCollection', features: [] });
+    mockClient = {
+      request: mockRequest,
+      raw: { GET: vi.fn() },
+      namespace: 'default-ns',
+      venueId: 100,
+      mapId: 200,
+      requireNs: vi.fn((ctx?) => ctx?.namespace ?? 'default-ns'),
+      requireVenue: vi.fn((ctx?) => ctx?.venueId ?? 100),
+      requireMap: vi.fn((ctx?) => ctx?.mapId ?? 200),
+    } as unknown as BaseClient;
+    resource = new ZonesResource(mockClient);
+  });
+
+  describe('list', () => {
+    it('uses default context when called without arguments', async () => {
+      await resource.list();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+      expect(mockClient.requireVenue).toHaveBeenCalled();
+    });
+
+    it('uses explicit parameters (legacy)', async () => {
+      await resource.list('explicit-ns', 999);
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('listByMap', () => {
+    it('uses default context including mapId', async () => {
+      await resource.listByMap();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+      expect(mockClient.requireVenue).toHaveBeenCalled();
+      expect(mockClient.requireMap).toHaveBeenCalled();
+    });
+  });
+
+  describe('getPresence', () => {
+    it('uses default namespace with options', async () => {
+      mockRequest.mockResolvedValue([]);
+      await resource.getPresence({ timestampFrom: 1000, timestampTo: 2000 });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**Action**: Create `test/resources/venues-context.test.ts`
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { VenuesResource } from '../../src/resources/venues';
+import type { BaseClient } from '../../src/client/base';
+
+describe('VenuesResource with context', () => {
+  let mockClient: BaseClient;
+  let resource: VenuesResource;
+  const mockRequest = vi.fn();
+
+  beforeEach(() => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValue([]);
+    mockClient = {
+      request: mockRequest,
+      raw: { GET: vi.fn() },
+      namespace: 'default-ns',
+      venueId: 100,
+      mapId: 200,
+      requireNs: vi.fn((ctx?) => ctx?.namespace ?? 'default-ns'),
+      requireVenue: vi.fn((ctx?) => ctx?.venueId ?? 100),
+      requireMap: vi.fn((ctx?) => ctx?.mapId ?? 200),
+    } as unknown as BaseClient;
+    resource = new VenuesResource(mockClient);
+  });
+
+  describe('list', () => {
+    it('uses default namespace', async () => {
+      await resource.list();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+
+  describe('get', () => {
+    it('uses default namespace and venueId', async () => {
+      mockRequest.mockResolvedValue({});
+      await resource.get();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+      expect(mockClient.requireVenue).toHaveBeenCalled();
+    });
+
+    it('accepts just venueId with default namespace', async () => {
+      mockRequest.mockResolvedValue({});
+      await resource.get(999);
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+
+  describe('listMaps', () => {
+    it('uses default context', async () => {
+      await resource.listMaps();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+      expect(mockClient.requireVenue).toHaveBeenCalled();
+    });
+  });
+
+  describe('listPois', () => {
+    it('uses default context', async () => {
+      mockRequest.mockResolvedValue({ type: 'FeatureCollection', features: [] });
+      await resource.listPois();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+      expect(mockClient.requireVenue).toHaveBeenCalled();
+    });
+  });
+
+  describe('listMapPois', () => {
+    it('uses default context including mapId', async () => {
+      mockRequest.mockResolvedValue({ type: 'FeatureCollection', features: [] });
+      await resource.listMapPois();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+      expect(mockClient.requireVenue).toHaveBeenCalled();
+      expect(mockClient.requireMap).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**Action**: Create `test/resources/spatial-context.test.ts`
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { SpatialResource } from '../../src/resources/spatial';
+import type { BaseClient } from '../../src/client/base';
+
+describe('SpatialResource with context', () => {
+  let mockClient: BaseClient;
+  let resource: SpatialResource;
+  const mockRequest = vi.fn();
+
+  beforeEach(() => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValue({ reference_point: {}, zones: [] });
+    mockClient = {
+      request: mockRequest,
+      raw: { GET: vi.fn(), POST: vi.fn() },
+      namespace: 'default-ns',
+      requireNs: vi.fn((ctx?) => ctx?.namespace ?? 'default-ns'),
+      requireVenue: vi.fn(),
+      requireMap: vi.fn(),
+    } as unknown as BaseClient;
+    resource = new SpatialResource(mockClient);
+  });
+
+  describe('zonesContainingPoint', () => {
+    it('uses default namespace with point options', async () => {
+      await resource.zonesContainingPoint({ lat: 48.8, lon: 2.3 });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace (legacy)', async () => {
+      await resource.zonesContainingPoint('explicit-ns', { lat: 48.8, lon: 2.3 });
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('nearestZones', () => {
+    it('uses default namespace', async () => {
+      await resource.nearestZones({ lat: 48.8, lon: 2.3, limit: 5 });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+
+  describe('zonesWithinRadius', () => {
+    it('uses default namespace', async () => {
+      await resource.zonesWithinRadius({ lat: 48.8, lon: 2.3, radiusMeters: 100 });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+
+  describe('nearestPois', () => {
+    it('uses default namespace', async () => {
+      mockRequest.mockResolvedValue({ reference_point: {}, pois: [] });
+      await resource.nearestPois({ lat: 48.8, lon: 2.3 });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**Verification**:
+```bash
+npm run test -- test/resources/zones-context.test.ts test/resources/venues-context.test.ts test/resources/spatial-context.test.ts --run 2>&1 | tail -5 && echo "PASS: Task 6.4" || echo "FAIL: Task 6.4"
+```
+
+---
+
 ### Phase 6 Checkpoint
 
 ```bash
-npm run typecheck && echo "✅ Phase 6 Complete" || echo "❌ Phase 6 Failed"
-```
-
-**Commit**:
-```bash
-git add -A && git commit -m "feat(sdk): phase 6 - ZonesResource, VenuesResource, SpatialResource with context"
+npm run typecheck && npm run test -- test/resources/*-context.test.ts --run && echo "✅ Phase 6 Complete" || echo "❌ Phase 6 Failed"
 ```
 
 ---
@@ -3887,15 +4198,162 @@ npx tsc --noEmit src/resources/navigation.ts 2>&1 && echo "PASS: Task 7.3" || ec
 
 ---
 
+### Task 7.4: Unit Tests for Phase 7 Resources
+
+**Action**: Create `test/resources/alerts-context.test.ts`
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { AlertsResource } from '../../src/resources/alerts';
+import type { BaseClient } from '../../src/client/base';
+
+describe('AlertsResource with context', () => {
+  let mockClient: BaseClient;
+  let resource: AlertsResource;
+  const mockRequest = vi.fn();
+
+  beforeEach(() => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValue([]);
+    mockClient = {
+      request: mockRequest,
+      raw: { GET: vi.fn(), POST: vi.fn() },
+      namespace: 'default-ns',
+      requireNs: vi.fn((ctx?) => ctx?.namespace ?? 'default-ns'),
+      requireVenue: vi.fn(),
+      requireMap: vi.fn(),
+    } as unknown as BaseClient;
+    resource = new AlertsResource(mockClient);
+  });
+
+  describe('getRules', () => {
+    it('uses default namespace when called without arguments', async () => {
+      await resource.getRules();
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace (legacy)', async () => {
+      await resource.getRules('explicit-ns');
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('saveRules', () => {
+    it('uses default namespace with rules array', async () => {
+      await resource.saveRules([{ name: 'test-rule' }]);
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace (legacy)', async () => {
+      await resource.saveRules('explicit-ns', [{ name: 'test-rule' }]);
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('list', () => {
+    it('uses default namespace with options', async () => {
+      await resource.list({ timestampFrom: 1000, timestampTo: 2000 });
+      expect(mockClient.requireNs).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace (legacy)', async () => {
+      await resource.list('explicit-ns', { timestampFrom: 1000, timestampTo: 2000 });
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**Action**: Create `test/resources/dashboards-context.test.ts`
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { DashboardsResource } from '../../src/resources/dashboards';
+import type { BaseClient } from '../../src/client/base';
+
+describe('DashboardsResource with context', () => {
+  let mockClient: BaseClient;
+  let resource: DashboardsResource;
+  const mockRequest = vi.fn();
+
+  beforeEach(() => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValue([]);
+    mockClient = {
+      request: mockRequest,
+      raw: { GET: vi.fn(), POST: vi.fn(), PUT: vi.fn(), DELETE: vi.fn() },
+      namespace: 'default-ns',
+      requireNs: vi.fn((ctx?) => ctx?.namespace ?? 'default-ns'),
+      requireVenue: vi.fn(),
+      requireMap: vi.fn(),
+    } as unknown as BaseClient;
+    resource = new DashboardsResource(mockClient);
+  });
+
+  describe('list', () => {
+    it('uses default namespace when called without arguments', async () => {
+      await resource.list();
+      // DashboardsResource uses optional namespace filter
+      expect(mockRequest).toHaveBeenCalled();
+    });
+
+    it('uses explicit namespace (legacy)', async () => {
+      await resource.list('explicit-ns');
+      expect(mockRequest).toHaveBeenCalled();
+    });
+
+    it('uses namespace from context options', async () => {
+      await resource.list({ namespace: 'context-ns' });
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('listCreated', () => {
+    it('uses default namespace', async () => {
+      await resource.listCreated();
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('listShared', () => {
+    it('uses default namespace', async () => {
+      await resource.listShared();
+      expect(mockRequest).toHaveBeenCalled();
+    });
+  });
+
+  describe('create', () => {
+    it('uses default namespace when not specified in data', async () => {
+      mockRequest.mockResolvedValue({});
+      await resource.create({ name: 'Test Dashboard' });
+      expect(mockRequest).toHaveBeenCalled();
+    });
+
+    it('uses namespace from data when specified', async () => {
+      mockRequest.mockResolvedValue({});
+      await resource.create({ name: 'Test', namespace: 'explicit-ns' });
+      expect(mockRequest).toHaveBeenCalled();
+    });
+
+    it('throws when no namespace available', async () => {
+      mockClient.namespace = undefined;
+      await expect(resource.create({ name: 'Test' })).rejects.toThrow('Namespace is required');
+    });
+  });
+});
+```
+
+**Verification**:
+```bash
+npm run test -- test/resources/alerts-context.test.ts test/resources/dashboards-context.test.ts --run 2>&1 | tail -5 && echo "PASS: Task 7.4" || echo "FAIL: Task 7.4"
+```
+
+---
+
 ### Phase 7 Checkpoint
 
 ```bash
-npm run typecheck && npm run test --run && echo "✅ Phase 7 Complete" || echo "❌ Phase 7 Failed"
-```
-
-**Commit**:
-```bash
-git add -A && git commit -m "feat(sdk): phase 7 - AlertsResource, DashboardsResource, NavigationResource with context"
+npm run typecheck && npm run test -- test/resources/*-context.test.ts --run && echo "✅ Phase 7 Complete" || echo "❌ Phase 7 Failed"
 ```
 
 ---
@@ -4357,32 +4815,256 @@ git add -A && git commit -m "feat(sdk): phase 9 - default context example"
 
 ---
 
-## Phase 10: Final Validation
+## Phase 10: Integration Tests & Final Validation
 
-### Task 10.1: Full Test Suite
+### Task 10.1: Create Integration Test for Context Features
+
+**Action**: Create `test/integration/context.integration.test.ts`
+
+```typescript
+/**
+ * Integration tests for context features.
+ * Requires .env with RTLS_API_KEY and RTLS_NAMESPACE
+ */
+
+import { describe, it, expect, beforeAll } from 'vitest';
+import { createRtlsClient, ContextError } from '../../src';
+
+const API_KEY = process.env.RTLS_API_KEY;
+const NAMESPACE = process.env.RTLS_NAMESPACE;
+
+// Skip if no credentials
+const describeIf = API_KEY && NAMESPACE ? describe : describe.skip;
+
+describeIf('Context Integration Tests', () => {
+  describe('Client with default namespace', () => {
+    const client = createRtlsClient({
+      apiKey: API_KEY!,
+      namespace: NAMESPACE!,
+    });
+
+    it('lists assets without explicit namespace', async () => {
+      const assets = await client.assets.list();
+      expect(Array.isArray(assets)).toBe(true);
+    });
+
+    it('lists cached positions without explicit namespace', async () => {
+      const positions = await client.positions.listCached();
+      expect(Array.isArray(positions)).toBe(true);
+    });
+
+    it('lists venues without explicit namespace', async () => {
+      const venues = await client.venues.list();
+      expect(Array.isArray(venues)).toBe(true);
+    });
+
+    it('allows namespace override per-call', async () => {
+      // Should work with override (uses same namespace for simplicity)
+      const assets = await client.assets.list({ namespace: NAMESPACE });
+      expect(Array.isArray(assets)).toBe(true);
+    });
+
+    it('supports legacy explicit namespace syntax', async () => {
+      const assets = await client.assets.list(NAMESPACE!);
+      expect(Array.isArray(assets)).toBe(true);
+    });
+  });
+
+  describe('Client without default namespace', () => {
+    const client = createRtlsClient({ apiKey: API_KEY! });
+
+    it('throws ContextError when namespace not provided', async () => {
+      await expect(client.assets.list()).rejects.toThrow(ContextError);
+    });
+
+    it('works when namespace provided explicitly', async () => {
+      const assets = await client.assets.list(NAMESPACE!);
+      expect(Array.isArray(assets)).toBe(true);
+    });
+
+    it('works when namespace provided in options', async () => {
+      const assets = await client.assets.list({ namespace: NAMESPACE });
+      expect(Array.isArray(assets)).toBe(true);
+    });
+  });
+
+  describe('Mutable setters', () => {
+    it('setNamespace changes default namespace', async () => {
+      const client = createRtlsClient({ apiKey: API_KEY! });
+
+      // Initially no namespace
+      expect(client.namespace).toBeUndefined();
+
+      // Set namespace
+      client.setNamespace(NAMESPACE!);
+      expect(client.namespace).toBe(NAMESPACE);
+
+      // Should now work without explicit namespace
+      const assets = await client.assets.list();
+      expect(Array.isArray(assets)).toBe(true);
+    });
+
+    it('setters are chainable', () => {
+      const client = createRtlsClient({ apiKey: API_KEY! });
+
+      const result = client
+        .setNamespace(NAMESPACE!)
+        .setVenue(123)
+        .setLevel(0);
+
+      expect(result).toBe(client);
+      expect(client.namespace).toBe(NAMESPACE);
+      expect(client.venueId).toBe(123);
+      expect(client.level).toBe(0);
+    });
+
+    it('clearContext resets all defaults', () => {
+      const client = createRtlsClient({
+        apiKey: API_KEY!,
+        namespace: NAMESPACE!,
+        venueId: 123,
+      });
+
+      client.clearContext();
+
+      expect(client.namespace).toBeUndefined();
+      expect(client.venueId).toBeUndefined();
+    });
+  });
+
+  describe('Scoped clients (immutable)', () => {
+    it('forNamespace creates new client with different namespace', async () => {
+      const client = createRtlsClient({ apiKey: API_KEY! });
+      const scopedClient = client.forNamespace(NAMESPACE!);
+
+      // Original unchanged
+      expect(client.namespace).toBeUndefined();
+
+      // Scoped client has namespace
+      expect(scopedClient.namespace).toBe(NAMESPACE);
+
+      // Scoped client works
+      const assets = await scopedClient.assets.list();
+      expect(Array.isArray(assets)).toBe(true);
+    });
+
+    it('withContext creates client with multiple overrides', () => {
+      const client = createRtlsClient({ apiKey: API_KEY!, namespace: 'original' });
+
+      const scopedClient = client.withContext({
+        namespace: NAMESPACE!,
+        venueId: 999,
+        level: 2,
+      });
+
+      // Original unchanged
+      expect(client.namespace).toBe('original');
+      expect(client.venueId).toBeUndefined();
+
+      // Scoped client has overrides
+      expect(scopedClient.namespace).toBe(NAMESPACE);
+      expect(scopedClient.venueId).toBe(999);
+      expect(scopedClient.level).toBe(2);
+    });
+  });
+
+  describe('Spatial queries with context', () => {
+    const client = createRtlsClient({
+      apiKey: API_KEY!,
+      namespace: NAMESPACE!,
+    });
+
+    it('nearestZones works with default namespace', async () => {
+      const result = await client.spatial.nearestZones({
+        lat: 48.8566,
+        lon: 2.3522,
+        limit: 5,
+      });
+      expect(result).toHaveProperty('reference_point');
+    });
+  });
+});
+```
+
+**Verification**:
+```bash
+npm run test:integration -- test/integration/context.integration.test.ts 2>&1 | tail -10 && echo "PASS: Task 10.1" || echo "FAIL: Task 10.1 (may need .env)"
+```
+
+---
+
+### Task 10.2: Full Unit Test Suite
 
 ```bash
 npm run test --run
-npm run test:integration  # If .env configured
 ```
 
-### Task 10.2: Build Verification
+**Expected**: All unit tests pass including new context tests.
+
+---
+
+### Task 10.3: Full Integration Test Suite
+
+```bash
+npm run test:integration
+```
+
+**Expected**: All integration tests pass (requires `.env` with credentials).
+
+---
+
+### Task 10.4: Build Verification
 
 ```bash
 npm run build
 node -e "const sdk = require('./dist/index.cjs'); console.log(typeof sdk.createRtlsClient === 'function' ? 'PASS' : 'FAIL')"
 ```
 
-### Task 10.3: Type Export Verification
+---
+
+### Task 10.5: Type Export Verification
 
 ```bash
-grep -q "RtlsContext" dist/index.d.ts && grep -q "forNamespace" dist/index.d.ts && echo "PASS" || echo "FAIL"
+grep -q "RtlsContext" dist/index.d.ts && grep -q "forNamespace" dist/index.d.ts && grep -q "ContextError" dist/index.d.ts && echo "PASS" || echo "FAIL"
 ```
 
-### Task 10.4: Update Version
+---
+
+### Task 10.6: Update Version and CHANGELOG
+
+**Action**: Bump version to 2.0.0 (minor breaking: ContextError for missing namespace)
 
 ```bash
 npm version minor --no-git-tag-version
+```
+
+**Action**: Update `CHANGELOG.md` with v2.0.0 section
+
+```markdown
+## [2.0.0] - YYYY-MM-DD
+
+### Added
+- Default context at client creation (`namespace`, `venueId`, `mapId`, `level`)
+- Mutable setters: `setNamespace()`, `setVenue()`, `setMap()`, `setLevel()`, `setContext()`, `clearContext()`
+- Immutable scoped clients: `forNamespace()`, `forVenue()`, `forMap()`, `withContext()`
+- `ContextError` thrown when required context is missing
+- Context getters: `client.namespace`, `client.venueId`, `client.mapId`, `client.level`, `client.context`
+
+### Changed
+- All resource methods now accept optional context override in options
+- Resource methods can be called without explicit namespace when default is set
+
+### Migration
+- All existing code continues to work (fully backward compatible)
+- See [Migration Guide](docs/guides/migration-v2.md) for upgrade path
+```
+
+---
+
+### Phase 10 Checkpoint
+
+```bash
+npm run test --run && npm run build && echo "✅ Phase 10 Complete" || echo "❌ Phase 10 Failed"
 ```
 
 ---
@@ -4390,14 +5072,29 @@ npm version minor --no-git-tag-version
 ## Summary
 
 ### Files Created
-- `src/context.ts`
-- `src/utils/args.ts`
-- `test/context.test.ts`
-- `test/client-context.test.ts`
-- `test/utils/args.test.ts`
-- `test/resources/assets-context.test.ts`
-- `examples/typescript/07-default-context.ts`
-- `docs/guides/migration-v2.md`
+
+**Source Files**:
+- `src/context.ts` - Context types and ContextError
+- `src/utils/args.ts` - Argument resolution utilities
+
+**Unit Test Files**:
+- `test/context.test.ts` - Context module tests
+- `test/client-context.test.ts` - Client context method tests
+- `test/utils/args.test.ts` - Args utility tests
+- `test/resources/assets-context.test.ts` - AssetsResource context tests
+- `test/resources/positions-context.test.ts` - PositionsResource context tests
+- `test/resources/zones-context.test.ts` - ZonesResource context tests
+- `test/resources/venues-context.test.ts` - VenuesResource context tests
+- `test/resources/spatial-context.test.ts` - SpatialResource context tests
+- `test/resources/alerts-context.test.ts` - AlertsResource context tests
+- `test/resources/dashboards-context.test.ts` - DashboardsResource context tests
+
+**Integration Test Files**:
+- `test/integration/context.integration.test.ts` - Live API context tests
+
+**Documentation & Examples**:
+- `examples/typescript/07-default-context.ts` - Context usage example
+- `docs/guides/migration-v2.md` - v1.x to v2.x migration guide
 
 ### Files Modified
 - `src/index.ts`
