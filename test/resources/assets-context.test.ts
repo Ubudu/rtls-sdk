@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createRtlsClient, RtlsClient, ContextError } from '../../src';
 
 describe('AssetsResource with context', () => {

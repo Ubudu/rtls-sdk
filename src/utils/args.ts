@@ -163,6 +163,7 @@ export function stripContextFromOptions<T extends object>(
 ): Omit<T, keyof CallContext> | undefined {
   if (!options) return undefined;
 
-  const { namespace, venueId, mapId, level, ...rest } = options as T & CallContext;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { namespace: _ns, venueId: _vid, mapId: _mid, level: _lvl, ...rest } = options as T & CallContext;
   return Object.keys(rest).length > 0 ? (rest as Omit<T, keyof CallContext>) : undefined;
 }
