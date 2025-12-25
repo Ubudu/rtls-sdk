@@ -1,7 +1,7 @@
 # Work Package 05: SDK Ergonomics & Default Context
 
 > **Execution Mode**: Fully Autonomous AI Coding Agent
-> **Total Tasks**: 42 atomic tasks across 10 phases
+> **Total Tasks**: 52 atomic tasks across 10 phases (complete code for all)
 > **Verification**: Each task includes testable acceptance criteria
 > **Breaking Changes**: None - fully backward compatible
 
@@ -2175,55 +2175,2033 @@ git add -A && git commit -m "feat(sdk): phase 4 - AssetsResource with context su
 
 ---
 
-## Phase 5-7: Update Remaining Resources
+## Phase 5: Update PositionsResource
 
-Due to length constraints, I'll provide the pattern. Each resource follows the same transformation:
+### Task 5.1: Update PositionsResource
 
-### Task 5.x-7.x: Update Each Resource
+**Action**: Replace entire `src/resources/positions.ts`
 
-For each resource file (`positions.ts`, `zones.ts`, `venues.ts`, `spatial.ts`, `alerts.ts`, `dashboards.ts`, `navigation.ts`):
-
-1. Add imports: `CallContext`, `resolveNamespaceArgs`, `resolveVenueArgs`, `stripContextFromOptions`
-2. Add overload signatures for each public method
-3. Implement argument resolution logic
-4. Update tests with context scenarios
-
-**Pattern for each method**:
+**Complete file content**:
 
 ```typescript
-// Add overloads
-async methodName(options?: MethodParams): Promise<Result>;
-async methodName(namespace: string, ...args): Promise<Result>;
-async methodName(arg1?, arg2?, arg3?): Promise<Result> {
-  // Resolve arguments
-  // Call API
+import type { BaseClient, RequestOptions } from '../client/base';
+import type { QueryOptions, FilterOptions } from '../types';
+import type { CallContext } from '../context';
+import { buildQueryParams, stripContextFromOptions } from '../utils';
+
+export type ListPositionsOptions = QueryOptions & FilterOptions & Record<string, unknown>;
+export type ListPositionsParams = ListPositionsOptions & CallContext;
+
+export interface PositionHistoryOptions {
+  timestampFrom: number;
+  timestampTo: number;
+  key?: string;
+  value: string;
+}
+
+export interface ListLastPositionsOptions extends ListPositionsOptions {
+  key?: string;
+  queryString?: string;
+  mapUuids?: string[];
+  timestampFrom?: number;
+  timestampTo?: number;
+}
+
+export interface PublishPositionData {
+  user_udid: string;
+  lat?: number;
+  lon?: number;
+  map_uuid?: string;
+  user_name?: string;
+}
+
+export class PositionsResource {
+  constructor(private client: BaseClient) {}
+
+  // ─── List Cached Positions ──────────────────────────────────────────────────
+
+  /**
+   * List all cached positions for a namespace.
+   *
+   * @example
+   * // Using default namespace
+   * const positions = await client.positions.listCached();
+   *
+   * // Explicit namespace (legacy)
+   * const positions = await client.positions.listCached('my-namespace');
+   */
+  async listCached(requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCached(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCached(
+    arg1?: string | RequestOptions,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = this.client.requireNs();
+      requestOptions = arg1;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/cache/{app_namespace}/positions', {
+          params: { path: { app_namespace: namespace } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── Get Cached Position ────────────────────────────────────────────────────
+
+  /**
+   * Get a single cached position by MAC address.
+   */
+  async getCached(macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async getCached(namespace: string, macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async getCached(
+    arg1: string,
+    arg2?: string | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    let namespace: string;
+    let macAddress: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg2 === 'string') {
+      namespace = arg1;
+      macAddress = arg2;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs();
+      macAddress = arg1;
+      requestOptions = arg2;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/cache/{app_namespace}/positions/{mac_address}', {
+          params: { path: { app_namespace: namespace, mac_address: macAddress } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── Get Last Position ──────────────────────────────────────────────────────
+
+  /**
+   * Get the last known position for an asset.
+   */
+  async getLast(macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async getLast(namespace: string, macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async getLast(
+    arg1: string,
+    arg2?: string | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    let namespace: string;
+    let macAddress: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg2 === 'string') {
+      namespace = arg1;
+      macAddress = arg2;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs();
+      macAddress = arg1;
+      requestOptions = arg2;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/asset_last_position/{app_namespace}/{mac_address}', {
+          params: { path: { app_namespace: namespace, mac_address: macAddress } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── List Last Positions ────────────────────────────────────────────────────
+
+  /**
+   * List last known positions with filtering.
+   */
+  async listLast(options?: ListLastPositionsOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listLast(namespace: string, options?: ListLastPositionsOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listLast(
+    arg1?: string | (ListLastPositionsOptions & CallContext),
+    arg2?: ListLastPositionsOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let options: ListLastPositionsOptions | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as ListLastPositionsOptions | undefined;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = stripContextFromOptions(arg1) as ListLastPositionsOptions | undefined;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    const { key, queryString, mapUuids, timestampFrom, timestampTo, ...queryOptions } = options ?? {};
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/es/last_positions/{appNamespace}', {
+          params: {
+            path: { appNamespace: namespace },
+            query: {
+              key,
+              queryString,
+              mapUuids: mapUuids?.join(','),
+              timestampFrom,
+              timestampTo,
+              ...buildQueryParams(queryOptions),
+            } as Record<string, unknown>,
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── Get Position History ───────────────────────────────────────────────────
+
+  /**
+   * Get position history for an asset.
+   */
+  async getHistory(options: PositionHistoryOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getHistory(namespace: string, options: PositionHistoryOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getHistory(
+    arg1: string | (PositionHistoryOptions & CallContext),
+    arg2?: PositionHistoryOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let options: PositionHistoryOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as PositionHistoryOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1 as PositionHistoryOptions;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/es/position_history/{appNamespace}', {
+          params: {
+            path: { appNamespace: namespace },
+            query: {
+              key: options.key ?? 'user.udid',
+              value: options.value,
+              timestampFrom: String(options.timestampFrom),
+              timestampTo: String(options.timestampTo),
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── Publish Position ───────────────────────────────────────────────────────
+
+  /**
+   * Publish a position update.
+   */
+  async publish(position: PublishPositionData, options?: { patchAssetData?: boolean } & CallContext, requestOptions?: RequestOptions): Promise<void>;
+  async publish(namespace: string, position: PublishPositionData, options?: { patchAssetData?: boolean }, requestOptions?: RequestOptions): Promise<void>;
+  async publish(
+    arg1: string | PublishPositionData,
+    arg2?: PublishPositionData | ({ patchAssetData?: boolean } & CallContext) | RequestOptions,
+    arg3?: { patchAssetData?: boolean } | RequestOptions,
+    arg4?: RequestOptions
+  ): Promise<void> {
+    let namespace: string;
+    let position: PublishPositionData;
+    let patchAssetData: boolean | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      position = arg2 as PublishPositionData;
+      patchAssetData = (arg3 as { patchAssetData?: boolean } | undefined)?.patchAssetData;
+      requestOptions = arg4;
+    } else {
+      namespace = this.client.requireNs(arg2 as CallContext | undefined);
+      position = arg1;
+      const opts = arg2 as { patchAssetData?: boolean } & CallContext | undefined;
+      patchAssetData = opts?.patchAssetData;
+      requestOptions = arg3 as RequestOptions | undefined;
+    }
+
+    await this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/publisher/{app_namespace}', {
+          params: {
+            path: { app_namespace: namespace },
+            query: patchAssetData ? { patch_asset_data: 'true' } : undefined,
+          },
+          body: position as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    );
+  }
 }
 ```
 
-**Verification for each**:
+**Verification**:
 ```bash
-npx tsc --noEmit src/resources/[resource].ts && echo "PASS" || echo "FAIL"
+npx tsc --noEmit src/resources/positions.ts 2>&1 && echo "PASS: Task 5.1" || echo "FAIL: Task 5.1"
+```
+
+---
+
+### Phase 5 Checkpoint
+
+```bash
+npm run typecheck && echo "✅ Phase 5 Complete" || echo "❌ Phase 5 Failed"
+```
+
+**Commit**:
+```bash
+git add -A && git commit -m "feat(sdk): phase 5 - PositionsResource with context support"
+```
+
+---
+
+## Phase 6: Update ZonesResource, VenuesResource, SpatialResource
+
+### Task 6.1: Update ZonesResource
+
+**Action**: Replace entire `src/resources/zones.ts`
+
+**Complete file content**:
+
+```typescript
+import type { BaseClient, RequestOptions } from '../client/base';
+import type { ZoneFeatureCollection, Zone } from '../types';
+import type { CallContext } from '../context';
+import { extractZonesFromGeoJSON } from '../utils/geojson';
+
+export interface ZonePresenceOptions {
+  timestampFrom: number;
+  timestampTo: number;
+  key?: string;
+  value?: string;
+  interval?: string;
+}
+
+export class ZonesResource {
+  constructor(private client: BaseClient) {}
+
+  // ─── List Zones ─────────────────────────────────────────────────────────────
+
+  /**
+   * List zones for a venue as GeoJSON FeatureCollection.
+   *
+   * @example
+   * // Using default context
+   * const zones = await client.zones.list();
+   *
+   * // Explicit (legacy)
+   * const zones = await client.zones.list('namespace', 123);
+   */
+  async list(options?: CallContext, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
+  async list(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
+  async list(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<ZoneFeatureCollection> {
+    let namespace: string;
+    let venueId: string | number;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      venueId = arg2 as string | number;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      venueId = this.client.requireVenue(arg1);
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}/zones', {
+          params: { path: { namespace, venueId: String(venueId) } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<ZoneFeatureCollection>;
+  }
+
+  // ─── List Zones as Array ────────────────────────────────────────────────────
+
+  /**
+   * List zones as flat array.
+   */
+  async listAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async listAsArray(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async listAsArray(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Zone[]> {
+    const geoJson = await this.list(arg1 as any, arg2 as any, arg3);
+    return extractZonesFromGeoJSON(geoJson);
+  }
+
+  // ─── List Zones by Map ──────────────────────────────────────────────────────
+
+  /**
+   * List zones for a specific map.
+   */
+  async listByMap(options?: CallContext, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
+  async listByMap(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
+  async listByMap(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: string | number | RequestOptions,
+    arg4?: RequestOptions
+  ): Promise<ZoneFeatureCollection> {
+    let namespace: string;
+    let venueId: number;
+    let mapId: number;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      venueId = Number(arg2);
+      mapId = Number(arg3);
+      requestOptions = arg4;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      venueId = this.client.requireVenue(arg1);
+      mapId = this.client.requireMap(arg1);
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}/maps/{mapId}/zones', {
+          params: { path: { namespace, venueId, mapId } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<ZoneFeatureCollection>;
+  }
+
+  // ─── List Zones by Map as Array ─────────────────────────────────────────────
+
+  async listByMapAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async listByMapAsArray(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async listByMapAsArray(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: string | number | RequestOptions,
+    arg4?: RequestOptions
+  ): Promise<Zone[]> {
+    const geoJson = await this.listByMap(arg1 as any, arg2 as any, arg3 as any, arg4);
+    return extractZonesFromGeoJSON(geoJson);
+  }
+
+  // ─── Get Presence ───────────────────────────────────────────────────────────
+
+  /**
+   * Get zone presence data.
+   */
+  async getPresence(options: ZonePresenceOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getPresence(namespace: string, options: ZonePresenceOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getPresence(
+    arg1: string | (ZonePresenceOptions & CallContext),
+    arg2?: ZonePresenceOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let options: ZonePresenceOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as ZonePresenceOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/es/zone_presence/{appNamespace}', {
+          params: {
+            path: { appNamespace: namespace },
+            query: {
+              timestampFrom: String(options.timestampFrom),
+              timestampTo: String(options.timestampTo),
+              key: options.key,
+              value: options.value,
+              interval: options.interval,
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── Iterate ────────────────────────────────────────────────────────────────
+
+  async *iterate(options?: CallContext, requestOptions?: RequestOptions): AsyncGenerator<Zone, void, unknown>;
+  async *iterate(namespace: string, venueId: string | number, requestOptions?: RequestOptions): AsyncGenerator<Zone, void, unknown>;
+  async *iterate(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): AsyncGenerator<Zone, void, unknown> {
+    const zones = await this.listAsArray(arg1 as any, arg2 as any, arg3);
+    for (const zone of zones) {
+      yield zone;
+    }
+  }
+
+  // ─── Get All ────────────────────────────────────────────────────────────────
+
+  async getAll(options?: CallContext, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async getAll(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async getAll(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Zone[]> {
+    return this.listAsArray(arg1 as any, arg2 as any, arg3);
+  }
+}
+```
+
+**Verification**:
+```bash
+npx tsc --noEmit src/resources/zones.ts 2>&1 && echo "PASS: Task 6.1" || echo "FAIL: Task 6.1"
+```
+
+---
+
+### Task 6.2: Update VenuesResource
+
+**Action**: Replace entire `src/resources/venues.ts`
+
+**Complete file content**:
+
+```typescript
+import type { BaseClient, RequestOptions } from '../client/base';
+import type {
+  POIFeatureCollection,
+  PathFeatureCollection,
+  POI,
+  PathNode,
+  PathSegment,
+} from '../types';
+import type { CallContext } from '../context';
+import {
+  extractPoisFromGeoJSON,
+  extractPathNodesFromGeoJSON,
+  extractPathSegmentsFromGeoJSON,
+  extractDataArray,
+} from '../utils';
+
+export type ListVenuesOptions = Record<string, unknown>;
+
+export class VenuesResource {
+  constructor(private client: BaseClient) {}
+
+  // ─── List Venues ────────────────────────────────────────────────────────────
+
+  /**
+   * List all venues for a namespace.
+   */
+  async list(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      requestOptions = arg2;
+    }
+
+    const response = await this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}', {
+          params: { path: { namespace } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    );
+    return extractDataArray<Record<string, unknown>>(response);
+  }
+
+  // ─── Get Venue ──────────────────────────────────────────────────────────────
+
+  /**
+   * Get a single venue by ID.
+   */
+  async get(venueId?: string | number, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async get(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async get(
+    arg1?: string | number,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    let namespace: string;
+    let venueId: number;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string' && (typeof arg2 === 'string' || typeof arg2 === 'number')) {
+      namespace = arg1;
+      venueId = Number(arg2);
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs();
+      venueId = arg1 !== undefined ? Number(arg1) : this.client.requireVenue();
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}', {
+          params: { path: { namespace, venueId } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── List Maps ──────────────────────────────────────────────────────────────
+
+  /**
+   * List maps for a venue.
+   */
+  async listMaps(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listMaps(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listMaps(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let venueId: number;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      venueId = Number(arg2);
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      venueId = this.client.requireVenue(arg1);
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    const response = await this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}/maps', {
+          params: { path: { namespace, venueId } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    );
+    return extractDataArray<Record<string, unknown>>(response);
+  }
+
+  // ─── List POIs ──────────────────────────────────────────────────────────────
+
+  async listPois(options?: CallContext, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
+  async listPois(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
+  async listPois(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<POIFeatureCollection> {
+    let namespace: string;
+    let venueId: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      venueId = String(arg2);
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      venueId = String(this.client.requireVenue(arg1));
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}/pois', {
+          params: { path: { namespace, venueId } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<POIFeatureCollection>;
+  }
+
+  async listPoisAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<POI[]>;
+  async listPoisAsArray(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<POI[]>;
+  async listPoisAsArray(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<POI[]> {
+    const geoJson = await this.listPois(arg1 as any, arg2 as any, arg3);
+    return extractPoisFromGeoJSON(geoJson);
+  }
+
+  // ─── List Map POIs ──────────────────────────────────────────────────────────
+
+  async listMapPois(options?: CallContext, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
+  async listMapPois(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
+  async listMapPois(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: string | number | RequestOptions,
+    arg4?: RequestOptions
+  ): Promise<POIFeatureCollection> {
+    let namespace: string;
+    let venueId: number;
+    let mapId: number;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      venueId = Number(arg2);
+      mapId = Number(arg3);
+      requestOptions = arg4;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      venueId = this.client.requireVenue(arg1);
+      mapId = this.client.requireMap(arg1);
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}/maps/{mapId}/pois', {
+          params: { path: { namespace, venueId, mapId } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<POIFeatureCollection>;
+  }
+
+  async listMapPoisAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<POI[]>;
+  async listMapPoisAsArray(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<POI[]>;
+  async listMapPoisAsArray(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: string | number | RequestOptions,
+    arg4?: RequestOptions
+  ): Promise<POI[]> {
+    const geoJson = await this.listMapPois(arg1 as any, arg2 as any, arg3 as any, arg4);
+    return extractPoisFromGeoJSON(geoJson);
+  }
+
+  // ─── List Paths ─────────────────────────────────────────────────────────────
+
+  async listPaths(options?: CallContext, requestOptions?: RequestOptions): Promise<PathFeatureCollection>;
+  async listPaths(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<PathFeatureCollection>;
+  async listPaths(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<PathFeatureCollection> {
+    let namespace: string;
+    let venueId: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      venueId = String(arg2);
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      venueId = String(this.client.requireVenue(arg1));
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/venues/{namespace}/{venueId}/paths', {
+          params: { path: { namespace, venueId } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<PathFeatureCollection>;
+  }
+
+  async listPathNodes(options?: CallContext, requestOptions?: RequestOptions): Promise<PathNode[]>;
+  async listPathNodes(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<PathNode[]>;
+  async listPathNodes(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<PathNode[]> {
+    const geoJson = await this.listPaths(arg1 as any, arg2 as any, arg3);
+    return extractPathNodesFromGeoJSON(geoJson);
+  }
+
+  async listPathSegments(options?: CallContext, requestOptions?: RequestOptions): Promise<PathSegment[]>;
+  async listPathSegments(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<PathSegment[]>;
+  async listPathSegments(
+    arg1?: string | CallContext,
+    arg2?: string | number | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<PathSegment[]> {
+    const geoJson = await this.listPaths(arg1 as any, arg2 as any, arg3);
+    return extractPathSegmentsFromGeoJSON(geoJson);
+  }
+
+  // ─── Iterate ────────────────────────────────────────────────────────────────
+
+  async *iterate(options?: CallContext, requestOptions?: RequestOptions): AsyncGenerator<Record<string, unknown>, void, unknown>;
+  async *iterate(namespace: string, requestOptions?: RequestOptions): AsyncGenerator<Record<string, unknown>, void, unknown>;
+  async *iterate(
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
+  ): AsyncGenerator<Record<string, unknown>, void, unknown> {
+    const venues = await this.list(arg1 as any, arg2);
+    for (const venue of venues) {
+      yield venue;
+    }
+  }
+}
+```
+
+**Verification**:
+```bash
+npx tsc --noEmit src/resources/venues.ts 2>&1 && echo "PASS: Task 6.2" || echo "FAIL: Task 6.2"
+```
+
+---
+
+### Task 6.3: Update SpatialResource
+
+**Action**: Replace entire `src/resources/spatial.ts`
+
+**Complete file content**:
+
+```typescript
+import type { BaseClient, RequestOptions } from '../client/base';
+import type {
+  ZonesContainingPointResult,
+  NearestZonesResult,
+  ZonesWithinRadiusResult,
+  NearestPoisResult,
+  PoisWithinRadiusResult,
+  AnalyzeCustomZonesRequest,
+  AnalyzeCustomPoisRequest,
+} from '../types';
+import type { CallContext } from '../context';
+
+export interface PointQueryOptions {
+  lat: number;
+  lon: number;
+  level?: number;
+}
+
+export interface NearestQueryOptions extends PointQueryOptions {
+  limit?: number;
+  maxDistanceMeters?: number;
+}
+
+export interface RadiusQueryOptions extends PointQueryOptions {
+  radiusMeters: number;
+}
+
+export type SpatialQueryOptions = NearestQueryOptions;
+
+export class SpatialResource {
+  constructor(private client: BaseClient) {}
+
+  // ─── Zones Containing Point ─────────────────────────────────────────────────
+
+  /**
+   * Find zones containing a geographic point.
+   */
+  async zonesContainingPoint(options: PointQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<ZonesContainingPointResult>;
+  async zonesContainingPoint(namespace: string, options: PointQueryOptions, requestOptions?: RequestOptions): Promise<ZonesContainingPointResult>;
+  async zonesContainingPoint(
+    arg1: string | (PointQueryOptions & CallContext),
+    arg2?: PointQueryOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<ZonesContainingPointResult> {
+    let namespace: string;
+    let options: PointQueryOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as PointQueryOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/spatial/zones/{namespace}/containing-point', {
+          params: {
+            path: { namespace },
+            query: { lat: options.lat, lon: options.lon, level: options.level },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<ZonesContainingPointResult>;
+  }
+
+  // ─── Nearest Zones ──────────────────────────────────────────────────────────
+
+  async nearestZones(options: NearestQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<NearestZonesResult>;
+  async nearestZones(namespace: string, options: NearestQueryOptions, requestOptions?: RequestOptions): Promise<NearestZonesResult>;
+  async nearestZones(
+    arg1: string | (NearestQueryOptions & CallContext),
+    arg2?: NearestQueryOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<NearestZonesResult> {
+    let namespace: string;
+    let options: NearestQueryOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as NearestQueryOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/spatial/zones/{namespace}/nearest-to-point', {
+          params: {
+            path: { namespace },
+            query: {
+              lat: options.lat,
+              lon: options.lon,
+              limit: options.limit,
+              level: options.level,
+              max_distance_meters: options.maxDistanceMeters,
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<NearestZonesResult>;
+  }
+
+  // ─── Zones Within Radius ────────────────────────────────────────────────────
+
+  async zonesWithinRadius(options: RadiusQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<ZonesWithinRadiusResult>;
+  async zonesWithinRadius(namespace: string, options: RadiusQueryOptions, requestOptions?: RequestOptions): Promise<ZonesWithinRadiusResult>;
+  async zonesWithinRadius(
+    arg1: string | (RadiusQueryOptions & CallContext),
+    arg2?: RadiusQueryOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<ZonesWithinRadiusResult> {
+    let namespace: string;
+    let options: RadiusQueryOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as RadiusQueryOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/spatial/zones/{namespace}/within-radius', {
+          params: {
+            path: { namespace },
+            query: {
+              lat: options.lat,
+              lon: options.lon,
+              radius_meters: options.radiusMeters,
+              level: options.level,
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<ZonesWithinRadiusResult>;
+  }
+
+  // ─── Analyze Custom Zones ───────────────────────────────────────────────────
+
+  async analyzeCustomZones(request: AnalyzeCustomZonesRequest & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async analyzeCustomZones(namespace: string, request: AnalyzeCustomZonesRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async analyzeCustomZones(
+    arg1: string | (AnalyzeCustomZonesRequest & CallContext),
+    arg2?: AnalyzeCustomZonesRequest | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    let namespace: string;
+    let request: AnalyzeCustomZonesRequest;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      request = arg2 as AnalyzeCustomZonesRequest;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      request = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/spatial/zones/{namespace}/analyze-custom', {
+          params: { path: { namespace } },
+          body: {
+            reference_point: request.reference_point,
+            zones: request.zones,
+          } as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── Nearest POIs ───────────────────────────────────────────────────────────
+
+  async nearestPois(options: NearestQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<NearestPoisResult>;
+  async nearestPois(namespace: string, options: NearestQueryOptions, requestOptions?: RequestOptions): Promise<NearestPoisResult>;
+  async nearestPois(
+    arg1: string | (NearestQueryOptions & CallContext),
+    arg2?: NearestQueryOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<NearestPoisResult> {
+    let namespace: string;
+    let options: NearestQueryOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as NearestQueryOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/spatial/pois/{namespace}/nearest-to-point', {
+          params: {
+            path: { namespace },
+            query: {
+              lat: options.lat,
+              lon: options.lon,
+              limit: options.limit,
+              level: options.level,
+              max_distance_meters: options.maxDistanceMeters,
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<NearestPoisResult>;
+  }
+
+  // ─── POIs Within Radius ─────────────────────────────────────────────────────
+
+  async poisWithinRadius(options: RadiusQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<PoisWithinRadiusResult>;
+  async poisWithinRadius(namespace: string, options: RadiusQueryOptions, requestOptions?: RequestOptions): Promise<PoisWithinRadiusResult>;
+  async poisWithinRadius(
+    arg1: string | (RadiusQueryOptions & CallContext),
+    arg2?: RadiusQueryOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<PoisWithinRadiusResult> {
+    let namespace: string;
+    let options: RadiusQueryOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as RadiusQueryOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/spatial/pois/{namespace}/within-radius', {
+          params: {
+            path: { namespace },
+            query: {
+              lat: options.lat,
+              lon: options.lon,
+              radius_meters: options.radiusMeters,
+              level: options.level,
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<PoisWithinRadiusResult>;
+  }
+
+  // ─── Analyze Custom POIs ────────────────────────────────────────────────────
+
+  async analyzeCustomPois(request: AnalyzeCustomPoisRequest & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async analyzeCustomPois(namespace: string, request: AnalyzeCustomPoisRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async analyzeCustomPois(
+    arg1: string | (AnalyzeCustomPoisRequest & CallContext),
+    arg2?: AnalyzeCustomPoisRequest | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    let namespace: string;
+    let request: AnalyzeCustomPoisRequest;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      request = arg2 as AnalyzeCustomPoisRequest;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      request = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/spatial/pois/{namespace}/analyze-custom', {
+          params: { path: { namespace } },
+          body: {
+            reference_point: request.reference_point,
+            pois: request.pois,
+          } as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+}
+```
+
+**Verification**:
+```bash
+npx tsc --noEmit src/resources/spatial.ts 2>&1 && echo "PASS: Task 6.3" || echo "FAIL: Task 6.3"
+```
+
+---
+
+### Phase 6 Checkpoint
+
+```bash
+npm run typecheck && echo "✅ Phase 6 Complete" || echo "❌ Phase 6 Failed"
+```
+
+**Commit**:
+```bash
+git add -A && git commit -m "feat(sdk): phase 6 - ZonesResource, VenuesResource, SpatialResource with context"
+```
+
+---
+
+## Phase 7: Update AlertsResource, DashboardsResource, NavigationResource
+
+### Task 7.1: Update AlertsResource
+
+**Action**: Replace entire `src/resources/alerts.ts`
+
+**Complete file content**:
+
+```typescript
+import type { BaseClient, RequestOptions } from '../client/base';
+import type { CallContext } from '../context';
+
+export interface GetAlertsOptions {
+  timestampFrom: number;
+  timestampTo: number;
+  size?: number;
+}
+
+export class AlertsResource {
+  constructor(private client: BaseClient) {}
+
+  // ─── Get Rules ──────────────────────────────────────────────────────────────
+
+  async getRules(requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getRules(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getRules(
+    arg1?: string | RequestOptions,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = this.client.requireNs();
+      requestOptions = arg1;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/alert_rules/{app_namespace}', {
+          params: { path: { app_namespace: namespace } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── Save Rules ─────────────────────────────────────────────────────────────
+
+  async saveRules(rules: Record<string, unknown>[], requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async saveRules(namespace: string, rules: Record<string, unknown>[], requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async saveRules(
+    arg1: string | Record<string, unknown>[],
+    arg2?: Record<string, unknown>[] | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let rules: Record<string, unknown>[];
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      rules = arg2 as Record<string, unknown>[];
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs();
+      rules = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/alert_rules/{app_namespace}', {
+          params: { path: { app_namespace: namespace } },
+          body: rules as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── List Alerts ────────────────────────────────────────────────────────────
+
+  async list(options: GetAlertsOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(namespace: string, options: GetAlertsOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    arg1: string | (GetAlertsOptions & CallContext),
+    arg2?: GetAlertsOptions | RequestOptions,
+    arg3?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string;
+    let options: GetAlertsOptions;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      options = arg2 as GetAlertsOptions;
+      requestOptions = arg3;
+    } else {
+      namespace = this.client.requireNs(arg1);
+      options = arg1;
+      requestOptions = arg2 as RequestOptions | undefined;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/es/alerts/{appNamespace}', {
+          params: {
+            path: { appNamespace: namespace },
+            query: {
+              timestampFrom: String(options.timestampFrom),
+              timestampTo: String(options.timestampTo),
+              size: options.size,
+            },
+          },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+}
+```
+
+**Verification**:
+```bash
+npx tsc --noEmit src/resources/alerts.ts 2>&1 && echo "PASS: Task 7.1" || echo "FAIL: Task 7.1"
+```
+
+---
+
+### Task 7.2: Update DashboardsResource
+
+**Action**: Replace entire `src/resources/dashboards.ts`
+
+**Complete file content**:
+
+```typescript
+import type { BaseClient, RequestOptions } from '../client/base';
+import type { CallContext } from '../context';
+
+export interface CreateDashboardData {
+  name: string;
+  namespace?: string;
+  data?: Record<string, unknown>;
+}
+
+export interface UpdateDashboardData {
+  name?: string;
+  data?: Record<string, unknown>;
+}
+
+export interface SharePermissions {
+  read?: boolean;
+  write?: boolean;
+  delete?: boolean;
+}
+
+export class DashboardsResource {
+  constructor(private client: BaseClient) {}
+
+  // ─── List Dashboards ────────────────────────────────────────────────────────
+
+  /**
+   * List all dashboards, optionally filtered by namespace.
+   * Uses client's default namespace if available.
+   */
+  async list(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/dashboards', {
+          params: { query: namespace ? { namespace } : undefined },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── List Created Dashboards ────────────────────────────────────────────────
+
+  async listCreated(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCreated(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCreated(
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/dashboards/created', {
+          params: { query: namespace ? { namespace } : undefined },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── List Shared Dashboards ─────────────────────────────────────────────────
+
+  async listShared(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listShared(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listShared(
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/dashboards/shared', {
+          params: { query: namespace ? { namespace } : undefined },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── List Selected Dashboards ───────────────────────────────────────────────
+
+  async listSelected(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listSelected(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listSelected(
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
+  ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/dashboards/selected', {
+          params: { query: namespace ? { namespace } : undefined },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>[]>;
+  }
+
+  // ─── Get Dashboard ──────────────────────────────────────────────────────────
+
+  async get(id: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>> {
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.GET('/dashboards/{id}', {
+          params: { path: { id } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── Create Dashboard ───────────────────────────────────────────────────────
+
+  /**
+   * Create a new dashboard.
+   * Uses client's default namespace if not specified in data.
+   */
+  async create(
+    data: CreateDashboardData,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    const namespace = data.namespace ?? this.client.namespace;
+    if (!namespace) {
+      throw new Error('Namespace is required for creating a dashboard');
+    }
+
+    const apiData = {
+      name: data.name,
+      application_namespace: namespace,
+      data: data.data ?? {},
+    };
+
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/dashboards', {
+          body: apiData as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── Update Dashboard ───────────────────────────────────────────────────────
+
+  async update(
+    id: string,
+    data: UpdateDashboardData,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.PUT('/dashboards/{id}', {
+          params: { path: { id } },
+          body: data as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── Delete Dashboard ───────────────────────────────────────────────────────
+
+  async delete(id: string, requestOptions?: RequestOptions): Promise<void> {
+    await this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.DELETE('/dashboards/{id}', {
+          params: { path: { id } },
+          ...fetchOpts,
+        }),
+      requestOptions
+    );
+  }
+
+  // ─── Share Dashboard ────────────────────────────────────────────────────────
+
+  async share(
+    id: string,
+    users: Array<{ username: string; permissions: SharePermissions }>,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/dashboards/{id}/share', {
+          params: { path: { id } },
+          body: { users } as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+
+  // ─── Unshare Dashboard ──────────────────────────────────────────────────────
+
+  async unshare(
+    id: string,
+    usernames: string[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    return this.client['request'](
+      (fetchOpts) =>
+        this.client.raw.POST('/dashboards/{id}/unshare', {
+          params: { path: { id } },
+          body: { usernames } as never,
+          ...fetchOpts,
+        }),
+      requestOptions
+    ) as unknown as Promise<Record<string, unknown>>;
+  }
+}
+```
+
+**Verification**:
+```bash
+npx tsc --noEmit src/resources/dashboards.ts 2>&1 && echo "PASS: Task 7.2" || echo "FAIL: Task 7.2"
+```
+
+---
+
+### Task 7.3: Update NavigationResource
+
+**Action**: Replace entire `src/resources/navigation.ts`
+
+**Complete file content**:
+
+```typescript
+import type { BaseClient, RequestOptions } from '../client/base';
+import type { CallContext } from '../context';
+
+export interface ShortestPathRequest {
+  startNodeId: string;
+  endNodeId: string;
+  options?: {
+    avoidStairs?: boolean;
+    avoidElevators?: boolean;
+  };
+}
+
+export interface AccessiblePathRequest {
+  startNodeId: string;
+  endNodeId: string;
+  accessibility: 'wheelchair' | 'visuallyImpaired';
+  preferElevator?: boolean;
+}
+
+export interface MultiStopRequest {
+  nodeIds: string[];
+  algorithm: 'nearest' | 'optimal';
+  options?: {
+    returnToStart?: boolean;
+  };
+}
+
+/**
+ * NavigationResource provides navigation-related operations.
+ * Note: Navigation endpoints are planned features - these methods provide
+ * the interface for when the API supports navigation operations.
+ */
+export class NavigationResource {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(private client: BaseClient) {}
+
+  // ─── Shortest Path ──────────────────────────────────────────────────────────
+
+  /**
+   * Calculate the shortest path between two nodes.
+   * @throws Will throw until navigation API is available
+   */
+  async shortestPath(request: ShortestPathRequest & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async shortestPath(namespace: string, request: ShortestPathRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async shortestPath(
+    _arg1: string | (ShortestPathRequest & CallContext),
+    _arg2?: ShortestPathRequest | RequestOptions,
+    _arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    throw new Error('Navigation API not yet available');
+  }
+
+  // ─── Accessible Path ────────────────────────────────────────────────────────
+
+  /**
+   * Calculate an accessible path between two nodes.
+   * @throws Will throw until navigation API is available
+   */
+  async accessiblePath(request: AccessiblePathRequest & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async accessiblePath(namespace: string, request: AccessiblePathRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async accessiblePath(
+    _arg1: string | (AccessiblePathRequest & CallContext),
+    _arg2?: AccessiblePathRequest | RequestOptions,
+    _arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    throw new Error('Navigation API not yet available');
+  }
+
+  // ─── Multi-Stop Path ────────────────────────────────────────────────────────
+
+  /**
+   * Calculate a path visiting multiple nodes.
+   * @throws Will throw until navigation API is available
+   */
+  async multiStop(request: MultiStopRequest & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async multiStop(namespace: string, request: MultiStopRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async multiStop(
+    _arg1: string | (MultiStopRequest & CallContext),
+    _arg2?: MultiStopRequest | RequestOptions,
+    _arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    throw new Error('Navigation API not yet available');
+  }
+
+  // ─── Nearest POI ────────────────────────────────────────────────────────────
+
+  /**
+   * Find the nearest POI from a starting node.
+   * @throws Will throw until navigation API is available
+   */
+  async nearestPoi(startNodeId: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async nearestPoi(namespace: string, startNodeId: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async nearestPoi(
+    _arg1: string,
+    _arg2?: string | RequestOptions,
+    _arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    throw new Error('Navigation API not yet available');
+  }
+
+  // ─── Evacuation Route ───────────────────────────────────────────────────────
+
+  /**
+   * Calculate an evacuation route from a starting node.
+   * @throws Will throw until navigation API is available
+   */
+  async evacuation(startNodeId: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async evacuation(namespace: string, startNodeId: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async evacuation(
+    _arg1: string,
+    _arg2?: string | RequestOptions,
+    _arg3?: RequestOptions
+  ): Promise<Record<string, unknown>> {
+    throw new Error('Navigation API not yet available');
+  }
+}
+```
+
+**Verification**:
+```bash
+npx tsc --noEmit src/resources/navigation.ts 2>&1 && echo "PASS: Task 7.3" || echo "FAIL: Task 7.3"
+```
+
+---
+
+### Phase 7 Checkpoint
+
+```bash
+npm run typecheck && npm run test --run && echo "✅ Phase 7 Complete" || echo "❌ Phase 7 Failed"
+```
+
+**Commit**:
+```bash
+git add -A && git commit -m "feat(sdk): phase 7 - AlertsResource, DashboardsResource, NavigationResource with context"
 ```
 
 ---
 
 ## Phase 8: Documentation
 
-### Task 8.1: Update README
+### Task 8.1: Update README Quick Start
 
-**Action**: Update `README.md` Quick Start section
+**Action**: Edit `README.md` - Update Quick Start section
 
-### Task 8.2: Update Getting Started Guide
+**Find the Quick Start code block and replace with**:
 
-**Action**: Add "Default Context" section to `docs/guides/getting-started.md`
+```typescript
+import { createRtlsClient } from '@ubudu/rtls-sdk';
+
+// Configure once with default context
+const client = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
+  namespace: 'my-namespace',  // Default for all calls
+  venueId: 123,               // Default venue (optional)
+});
+
+// Check API health
+const health = await client.health();
+
+// List assets (uses default namespace)
+const assets = await client.assets.list();
+
+// Get real-time positions
+const positions = await client.positions.listCached();
+
+// Override namespace for specific call
+const otherAssets = await client.assets.list({ namespace: 'other-ns' });
+
+// Spatial query
+const nearbyZones = await client.spatial.nearestZones({
+  lat: 48.8566,
+  lon: 2.3522,
+  limit: 5,
+});
+
+// Legacy syntax still works
+const legacyAssets = await client.assets.list('explicit-namespace');
+```
+
+**Verification**:
+```bash
+grep -q "namespace: 'my-namespace'" README.md && echo "PASS: Task 8.1" || echo "FAIL: Task 8.1"
+```
+
+---
+
+### Task 8.2: Add Context Section to Getting Started Guide
+
+**Action**: Edit `docs/guides/getting-started.md` - Add section after Configuration
+
+**Add this section**:
+
+```markdown
+## Default Context
+
+Configure default values at client creation to avoid repetitive parameters:
+
+### Setting Defaults
+
+```typescript
+const client = createRtlsClient({
+  apiKey: 'your-api-key',
+  namespace: 'production',    // Default namespace
+  venueId: 123,               // Default venue ID
+  mapId: 456,                 // Default map ID
+  level: 0,                   // Default floor level
+});
+
+// All calls use defaults
+const assets = await client.assets.list();
+const zones = await client.zones.list();
+const pois = await client.venues.listPois();
+```
+
+### Overriding Defaults
+
+Override defaults for specific calls:
+
+```typescript
+// Override in options
+const otherAssets = await client.assets.list({ namespace: 'staging' });
+
+// Override venue and map
+const otherZones = await client.zones.listByMap({ venueId: 789, mapId: 101 });
+```
+
+### Runtime Changes
+
+Change defaults at runtime:
+
+```typescript
+// Mutable setters (chainable)
+client
+  .setNamespace('new-namespace')
+  .setVenue(999)
+  .setLevel(2);
+
+// Set multiple at once
+client.setContext({ namespace: 'ns', venueId: 100 });
+
+// Clear all defaults
+client.clearContext();
+```
+
+### Scoped Clients
+
+Create immutable scoped clients for different contexts:
+
+```typescript
+// Original client unchanged
+const venue1Client = client.forVenue(123);
+const venue2Client = client.forVenue(456);
+
+// Work with different venues
+const venue1Assets = await venue1Client.assets.list();
+const venue2Assets = await venue2Client.assets.list();
+
+// Create fully scoped client
+const scopedClient = client.withContext({
+  namespace: 'production',
+  venueId: 789,
+  mapId: 101,
+});
+```
+
+### Backward Compatibility
+
+Legacy explicit parameters still work:
+
+```typescript
+// Legacy style (still supported)
+const assets = await client.assets.list('my-namespace');
+const zones = await client.zones.list('my-namespace', 123);
+
+// New style
+const assets = await client.assets.list();
+const zones = await client.zones.list();
+```
+```
+
+**Verification**:
+```bash
+grep -q "Default Context" docs/guides/getting-started.md && echo "PASS: Task 8.2" || echo "FAIL: Task 8.2"
+```
+
+---
 
 ### Task 8.3: Create Migration Guide
 
 **Action**: Create `docs/guides/migration-v2.md`
 
-### Task 8.4: Update API Reference
+**Complete file content**:
 
-**Action**: Update `docs/api/README.md` with context methods
+```markdown
+# Migration Guide: v1.x to v2.x
+
+## Overview
+
+Version 2.0 introduces **default context** - the ability to configure namespace, venueId, mapId, and level at client creation. All changes are **backward compatible**.
+
+## What's New
+
+### Default Context at Client Creation
+
+```typescript
+// v1.x - Repeat namespace everywhere
+const client = createRtlsClient({ apiKey: '...' });
+await client.assets.list('my-namespace');
+await client.positions.listCached('my-namespace');
+await client.zones.list('my-namespace', 123);
+
+// v2.x - Configure once
+const client = createRtlsClient({
+  apiKey: '...',
+  namespace: 'my-namespace',
+  venueId: 123,
+});
+await client.assets.list();
+await client.positions.listCached();
+await client.zones.list();
+```
+
+### New Client Methods
+
+| Method | Description |
+|--------|-------------|
+| `client.namespace` | Get default namespace |
+| `client.venueId` | Get default venue ID |
+| `client.mapId` | Get default map ID |
+| `client.level` | Get default level |
+| `client.context` | Get all defaults (read-only) |
+| `client.setNamespace(ns)` | Set default namespace |
+| `client.setVenue(id)` | Set default venue ID |
+| `client.setMap(id)` | Set default map ID |
+| `client.setLevel(n)` | Set default level |
+| `client.setContext({...})` | Set multiple defaults |
+| `client.clearContext()` | Clear all defaults |
+| `client.forNamespace(ns)` | Create scoped client |
+| `client.forVenue(id)` | Create scoped client |
+| `client.forMap(id)` | Create scoped client |
+| `client.withContext({...})` | Create scoped client |
+
+## Migration Steps
+
+### Step 1: Update Client Creation (Optional)
+
+Add default context to reduce repetition:
+
+```typescript
+// Before
+const client = createRtlsClient({ apiKey: '...' });
+
+// After (optional - adds convenience)
+const client = createRtlsClient({
+  apiKey: '...',
+  namespace: 'my-namespace',
+});
+```
+
+### Step 2: Simplify API Calls (Optional)
+
+Remove explicit namespace from calls:
+
+```typescript
+// Before
+const assets = await client.assets.list('my-namespace');
+
+// After
+const assets = await client.assets.list();
+```
+
+### Step 3: No Changes Required
+
+All existing code continues to work:
+
+```typescript
+// This still works in v2.x
+const assets = await client.assets.list('my-namespace');
+const zones = await client.zones.list('my-namespace', 123);
+```
+
+## New Error: ContextError
+
+If you call a method without providing required context:
+
+```typescript
+const client = createRtlsClient({ apiKey: '...' }); // No namespace
+
+// Throws ContextError
+await client.assets.list();
+// Error: Namespace is required. Pass it to the method, set via createRtlsClient({ namespace: "..." }), or call client.setNamespace("...")
+```
+
+Handle with:
+
+```typescript
+import { ContextError } from '@ubudu/rtls-sdk';
+
+try {
+  await client.assets.list();
+} catch (error) {
+  if (error instanceof ContextError) {
+    console.log(`Missing: ${error.field}`);
+    console.log(`Fix: ${error.suggestion}`);
+  }
+}
+```
+
+## TypeScript Types
+
+New types exported:
+
+```typescript
+import type {
+  RtlsContext,
+  CallContext,
+  ResolvedNamespaceContext,
+  ResolvedVenueContext,
+  ResolvedMapContext,
+} from '@ubudu/rtls-sdk';
+```
+```
+
+**Verification**:
+```bash
+[ -f docs/guides/migration-v2.md ] && grep -q "ContextError" docs/guides/migration-v2.md && echo "PASS: Task 8.3" || echo "FAIL: Task 8.3"
+```
+
+---
+
+### Phase 8 Checkpoint
+
+```bash
+echo "✅ Phase 8 Complete - Documentation updated"
+```
+
+**Commit**:
+```bash
+git add -A && git commit -m "docs(sdk): phase 8 - context documentation and migration guide"
+```
 
 ---
 
@@ -2233,9 +4211,149 @@ npx tsc --noEmit src/resources/[resource].ts && echo "PASS" || echo "FAIL"
 
 **Action**: Create `examples/typescript/07-default-context.ts`
 
-### Task 9.2: Update Existing Examples
+**Complete file content**:
 
-**Action**: Update examples to show both patterns
+```typescript
+/**
+ * Example 07: Default Context
+ *
+ * Demonstrates how to configure default context at client creation
+ * and override it for specific calls.
+ */
+
+import { createRtlsClient, ContextError } from '../../src';
+import { NAMESPACE, API_KEY } from './config';
+
+async function main() {
+  console.log('=== Default Context Example ===\n');
+
+  // ─── 1. Create Client with Default Context ──────────────────────────────────
+
+  console.log('1. Creating client with default context...');
+
+  const client = createRtlsClient({
+    apiKey: API_KEY,
+    namespace: NAMESPACE,
+    // venueId: 123,  // Uncomment if you have a default venue
+  });
+
+  console.log(`   Default namespace: ${client.namespace}`);
+  console.log(`   Default venueId: ${client.venueId ?? 'not set'}`);
+  console.log();
+
+  // ─── 2. Use Default Context ─────────────────────────────────────────────────
+
+  console.log('2. Using default context (no namespace parameter needed)...');
+
+  const assets = await client.assets.list();
+  console.log(`   Found ${assets.length} assets\n`);
+
+  // ─── 3. Override Context ────────────────────────────────────────────────────
+
+  console.log('3. Override context for specific call...');
+
+  // This would use a different namespace for just this call
+  // const otherAssets = await client.assets.list({ namespace: 'other-ns' });
+
+  console.log('   (Skipped - requires another valid namespace)\n');
+
+  // ─── 4. Runtime Context Changes ─────────────────────────────────────────────
+
+  console.log('4. Change context at runtime...');
+
+  // Chainable setters
+  client.setNamespace(NAMESPACE).setLevel(0);
+
+  console.log(`   Updated namespace: ${client.namespace}`);
+  console.log(`   Updated level: ${client.level}`);
+
+  // Set multiple values
+  client.setContext({ venueId: 100, mapId: 200 });
+  console.log(`   Set venueId: ${client.venueId}, mapId: ${client.mapId}\n`);
+
+  // ─── 5. Scoped Clients ──────────────────────────────────────────────────────
+
+  console.log('5. Create scoped clients (immutable)...');
+
+  // Create a client scoped to a specific venue
+  // const venueClient = client.forVenue(456);
+  // console.log(`   Scoped client venueId: ${venueClient.venueId}`);
+  // console.log(`   Original client venueId: ${client.venueId}`);
+
+  // Create with full context override
+  const scopedClient = client.withContext({
+    namespace: NAMESPACE,
+    venueId: 999,
+    level: 2,
+  });
+  console.log(`   Scoped client: ns=${scopedClient.namespace}, venue=${scopedClient.venueId}, level=${scopedClient.level}`);
+  console.log(`   Original unchanged: ns=${client.namespace}, venue=${client.venueId}, level=${client.level}\n`);
+
+  // ─── 6. Error Handling ──────────────────────────────────────────────────────
+
+  console.log('6. ContextError handling...');
+
+  const emptyClient = createRtlsClient({ apiKey: API_KEY });
+
+  try {
+    await emptyClient.assets.list();
+  } catch (error) {
+    if (error instanceof ContextError) {
+      console.log(`   ContextError caught!`);
+      console.log(`   Field: ${error.field}`);
+      console.log(`   Suggestion: ${error.suggestion}`);
+    }
+  }
+
+  console.log();
+
+  // ─── 7. Legacy Syntax ───────────────────────────────────────────────────────
+
+  console.log('7. Legacy syntax (still works)...');
+
+  const legacyAssets = await client.assets.list(NAMESPACE);
+  console.log(`   Legacy call returned ${legacyAssets.length} assets`);
+
+  console.log('\n=== Done ===');
+}
+
+main().catch(console.error);
+```
+
+**Verification**:
+```bash
+[ -f examples/typescript/07-default-context.ts ] && echo "PASS: Task 9.1" || echo "FAIL: Task 9.1"
+```
+
+---
+
+### Task 9.2: Update package.json Scripts
+
+**Action**: Edit `examples/package.json` - Add script for new example
+
+**Add to scripts**:
+
+```json
+"ts:default-context": "npx tsx typescript/07-default-context.ts"
+```
+
+**Verification**:
+```bash
+grep -q "ts:default-context" examples/package.json && echo "PASS: Task 9.2" || echo "FAIL: Task 9.2"
+```
+
+---
+
+### Phase 9 Checkpoint
+
+```bash
+echo "✅ Phase 9 Complete - Examples created"
+```
+
+**Commit**:
+```bash
+git add -A && git commit -m "feat(sdk): phase 9 - default context example"
+```
 
 ---
 
