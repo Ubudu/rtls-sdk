@@ -76,6 +76,7 @@ The SDK provides access to these API resources:
 | 2 | [02_API_VALIDATION_WORKPACKAGE.md](./development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing |
 | 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](./development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment |
 | 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](./development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Documentation & examples |
+| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](./development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | PENDING | Default context & ergonomics |
 
 ## Support
 
