@@ -14,7 +14,8 @@ RtlsError (base class)
 ├── ValidationError (400/422)
 ├── RateLimitError (429)
 ├── TimeoutError (request timeout)
-└── NetworkError (connection issues)
+├── NetworkError (connection issues)
+└── ContextError (missing context)
 ```
 
 ## Importing Error Classes
@@ -29,6 +30,7 @@ import {
   RateLimitError,
   TimeoutError,
   NetworkError,
+  ContextError,
 } from '@ubudu/rtls-sdk';
 ```
 
@@ -60,20 +62,71 @@ error.isClientError();    // false (4xx)
 error.isServerError();    // true (5xx)
 ```
 
+## ContextError
+
+The `ContextError` is thrown when a required context value (namespace, venueId, mapId) is missing:
+
+```typescript
+import { createRtlsClient, ContextError } from '@ubudu/rtls-sdk';
+
+// Client without default namespace
+const client = createRtlsClient({ apiKey: 'your-key' });
+
+try {
+  // This throws ContextError because namespace is not set
+  await client.assets.list();
+} catch (error) {
+  if (error instanceof ContextError) {
+    console.log(`Missing: ${error.field}`);
+    // "Missing: Namespace"
+    console.log(`Solution: ${error.suggestion}`);
+    // "Solution: Pass it to the method, set via createRtlsClient({ namespace: "..." }), or call client.setNamespace("...")"
+  }
+}
+```
+
+### Fixing ContextError
+
+There are three ways to provide the required context:
+
+```typescript
+// Option 1: Configure at client creation (recommended)
+const client = createRtlsClient({
+  apiKey: 'your-key',
+  namespace: 'my-namespace',
+  venueId: 123,
+});
+
+// Option 2: Set at runtime
+client.setNamespace('my-namespace');
+client.setVenue(123);
+
+// Option 3: Override per-call
+await client.assets.list({ namespace: 'my-namespace' });
+
+// Option 4: Legacy explicit parameter (backward compatible)
+await client.assets.list('my-namespace');
+```
+
 ## Catching Specific Errors
 
 ### Basic Pattern
 
 ```typescript
-import { createRtlsClient, NotFoundError, RtlsError } from '@ubudu/rtls-sdk';
+import { createRtlsClient, NotFoundError, ContextError, RtlsError } from '@ubudu/rtls-sdk';
 
-const client = createRtlsClient({ apiKey: 'your-key' });
+const client = createRtlsClient({
+  apiKey: 'your-key',
+  namespace: 'my-namespace',
+});
 
 try {
-  const asset = await client.assets.get('namespace', 'AA:BB:CC:DD:EE:FF');
+  const asset = await client.assets.get('AA:BB:CC:DD:EE:FF');
 } catch (error) {
   if (error instanceof NotFoundError) {
     console.log('Asset not found');
+  } else if (error instanceof ContextError) {
+    console.log(`Missing context: ${error.field}`);
   } else if (error instanceof RtlsError) {
     console.log(`API error: ${error.status} - ${error.message}`);
   } else {
@@ -103,6 +156,9 @@ async function handleApiCall<T>(operation: () => Promise<T>): Promise<T | null> 
       console.error('Request timed out');
     } else if (error instanceof NetworkError) {
       console.error('Network error:', error.networkCause?.message);
+    } else if (error instanceof ContextError) {
+      console.error('Missing context:', error.field);
+      console.error('Fix:', error.suggestion);
     } else if (error instanceof RtlsError) {
       console.error(`API error (${error.status}): ${error.message}`);
     } else {
@@ -173,8 +229,8 @@ async function withRetry<T>(
   throw lastError;
 }
 
-// Usage
-const assets = await withRetry(() => client.assets.list('namespace'));
+// Usage (uses default namespace from client)
+const assets = await withRetry(() => client.assets.list());
 ```
 
 ### Rate Limit Handling
@@ -201,11 +257,12 @@ async function handleRateLimit<T>(operation: () => Promise<T>): Promise<T> {
 // Configure timeout when creating client
 const client = createRtlsClient({
   apiKey: 'your-key',
+  namespace: 'my-namespace',
   timeoutMs: 30000, // 30 seconds (default)
 });
 
-// Or per-request
-const assets = await client.assets.list('namespace', undefined, {
+// Or per-request (uses default namespace)
+const assets = await client.assets.list(undefined, {
   timeout: 5000, // 5 second timeout for this request
 });
 ```
@@ -214,7 +271,8 @@ const assets = await client.assets.list('namespace', undefined, {
 
 ```typescript
 try {
-  await client.assets.create('namespace', 'invalid-mac', {
+  // Uses default namespace
+  await client.assets.create('invalid-mac', {
     user_name: '', // Empty name
   });
 } catch (error) {
@@ -229,7 +287,8 @@ try {
 
 ```typescript
 try {
-  await client.assets.list('namespace');
+  // Uses default namespace
+  await client.assets.list();
 } catch (error) {
   if (error instanceof NetworkError) {
     console.log('Network issue:', error.message);
@@ -255,13 +314,13 @@ console.log(error instanceof NotFoundError); // true
 ### Safe Get with Default
 
 ```typescript
+// Uses default namespace from client
 async function getAssetOrDefault(
-  namespace: string,
   macAddress: string,
   defaultValue: Asset | null = null
 ): Promise<Asset | null> {
   try {
-    return await client.assets.get(namespace, macAddress);
+    return await client.assets.get(macAddress);
   } catch (error) {
     if (error instanceof NotFoundError) {
       return defaultValue;
@@ -274,8 +333,8 @@ async function getAssetOrDefault(
 ### Batch Operations with Error Collection
 
 ```typescript
+// Uses default namespace from client
 async function batchGetAssets(
-  namespace: string,
   macAddresses: string[]
 ): Promise<{ assets: Asset[]; errors: Map<string, Error> }> {
   const assets: Asset[] = [];
@@ -284,7 +343,7 @@ async function batchGetAssets(
   await Promise.all(
     macAddresses.map(async (mac) => {
       try {
-        const asset = await client.assets.get(namespace, mac);
+        const asset = await client.assets.get(mac);
         assets.push(asset);
       } catch (error) {
         errors.set(mac, error as Error);
@@ -316,3 +375,4 @@ function logError(context: string, error: unknown): void {
 
 - [Getting Started](./getting-started.md)
 - [Advanced Patterns](./advanced-patterns.md)
+- [Migration Guide](./migration-v2.md)

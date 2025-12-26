@@ -33,7 +33,11 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-const client = createRtlsClient({ apiKey: API_KEY });
+// Create client with default namespace
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE, // Default namespace for all calls
+});
 
 console.log('Ubudu RTLS SDK - Navigation Example\n');
 console.log('====================================\n');
@@ -49,7 +53,7 @@ async function getFirstVenue(): Promise<void> {
   console.log('1. Getting First Venue');
   console.log(`   Endpoint: GET /venues/${NAMESPACE}\n`);
 
-  const venues = await client.venues.list(NAMESPACE);
+  const venues = await client.venues.list();
 
   if (venues.length === 0) {
     console.log('   No venues found.\n');
@@ -78,7 +82,7 @@ async function listPoisGeoJSON(): Promise<POIFeatureCollection | null> {
   console.log('2. Listing POIs as GeoJSON');
   console.log(`   Endpoint: GET /venues/${NAMESPACE}/${venueId}/pois\n`);
 
-  const geoJson = await client.venues.listPois(NAMESPACE, venueId);
+  const geoJson = await client.venues.listPois({ venueId });
 
   console.log(`   GeoJSON Type: ${geoJson.type}`);
   console.log(`   Total Features: ${geoJson.features.length}`);
@@ -106,7 +110,7 @@ async function listPoisArray(): Promise<void> {
   console.log('3. Listing POIs as Flat Array');
   console.log('   Method: client.venues.listPoisAsArray()\n');
 
-  const pois = await client.venues.listPoisAsArray(NAMESPACE, venueId);
+  const pois = await client.venues.listPoisAsArray({ venueId });
 
   console.log(`   Total POIs: ${pois.length}`);
 
@@ -135,7 +139,8 @@ async function nearestPois(): Promise<void> {
   console.log(`   Endpoint: GET /spatial/pois/${NAMESPACE}/nearest-to-point\n`);
 
   try {
-    const result = await client.spatial.nearestPois(NAMESPACE, {
+    // Uses default namespace from client config
+    const result = await client.spatial.nearestPois({
       lat: venueCoords.lat,
       lon: venueCoords.lng,
       limit: 5,
@@ -177,7 +182,8 @@ async function poisWithinRadius(): Promise<void> {
   console.log(`   Endpoint: GET /spatial/pois/${NAMESPACE}/within-radius\n`);
 
   try {
-    const result = await client.spatial.poisWithinRadius(NAMESPACE, {
+    // Uses default namespace from client config
+    const result = await client.spatial.poisWithinRadius({
       lat: venueCoords.lat,
       lon: venueCoords.lng,
       radiusMeters: 200,
@@ -212,7 +218,7 @@ async function listPaths(): Promise<PathFeatureCollection | null> {
   console.log('6. Listing Navigation Paths (GeoJSON)');
   console.log(`   Endpoint: GET /venues/${NAMESPACE}/${venueId}/paths\n`);
 
-  const geoJson = await client.venues.listPaths(NAMESPACE, venueId);
+  const geoJson = await client.venues.listPaths({ venueId });
 
   console.log(`   GeoJSON Type: ${geoJson.type}`);
   console.log(`   Total Features: ${geoJson.features.length}`);
@@ -248,8 +254,8 @@ async function extractPathData(): Promise<void> {
   console.log('7. Extracting Path Nodes and Segments');
   console.log('   Using: client.venues.listPathNodes() / listPathSegments()\n');
 
-  const nodes = await client.venues.listPathNodes(NAMESPACE, venueId);
-  const segments = await client.venues.listPathSegments(NAMESPACE, venueId);
+  const nodes = await client.venues.listPathNodes({ venueId });
+  const segments = await client.venues.listPathSegments({ venueId });
 
   console.log(`   Path Nodes: ${nodes.length}`);
   console.log(`   Path Segments: ${segments.length}`);
@@ -310,8 +316,8 @@ async function extractUtilitiesDemo(): Promise<void> {
   console.log('9. GeoJSON Extraction Utilities');
   console.log('   Using: extractPoisFromGeoJSON(), extractPathNodesFromGeoJSON()\n');
 
-  const poisGeoJson = await client.venues.listPois(NAMESPACE, venueId);
-  const pathsGeoJson = await client.venues.listPaths(NAMESPACE, venueId);
+  const poisGeoJson = await client.venues.listPois({ venueId });
+  const pathsGeoJson = await client.venues.listPaths({ venueId });
 
   const pois = extractPoisFromGeoJSON(poisGeoJson);
   const pathNodes = extractPathNodesFromGeoJSON(pathsGeoJson);

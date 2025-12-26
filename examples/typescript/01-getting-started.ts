@@ -34,9 +34,10 @@ if (!NAMESPACE || !API_KEY) {
 // Initialize the SDK Client
 // =============================================================================
 
-// Create a client instance with your API key
+// Create a client instance with default context
 const client = createRtlsClient({
   apiKey: API_KEY,
+  namespace: NAMESPACE, // Default namespace for all calls
   // Optional: customize timeout (default: 30000ms)
   timeoutMs: 10000,
 });
@@ -72,10 +73,11 @@ async function checkHealth(): Promise<void> {
 
 async function listVenues(): Promise<number | null> {
   console.log('2. Listing Venues...');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}\n`);
+  console.log(`   Endpoint: GET /venues/${NAMESPACE} (using default namespace)\n`);
 
   try {
-    const venues = await client.venues.list(NAMESPACE);
+    // Uses default namespace from client config
+    const venues = await client.venues.list();
 
     console.log(`   Found ${venues.length} venue(s)\n`);
 
@@ -103,10 +105,11 @@ async function listVenues(): Promise<number | null> {
 
 async function listAssets(): Promise<void> {
   console.log('3. Listing Assets...');
-  console.log(`   Endpoint: GET /assets/${NAMESPACE}\n`);
+  console.log(`   Endpoint: GET /assets/${NAMESPACE} (using default namespace)\n`);
 
   try {
-    const assets = await client.assets.list(NAMESPACE);
+    // Uses default namespace from client config
+    const assets = await client.assets.list();
 
     console.log(`   Found ${assets.length} asset(s)\n`);
 

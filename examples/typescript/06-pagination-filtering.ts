@@ -31,7 +31,11 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-const client = createRtlsClient({ apiKey: API_KEY });
+// Create client with default namespace
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE, // Default namespace for all calls
+});
 
 console.log('Ubudu RTLS SDK - Pagination & Filtering Example\n');
 console.log('================================================\n');
@@ -48,7 +52,7 @@ async function asyncIteratorPattern(): Promise<void> {
   const maxItems = 5;
 
   console.log('   Iterating through assets:');
-  for await (const asset of client.assets.iterate(NAMESPACE)) {
+  for await (const asset of client.assets.iterate()) {
     const a = asset as { user_udid: string; user_name: string };
     console.log(`   [${count + 1}] ${a.user_name} (${a.user_udid})`);
     count++;
@@ -72,7 +76,7 @@ async function collectAllResults(): Promise<void> {
   console.log('2. Collect All Results');
   console.log('   Using: client.assets.getAll() or list()\n');
 
-  const allAssets = await client.assets.getAll(NAMESPACE);
+  const allAssets = await client.assets.getAll();
   console.log(`   Total assets collected: ${allAssets.length}`);
 
   // Show type distribution
@@ -134,7 +138,7 @@ async function applySingleFilter(): Promise<void> {
   console.log('   Example: Filter by user_type\n');
 
   // Get all assets first to see types
-  const allAssets = await client.assets.list(NAMESPACE);
+  const allAssets = await client.assets.list();
   const types = new Set(allAssets.map((a) => (a as { user_type: string }).user_type));
   console.log(`   Available types: ${[...types].join(', ')}`);
 
@@ -205,7 +209,7 @@ async function iteratorWithTransform(): Promise<void> {
   let count = 0;
   const maxItems = 10;
 
-  for await (const asset of client.assets.iterate(NAMESPACE)) {
+  for await (const asset of client.assets.iterate()) {
     const a = asset as { user_name: string };
     names.push(a.user_name);
     count++;
@@ -227,7 +231,7 @@ async function batchProcessingPattern(): Promise<void> {
   console.log('8. Batch Processing Pattern');
   console.log('   Processing in chunks\n');
 
-  const assets = await client.assets.list(NAMESPACE);
+  const assets = await client.assets.list();
   const batchSize = 5;
   const batches = [];
 
@@ -262,12 +266,12 @@ async function venuesAndZonesIteration(): Promise<void> {
   console.log('   Iterating through nested resources\n');
 
   let venueCount = 0;
-  for await (const venue of client.venues.iterate(NAMESPACE)) {
+  for await (const venue of client.venues.iterate()) {
     const v = venue as { id: number; name: string };
     console.log(`   Venue: ${v.name} (ID: ${v.id})`);
 
     let zoneCount = 0;
-    for await (const zone of client.zones.iterate(NAMESPACE, v.id)) {
+    for await (const zone of client.zones.iterate({ venueId: v.id })) {
       console.log(`   - Zone: ${zone.name}`);
       zoneCount++;
       if (zoneCount >= 3) {

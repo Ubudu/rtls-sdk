@@ -31,7 +31,11 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-const client = createRtlsClient({ apiKey: API_KEY });
+// Create client with default namespace
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE, // Default namespace for all calls
+});
 
 console.log('Ubudu RTLS SDK - Zone & Geofencing Example\n');
 console.log('==========================================\n');
@@ -48,7 +52,8 @@ async function getFirstVenue(): Promise<void> {
   console.log('1. Getting First Venue');
   console.log(`   Endpoint: GET /venues/${NAMESPACE}\n`);
 
-  const venues = await client.venues.list(NAMESPACE);
+  // Uses default namespace from client config
+  const venues = await client.venues.list();
 
   if (venues.length === 0) {
     console.log('   No venues found. Create a venue first.\n');
@@ -83,7 +88,8 @@ async function listZonesGeoJSON(): Promise<ZoneFeatureCollection | null> {
   console.log('2. Listing Zones as GeoJSON');
   console.log(`   Endpoint: GET /venues/${NAMESPACE}/${venueId}/zones\n`);
 
-  const geoJson = await client.zones.list(NAMESPACE, venueId);
+  // Uses default namespace from client config, with explicit venueId
+  const geoJson = await client.zones.list({ venueId });
 
   console.log(`   GeoJSON Type: ${geoJson.type}`);
   console.log(`   Total Features: ${geoJson.features.length}`);
@@ -114,7 +120,8 @@ async function listZonesArray(): Promise<Zone[]> {
   console.log('3. Listing Zones as Flat Array');
   console.log('   Method: client.zones.listAsArray()\n');
 
-  const zones = await client.zones.listAsArray(NAMESPACE, venueId);
+  // Uses default namespace from client config, with explicit venueId
+  const zones = await client.zones.listAsArray({ venueId });
 
   console.log(`   Total Zones: ${zones.length}\n`);
 
@@ -162,7 +169,8 @@ async function zonesContainingPoint(): Promise<void> {
   console.log('5. Spatial Query: Zones Containing Point');
   console.log(`   Endpoint: GET /spatial/zones/${NAMESPACE}/containing-point\n`);
 
-  const result = await client.spatial.zonesContainingPoint(NAMESPACE, {
+  // Uses default namespace from client config
+  const result = await client.spatial.zonesContainingPoint({
     lat: venueCoords.lat,
     lon: venueCoords.lng,
   });
@@ -194,7 +202,8 @@ async function nearestZones(): Promise<void> {
   console.log('6. Spatial Query: Nearest Zones');
   console.log(`   Endpoint: GET /spatial/zones/${NAMESPACE}/nearest-to-point\n`);
 
-  const result = await client.spatial.nearestZones(NAMESPACE, {
+  // Uses default namespace from client config
+  const result = await client.spatial.nearestZones({
     lat: venueCoords.lat,
     lon: venueCoords.lng,
     limit: 5,
@@ -229,7 +238,8 @@ async function zonesWithinRadius(): Promise<void> {
   console.log('7. Spatial Query: Zones Within Radius');
   console.log(`   Endpoint: GET /spatial/zones/${NAMESPACE}/within-radius\n`);
 
-  const result = await client.spatial.zonesWithinRadius(NAMESPACE, {
+  // Uses default namespace from client config
+  const result = await client.spatial.zonesWithinRadius({
     lat: venueCoords.lat,
     lon: venueCoords.lng,
     radiusMeters: 500, // 500 meter radius
@@ -261,7 +271,8 @@ async function zonePresence(): Promise<void> {
   const startTime = endTime - 60 * 60 * 1000; // Last hour
 
   try {
-    const presence = await client.zones.getPresence(NAMESPACE, {
+    // Uses default namespace from client config
+    const presence = await client.zones.getPresence({
       timestampFrom: startTime,
       timestampTo: endTime,
       interval: '5m',

@@ -31,7 +31,11 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-const client = createRtlsClient({ apiKey: API_KEY });
+// Create client with default namespace
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE, // Default namespace for all calls
+});
 
 console.log('Ubudu RTLS SDK - Asset Tracking Example\n');
 console.log('========================================\n');
@@ -44,7 +48,8 @@ async function listAllAssets(): Promise<string | null> {
   console.log('1. Listing All Assets');
   console.log(`   Endpoint: GET /assets/${NAMESPACE}\n`);
 
-  const assets = await client.assets.list(NAMESPACE);
+  // Uses default namespace from client config
+  const assets = await client.assets.list();
   console.log(`   Total assets: ${assets.length}\n`);
 
   if (assets.length > 0) {
@@ -65,7 +70,8 @@ async function getCachedPositions(): Promise<void> {
   console.log('2. Getting Cached Positions (Real-time)');
   console.log(`   Endpoint: GET /cache/${NAMESPACE}/positions\n`);
 
-  const positions = await client.positions.listCached(NAMESPACE);
+  // Uses default namespace from client config
+  const positions = await client.positions.listCached();
   console.log(`   Active positions: ${positions.length}\n`);
 
   if (positions.length > 0) {
@@ -91,7 +97,8 @@ async function getAssetDetails(macAddress: string): Promise<void> {
   console.log(`   Endpoint: GET /assets/${NAMESPACE}/${macAddress}\n`);
 
   try {
-    const asset = (await client.assets.get(NAMESPACE, macAddress)) as {
+    // Uses default namespace from client config
+    const asset = (await client.assets.get(macAddress)) as {
       user_name: string;
       user_type: string;
       color: string;
@@ -124,7 +131,8 @@ async function getAssetHistory(macAddress: string): Promise<void> {
   const startTime = endTime - 24 * 60 * 60 * 1000;
 
   try {
-    const history = await client.assets.getHistory(NAMESPACE, macAddress, {
+    // Uses default namespace from client config
+    const history = await client.assets.getHistory(macAddress, {
       startTime,
       endTime,
     });
@@ -163,7 +171,8 @@ async function getAssetStats(): Promise<void> {
   const startTime = endTime - 24 * 60 * 60 * 1000;
 
   try {
-    const stats = await client.assets.getStats(NAMESPACE, {
+    // Uses default namespace from client config
+    const stats = await client.assets.getStats({
       startTime,
       endTime,
     });
@@ -191,7 +200,8 @@ async function iterateAssets(): Promise<void> {
   let count = 0;
   const maxItems = 5;
 
-  for await (const asset of client.assets.iterate(NAMESPACE)) {
+  // Uses default namespace from client config
+  for await (const asset of client.assets.iterate()) {
     const a = asset as { user_udid: string; user_name: string };
     console.log(`   [${count + 1}] ${a.user_name} (${a.user_udid})`);
     count++;
@@ -211,8 +221,8 @@ async function filterAssets(): Promise<void> {
   console.log('7. Filtering Assets');
   console.log('   Using: filters.equals(), filters.contains()\n');
 
-  // Get all assets and show types distribution
-  const allAssets = await client.assets.list(NAMESPACE);
+  // Get all assets and show types distribution (uses default namespace)
+  const allAssets = await client.assets.list();
   const typeCount: Record<string, number> = {};
   for (const a of allAssets) {
     const type = (a as { user_type: string }).user_type || 'unknown';

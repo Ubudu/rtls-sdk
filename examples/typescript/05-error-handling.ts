@@ -67,13 +67,17 @@ function showErrorHierarchy(): void {
 async function catchSpecificErrors(): Promise<void> {
   console.log('2. Catching Specific Error Types\n');
 
-  const client = createRtlsClient({ apiKey: API_KEY });
+  const client = createRtlsClient({
+    apiKey: API_KEY,
+    namespace: NAMESPACE, // Default namespace for all calls
+  });
 
   // Try to get a non-existent asset
   console.log('   Attempting to get non-existent asset...');
 
   try {
-    await client.assets.get(NAMESPACE, 'NONEXISTENT:12:34:56:78:90');
+    // Uses default namespace from client config
+    await client.assets.get('NONEXISTENT:12:34:56:78:90');
     console.log('   Unexpected: Asset was found');
   } catch (error) {
     if (error instanceof NotFoundError) {
@@ -99,10 +103,14 @@ async function catchSpecificErrors(): Promise<void> {
 async function demonstrateAuthError(): Promise<void> {
   console.log('3. Authentication Error (Invalid API Key)\n');
 
-  const badClient = createRtlsClient({ apiKey: 'invalid-key-12345' });
+  const badClient = createRtlsClient({
+    apiKey: 'invalid-key-12345',
+    namespace: NAMESPACE, // Default namespace
+  });
 
   try {
-    await badClient.assets.list(NAMESPACE);
+    // Uses default namespace from client config
+    await badClient.assets.list();
     console.log('   Unexpected: Request succeeded');
   } catch (error) {
     if (error instanceof AuthenticationError) {
@@ -129,13 +137,15 @@ async function demonstrateTimeout(): Promise<void> {
   // Create client with very short timeout
   const client = createRtlsClient({
     apiKey: API_KEY,
+    namespace: NAMESPACE, // Default namespace
     timeoutMs: 1, // 1ms timeout (will likely timeout)
   });
 
   console.log('   Making request with 1ms timeout...');
 
   try {
-    await client.assets.list(NAMESPACE);
+    // Uses default namespace from client config
+    await client.assets.list();
     console.log('   Request completed (surprisingly fast!)\n');
   } catch (error) {
     if (error instanceof TimeoutError) {
@@ -258,13 +268,16 @@ async function withRetry<T>(
 async function demonstrateRetry(): Promise<void> {
   console.log('6. Retry with Exponential Backoff\n');
 
-  const client = createRtlsClient({ apiKey: API_KEY });
+  const client = createRtlsClient({
+    apiKey: API_KEY,
+    namespace: NAMESPACE, // Default namespace
+  });
 
   console.log('   Demonstrating retry logic (will succeed on first try):\n');
 
   try {
     const result = await withRetry(
-      () => client.assets.list(NAMESPACE),
+      () => client.assets.list(), // Uses default namespace from client config
       3,
       1000
     );
@@ -349,9 +362,12 @@ async function main(): Promise<void> {
   await demonstrateAuthError();
   await demonstrateTimeout();
 
-  const client = createRtlsClient({ apiKey: API_KEY });
+  const client = createRtlsClient({
+    apiKey: API_KEY,
+    namespace: NAMESPACE, // Default namespace
+  });
   await comprehensiveErrorHandler(
-    () => client.assets.list(NAMESPACE),
+    () => client.assets.list(), // Uses default namespace from client config
     'List Assets'
   );
 

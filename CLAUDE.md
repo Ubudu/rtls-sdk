@@ -84,7 +84,7 @@ docs/
 | 2 | [02_API_VALIDATION_WORKPACKAGE.md](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing (68 tasks, 11 phases) |
 | 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment for v1.0.0 (28 tasks, 11 phases) |
 | 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Examples & documentation (52 tasks, 12 phases) |
-| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | PENDING | Default context & ergonomics (33 tasks, 10 phases) |
+| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics (33 tasks, 10 phases) |
 
 ### Reports (from WP #2)
 
@@ -104,6 +104,7 @@ docs/
 - [Navigation](docs/guides/navigation.md) - POIs, paths, indoor routing
 - [Error Handling](docs/guides/error-handling.md) - Error types, retry strategies
 - [Advanced Patterns](docs/guides/advanced-patterns.md) - Pagination, filtering, batch processing
+- [Migration Guide v2](docs/guides/migration-v2.md) - Migrating to default context
 - [Release Setup](docs/guides/release-setup.md) - CI/CD for GitHub mirroring and npm publishing
 
 ## Integration Testing

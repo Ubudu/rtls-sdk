@@ -19,6 +19,22 @@ export {
   createError,
 } from './errors';
 
+// Context types and utilities
+export type {
+  RtlsContext,
+  CallContext,
+  ResolvedNamespaceContext,
+  ResolvedVenueContext,
+  ResolvedMapContext,
+} from './context';
+export {
+  resolveContext,
+  requireNamespace,
+  requireVenueId,
+  requireMapId,
+  ContextError,
+} from './context';
+
 // Type exports
 export type {
   Asset,
