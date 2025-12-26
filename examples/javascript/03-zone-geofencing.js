@@ -1,11 +1,10 @@
 /**
- * 03 - Zone & Geofencing with Ubudu RTLS SDK (JavaScript)
+ * 03 - Zones & Geofencing with Ubudu RTLS SDK
  *
- * This example demonstrates:
- * - Listing zones for a venue (GeoJSON format)
+ * This example covers:
+ * - Listing zones (GeoJSON and flat array)
  * - Spatial queries (containing point, nearest, within radius)
- * - Zone presence detection
- * - Working with GeoJSON data
+ * - Zone presence data
  */
 
 import { config } from 'dotenv';
@@ -21,6 +20,10 @@ import {
   extractZonesFromGeoJSON,
 } from '@ubudu/rtls-sdk';
 
+// =============================================================================
+// Configuration
+// =============================================================================
+
 const NAMESPACE = process.env.APP_NAMESPACE;
 const API_KEY = process.env.RTLS_API_KEY;
 
@@ -29,297 +32,196 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-const client = createRtlsClient({ apiKey: API_KEY });
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE,
+});
 
-console.log('Ubudu RTLS SDK - Zone & Geofencing Example (JavaScript)\n');
-console.log('=======================================================\n');
+console.log('Ubudu RTLS SDK - Zones & Geofencing\n');
 
-// Store venue info for examples
-let venueId = null;
 let venueCoords = null;
 
 // =============================================================================
-// Example 1: Get Venue for Zone Operations
+// 1. Get Venue
 // =============================================================================
 
-async function getFirstVenue() {
-  console.log('1. Getting First Venue');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}\n`);
+async function getVenue() {
+  console.log('1. Getting Venue...');
 
-  const venues = await client.venues.list(NAMESPACE);
-
+  const venues = await client.venues.list();
   if (venues.length === 0) {
-    console.log('   No venues found. Create a venue first.\n');
-    return;
+    console.log('   No venues found');
+    return false;
   }
 
   const venue = venues[0];
-  venueId = venue.id;
   venueCoords = venue.coordinates;
 
-  console.log(`   Venue: ${venue.name}`);
-  console.log(`   ID: ${venueId}`);
-  if (venueCoords) {
-    console.log(`   Coordinates: (${venueCoords.lat}, ${venueCoords.lng})\n`);
-  } else {
-    console.log(`   Coordinates: N/A\n`);
-  }
+  // Set default venue for subsequent calls
+  client.setVenue(venue.id);
+
+  console.log(`   Venue: ${venue.name} (ID: ${venue.id})`);
+  return true;
 }
 
 // =============================================================================
-// Example 2: List Zones as GeoJSON
+// 2. List Zones (GeoJSON)
 // =============================================================================
 
 async function listZonesGeoJSON() {
-  if (!venueId) return null;
+  console.log('\n2. Listing Zones (GeoJSON)...');
 
-  console.log('2. Listing Zones as GeoJSON');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}/${venueId}/zones\n`);
-
-  const geoJson = await client.zones.list(NAMESPACE, venueId);
-
-  console.log(`   GeoJSON Type: ${geoJson.type}`);
-  console.log(`   Total Features: ${geoJson.features.length}`);
-  if (geoJson.metadata) {
-    console.log(`   Metadata: ${JSON.stringify(geoJson.metadata)}\n`);
-  }
+  const geoJson = await client.zones.list();
+  console.log(`   Features: ${geoJson.features.length}`);
 
   if (geoJson.features.length > 0) {
     const first = geoJson.features[0];
-    console.log('   First Zone (GeoJSON Feature):');
-    console.log(`   - Type: ${first.type}`);
-    console.log(`   - Geometry: ${first.geometry.type}`);
-    console.log(`   - Properties: ${first.properties.name} (ID: ${first.properties.id})`);
-    console.log(`   - Level: ${first.properties.level}`);
-    console.log(`   - Color: ${first.properties.rgb_color}\n`);
+    console.log(`   First: ${first.properties.name} (${first.geometry.type})`);
   }
 
   return geoJson;
 }
 
 // =============================================================================
-// Example 3: List Zones as Flat Array
+// 3. List Zones (Flat Array)
 // =============================================================================
 
 async function listZonesArray() {
-  if (!venueId) return [];
+  console.log('\n3. Listing Zones (Array)...');
 
-  console.log('3. Listing Zones as Flat Array');
-  console.log('   Method: client.zones.listAsArray()\n');
+  const zones = await client.zones.listAsArray();
+  console.log(`   Total: ${zones.length} zone(s)`);
 
-  const zones = await client.zones.listAsArray(NAMESPACE, venueId);
-
-  console.log(`   Total Zones: ${zones.length}\n`);
-
-  zones.slice(0, 3).forEach((zone, i) => {
-    console.log(`   Zone ${i + 1}: ${zone.name}`);
-    console.log(`   - ID: ${zone.id}`);
-    console.log(`   - Type: ${zone.type}`);
-    console.log(`   - Level: ${zone.level}`);
-    console.log(`   - Color: ${zone.color}\n`);
+  zones.slice(0, 3).forEach((zone) => {
+    console.log(`   - ${zone.name} (Level ${zone.level})`);
   });
-
-  return zones;
 }
 
 // =============================================================================
-// Example 4: Extract Zones from GeoJSON (Utility)
+// 4. Extract Zones from GeoJSON
 // =============================================================================
 
-async function extractZonesDemo(geoJson) {
-  if (!geoJson) return;
-
-  console.log('4. Extracting Zones from GeoJSON (Utility)');
-  console.log('   Using: extractZonesFromGeoJSON()\n');
+async function extractZones(geoJson) {
+  console.log('\n4. Extracting Zones from GeoJSON...');
 
   const zones = extractZonesFromGeoJSON(geoJson);
-  console.log(`   Extracted ${zones.length} zones from GeoJSON`);
-
-  if (zones.length > 0) {
-    console.log(`   First zone: ${zones[0].name}`);
-    console.log(`   Has geometry: ${zones[0].geometry ? 'yes' : 'no'}\n`);
-  }
+  console.log(`   Extracted: ${zones.length} zone(s)`);
 }
 
 // =============================================================================
-// Example 5: Spatial Query - Zones Containing Point
+// 5. Zones Containing Point
 // =============================================================================
 
 async function zonesContainingPoint() {
-  if (!venueCoords) {
-    console.log('5. Spatial Query: Zones Containing Point');
-    console.log('   Skipped - no venue coordinates available\n');
-    return;
-  }
+  if (!venueCoords) return;
 
-  console.log('5. Spatial Query: Zones Containing Point');
-  console.log(`   Endpoint: GET /spatial/zones/${NAMESPACE}/containing-point\n`);
+  console.log('\n5. Zones Containing Point...');
 
-  const result = await client.spatial.zonesContainingPoint(NAMESPACE, {
+  const result = await client.spatial.zonesContainingPoint({
     lat: venueCoords.lat,
     lon: venueCoords.lng,
   });
 
-  console.log('   Result:');
-  console.log(`   - Reference Point: (${result.reference_point.lat}, ${result.reference_point.lon})`);
-  console.log(`   - Level: ${result.level ?? 'all'}`);
-  console.log(`   - Containing Zones: ${result.total}`);
+  console.log(`   Point: (${result.reference_point.lat}, ${result.reference_point.lon})`);
+  console.log(`   Containing zones: ${result.total}`);
 
-  if (result.containing_zones.length > 0) {
-    result.containing_zones.forEach((zone) => {
-      console.log(`     - ${zone.name} (ID: ${zone.id})`);
-    });
-  }
-  console.log();
+  result.containing_zones.slice(0, 3).forEach((zone) => {
+    console.log(`   - ${zone.name}`);
+  });
 }
 
 // =============================================================================
-// Example 6: Spatial Query - Nearest Zones
+// 6. Nearest Zones
 // =============================================================================
 
 async function nearestZones() {
-  if (!venueCoords) {
-    console.log('6. Spatial Query: Nearest Zones');
-    console.log('   Skipped - no venue coordinates available\n');
-    return;
-  }
+  if (!venueCoords) return;
 
-  console.log('6. Spatial Query: Nearest Zones');
-  console.log(`   Endpoint: GET /spatial/zones/${NAMESPACE}/nearest-to-point\n`);
+  console.log('\n6. Nearest Zones...');
 
-  const result = await client.spatial.nearestZones(NAMESPACE, {
+  const result = await client.spatial.nearestZones({
     lat: venueCoords.lat,
     lon: venueCoords.lng,
     limit: 5,
   });
 
-  console.log('   Result:');
-  console.log(`   - Reference Point: (${result.reference_point.lat}, ${result.reference_point.lon})`);
-  console.log(`   - Total Zones: ${result.total_zones}`);
-  console.log(`   - Has More: ${result.hasMore}`);
+  console.log(`   Found: ${result.total_zones} zone(s)`);
 
-  if (result.zones.length > 0) {
-    console.log('   - Nearest Zones:');
-    result.zones.forEach((zone) => {
-      const distance = zone.distance_meters?.toFixed(1) ?? 'N/A';
-      console.log(`     - ${zone.name}: ${distance}m`);
-    });
-  }
-  console.log();
+  result.zones.slice(0, 3).forEach((zone) => {
+    const dist = zone.distance_meters?.toFixed(1) ?? 'N/A';
+    console.log(`   - ${zone.name}: ${dist}m`);
+  });
 }
 
 // =============================================================================
-// Example 7: Spatial Query - Zones Within Radius
+// 7. Zones Within Radius
 // =============================================================================
 
 async function zonesWithinRadius() {
-  if (!venueCoords) {
-    console.log('7. Spatial Query: Zones Within Radius');
-    console.log('   Skipped - no venue coordinates available\n');
-    return;
-  }
+  if (!venueCoords) return;
 
-  console.log('7. Spatial Query: Zones Within Radius');
-  console.log(`   Endpoint: GET /spatial/zones/${NAMESPACE}/within-radius\n`);
+  console.log('\n7. Zones Within 500m Radius...');
 
-  const result = await client.spatial.zonesWithinRadius(NAMESPACE, {
+  const result = await client.spatial.zonesWithinRadius({
     lat: venueCoords.lat,
     lon: venueCoords.lng,
     radiusMeters: 500,
   });
 
-  console.log('   Result:');
-  console.log(`   - Reference Point: (${result.reference_point.lat}, ${result.reference_point.lon})`);
-  console.log(`   - Radius: ${result.radius_meters}m`);
-  console.log(`   - Total Zones: ${result.total_zones}`);
+  console.log(`   Found: ${result.total_zones} zone(s)`);
 
-  if (result.zones.length > 0) {
-    console.log('   - Zones in radius:');
-    result.zones.slice(0, 5).forEach((zone) => {
-      console.log(`     - ${zone.name}`);
-    });
-  }
-  console.log();
+  result.zones.slice(0, 3).forEach((zone) => {
+    console.log(`   - ${zone.name}`);
+  });
 }
 
 // =============================================================================
-// Example 8: Zone Presence Data
+// 8. Zone Presence
 // =============================================================================
 
 async function zonePresence() {
-  console.log('8. Zone Presence Data');
-  console.log(`   Endpoint: GET /es/zone_presence/${NAMESPACE}\n`);
+  console.log('\n8. Zone Presence (last hour)...');
 
   const endTime = Date.now();
   const startTime = endTime - 60 * 60 * 1000;
 
   try {
-    const presence = await client.zones.getPresence(NAMESPACE, {
+    const presence = await client.zones.getPresence({
       timestampFrom: startTime,
       timestampTo: endTime,
       interval: '5m',
     });
-
-    console.log(`   Presence records (last hour): ${presence.length}`);
-
-    if (presence.length > 0) {
-      console.log('   Sample record:', JSON.stringify(presence[0], null, 2).slice(0, 200));
-    }
+    console.log(`   Records: ${presence.length}`);
   } catch (error) {
     if (error instanceof RtlsError) {
-      console.log(`   Presence data not available: ${error.message}`);
+      console.log(`   Not available: ${error.message}`);
     } else {
       throw error;
     }
   }
-  console.log();
 }
 
 // =============================================================================
-// Example 9: Iterate Through Zones
-// =============================================================================
-
-async function iterateZones() {
-  if (!venueId) return;
-
-  console.log('9. Iterating Through Zones');
-  console.log('   Using: client.zones.iterate()\n');
-
-  let count = 0;
-  for await (const zone of client.zones.iterate(NAMESPACE, venueId)) {
-    console.log(`   [${count + 1}] ${zone.name} (Level ${zone.level})`);
-    count++;
-    if (count >= 5) {
-      console.log('   ... (showing first 5)');
-      break;
-    }
-  }
-  console.log();
-}
-
-// =============================================================================
-// Main Execution
+// Main
 // =============================================================================
 
 async function main() {
   try {
-    await getFirstVenue();
+    const hasVenue = await getVenue();
 
-    const geoJson = await listZonesGeoJSON();
-    await listZonesArray();
-    await extractZonesDemo(geoJson);
+    if (hasVenue) {
+      const geoJson = await listZonesGeoJSON();
+      await listZonesArray();
+      await extractZones(geoJson);
+      await zonesContainingPoint();
+      await nearestZones();
+      await zonesWithinRadius();
+      await zonePresence();
+    }
 
-    await zonesContainingPoint();
-    await nearestZones();
-    await zonesWithinRadius();
-
-    await zonePresence();
-    await iterateZones();
-
-    console.log('=======================================================');
-    console.log('Zone & geofencing example completed!');
+    console.log('\nDone!');
   } catch (error) {
-    console.error('Example failed:', error);
+    console.error('Failed:', error.message);
     process.exit(1);
   }
 }

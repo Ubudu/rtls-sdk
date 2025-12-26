@@ -1,12 +1,11 @@
 /**
- * 02 - Asset Tracking with Ubudu RTLS SDK (JavaScript)
+ * 02 - Asset Tracking with Ubudu RTLS SDK
  *
- * This example demonstrates:
- * - Listing and searching assets
- * - Getting real-time cached positions
- * - Viewing asset position history
- * - Asset statistics and analytics
- * - Creating, updating, and deleting assets
+ * This example covers:
+ * - Listing assets and getting details
+ * - Real-time cached positions
+ * - Position history
+ * - Iterating through assets
  */
 
 import { config } from 'dotenv';
@@ -20,8 +19,11 @@ import {
   createRtlsClient,
   RtlsError,
   NotFoundError,
-  filters,
 } from '@ubudu/rtls-sdk';
+
+// =============================================================================
+// Configuration
+// =============================================================================
 
 const NAMESPACE = process.env.APP_NAMESPACE;
 const API_KEY = process.env.RTLS_API_KEY;
@@ -31,70 +33,62 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-const client = createRtlsClient({ apiKey: API_KEY });
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE,
+});
 
-console.log('Ubudu RTLS SDK - Asset Tracking Example (JavaScript)\n');
-console.log('====================================================\n');
+console.log('Ubudu RTLS SDK - Asset Tracking\n');
 
 // =============================================================================
-// Example 1: List All Assets
+// 1. List All Assets
 // =============================================================================
 
-async function listAllAssets() {
-  console.log('1. Listing All Assets');
-  console.log(`   Endpoint: GET /assets/${NAMESPACE}\n`);
+async function listAssets() {
+  console.log('1. Listing Assets...');
 
-  const assets = await client.assets.list(NAMESPACE);
-  console.log(`   Total assets: ${assets.length}\n`);
+  const assets = await client.assets.list();
+  console.log(`   Found ${assets.length} asset(s)`);
 
   if (assets.length > 0) {
     const first = assets[0];
-    console.log('   First asset:', first.user_name);
-    console.log(`   MAC Address: ${first.user_udid}\n`);
+    console.log(`   First: ${first.user_name} (${first.user_udid})`);
     return first.user_udid;
   }
-
   return null;
 }
 
 // =============================================================================
-// Example 2: Get Cached Positions (Real-time)
+// 2. Get Cached Positions (Real-time)
 // =============================================================================
 
 async function getCachedPositions() {
-  console.log('2. Getting Cached Positions (Real-time)');
-  console.log(`   Endpoint: GET /cache/${NAMESPACE}/positions\n`);
+  console.log('\n2. Getting Cached Positions...');
 
-  const positions = await client.positions.listCached(NAMESPACE);
-  console.log(`   Active positions: ${positions.length}\n`);
+  const positions = await client.positions.listCached();
+  console.log(`   Active: ${positions.length} position(s)`);
 
   if (positions.length > 0) {
     const pos = positions[0];
-    console.log('   Latest position:');
-    console.log(`   - Asset: ${pos.user_udid}`);
-    console.log(`   - Location: (${pos.lat}, ${pos.lon})`);
-    console.log(`   - Time: ${new Date(pos.timestamp).toISOString()}\n`);
+    console.log(`   Latest: ${pos.user_udid} at (${pos.lat}, ${pos.lon})`);
   }
 }
 
 // =============================================================================
-// Example 3: Get Single Asset Details
+// 3. Get Asset Details
 // =============================================================================
 
 async function getAssetDetails(macAddress) {
-  console.log('3. Getting Asset Details');
-  console.log(`   Endpoint: GET /assets/${NAMESPACE}/${macAddress}\n`);
+  console.log('\n3. Getting Asset Details...');
 
   try {
-    const asset = await client.assets.get(NAMESPACE, macAddress);
-    console.log('   Asset found:');
-    console.log(`   - Name: ${asset.user_name}`);
-    console.log(`   - Type: ${asset.user_type}`);
-    console.log(`   - Color: ${asset.color}`);
-    console.log(`   - Tags: ${asset.tags?.join(', ') || 'none'}\n`);
+    const asset = await client.assets.get(macAddress);
+    console.log(`   Name: ${asset.user_name}`);
+    console.log(`   Type: ${asset.user_type}`);
+    console.log(`   Tags: ${asset.tags?.join(', ') || 'none'}`);
   } catch (error) {
     if (error instanceof NotFoundError) {
-      console.log(`   Asset ${macAddress} not found\n`);
+      console.log(`   Asset ${macAddress} not found`);
     } else {
       throw error;
     }
@@ -102,34 +96,30 @@ async function getAssetDetails(macAddress) {
 }
 
 // =============================================================================
-// Example 4: Asset Position History
+// 4. Asset Position History
 // =============================================================================
 
 async function getAssetHistory(macAddress) {
-  console.log('4. Getting Asset Position History');
-  console.log(`   Endpoint: GET /asset_history/${NAMESPACE}/${macAddress}\n`);
+  console.log('\n4. Getting Position History (last 24h)...');
 
   const endTime = Date.now();
   const startTime = endTime - 24 * 60 * 60 * 1000;
 
   try {
-    const history = await client.assets.getHistory(NAMESPACE, macAddress, {
+    const history = await client.positions.getHistory({
+      macAddress,
       startTime,
       endTime,
     });
-
-    console.log(`   History points (last 24h): ${history.length}`);
+    console.log(`   Found ${history.length} position(s)`);
 
     if (history.length > 0) {
       const latest = history[history.length - 1];
-      console.log('   Latest position in history:');
-      console.log(`   - Location: (${latest.lat}, ${latest.lon})`);
-      console.log(`   - Time: ${new Date(latest.timestamp).toISOString()}`);
+      console.log(`   Latest: (${latest.lat}, ${latest.lon})`);
     }
-    console.log();
   } catch (error) {
     if (error instanceof RtlsError) {
-      console.log(`   History not available: ${error.message}\n`);
+      console.log(`   History not available: ${error.message}`);
     } else {
       throw error;
     }
@@ -137,106 +127,30 @@ async function getAssetHistory(macAddress) {
 }
 
 // =============================================================================
-// Example 5: Asset Statistics
-// =============================================================================
-
-async function getAssetStats() {
-  console.log('5. Getting Asset Statistics');
-  console.log(`   Endpoint: GET /asset_stats/${NAMESPACE}/...\n`);
-
-  const endTime = Date.now();
-  const startTime = endTime - 24 * 60 * 60 * 1000;
-
-  try {
-    const stats = await client.assets.getStats(NAMESPACE, {
-      startTime,
-      endTime,
-    });
-
-    console.log('   Statistics (last 24h):');
-    console.log(`   - Response:`, JSON.stringify(stats, null, 2).slice(0, 200));
-    console.log();
-  } catch (error) {
-    if (error instanceof RtlsError) {
-      console.log(`   Stats not available: ${error.message}\n`);
-    } else {
-      throw error;
-    }
-  }
-}
-
-// =============================================================================
-// Example 6: Iterate Through Assets (Async Generator)
+// 5. Iterate Through Assets
 // =============================================================================
 
 async function iterateAssets() {
-  console.log('6. Iterating Through Assets (Async Generator)');
-  console.log('   Using: client.assets.iterate()\n');
+  console.log('\n5. Iterating Assets...');
 
   let count = 0;
-  const maxItems = 5;
-
-  for await (const asset of client.assets.iterate(NAMESPACE)) {
-    console.log(`   [${count + 1}] ${asset.user_name} (${asset.user_udid})`);
+  for await (const asset of client.assets.iterate()) {
+    console.log(`   [${count + 1}] ${asset.user_name}`);
     count++;
-    if (count >= maxItems) {
-      console.log(`   ... (showing first ${maxItems} only)`);
+    if (count >= 5) {
+      console.log(`   ... (showing first 5)`);
       break;
     }
   }
-  console.log();
 }
 
 // =============================================================================
-// Example 7: Filter Assets
-// =============================================================================
-
-async function filterAssets() {
-  console.log('7. Filtering Assets');
-  console.log('   Using: filters.equals(), filters.contains()\n');
-
-  const allAssets = await client.assets.list(NAMESPACE);
-  const typeCount = allAssets.reduce((acc, a) => {
-    const type = a.user_type || 'unknown';
-    acc[type] = (acc[type] || 0) + 1;
-    return acc;
-  }, {});
-
-  console.log('   Asset types distribution:');
-  Object.entries(typeCount).forEach(([type, count]) => {
-    console.log(`   - ${type}: ${count}`);
-  });
-
-  console.log('\n   Filter Examples (syntax):');
-  console.log('   - filters.equals("user_type", "forklift")');
-  console.log('   - filters.contains("user_name", "truck")');
-  console.log('   - filters.in("user_type", ["forklift", "person"])');
-  console.log();
-}
-
-// =============================================================================
-// Example 8: Create and Delete Asset (Demo - Commented Out)
-// =============================================================================
-
-async function assetCrudDemo() {
-  console.log('8. Asset CRUD Operations (Read-Only Demo)');
-  console.log('   Note: Create/Update/Delete are available but skipped\n');
-
-  console.log('   Available methods:');
-  console.log('   - client.assets.create(namespace, macAddress, data)');
-  console.log('   - client.assets.update(namespace, macAddress, updates)');
-  console.log('   - client.assets.delete(namespace, macAddress)');
-  console.log('   - client.assets.batchSave(namespace, assets[])');
-  console.log('   - client.assets.batchDelete(namespace, macAddresses[])\n');
-}
-
-// =============================================================================
-// Main Execution
+// Main
 // =============================================================================
 
 async function main() {
   try {
-    const firstMac = await listAllAssets();
+    const firstMac = await listAssets();
     await getCachedPositions();
 
     if (firstMac) {
@@ -244,15 +158,11 @@ async function main() {
       await getAssetHistory(firstMac);
     }
 
-    await getAssetStats();
     await iterateAssets();
-    await filterAssets();
-    await assetCrudDemo();
 
-    console.log('====================================================');
-    console.log('Asset tracking example completed!');
+    console.log('\nDone!');
   } catch (error) {
-    console.error('Example failed:', error);
+    console.error('Failed:', error.message);
     process.exit(1);
   }
 }

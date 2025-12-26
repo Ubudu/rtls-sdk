@@ -1,11 +1,10 @@
 /**
- * 01 - Getting Started with Ubudu RTLS SDK (JavaScript)
+ * 01 - Getting Started with Ubudu RTLS SDK
  *
- * This example demonstrates:
- * - Setting up the SDK client
+ * This example covers:
+ * - Creating an SDK client with default namespace
  * - Checking API health
- * - Making your first API call
- * - Understanding the response format
+ * - Listing venues and assets
  */
 
 import { config } from 'dotenv';
@@ -25,35 +24,33 @@ const NAMESPACE = process.env.APP_NAMESPACE;
 const API_KEY = process.env.RTLS_API_KEY;
 
 if (!NAMESPACE || !API_KEY) {
-  console.error('Error: Missing required environment variables');
-  console.error('Please set APP_NAMESPACE and RTLS_API_KEY in your .env file');
+  console.error('Error: Missing APP_NAMESPACE or RTLS_API_KEY in .env file');
   process.exit(1);
 }
 
 // =============================================================================
-// Initialize the SDK Client
+// Create the SDK Client
 // =============================================================================
 
+// Set namespace once here - all API calls will use it automatically
 const client = createRtlsClient({
   apiKey: API_KEY,
+  namespace: NAMESPACE,
   timeoutMs: 10000,
 });
 
-console.log('Ubudu RTLS SDK - Getting Started Example (JavaScript)\n');
-console.log('=====================================================\n');
+console.log('Ubudu RTLS SDK - Getting Started\n');
 
 // =============================================================================
-// Example 1: Health Check
+// 1. Health Check
 // =============================================================================
 
 async function checkHealth() {
   console.log('1. Checking API Health...');
-  console.log('   Endpoint: GET /health\n');
 
   try {
     const health = await client.health();
-    console.log('   Status:', health);
-    console.log('   Result: API is healthy and ready\n');
+    console.log('   Status:', health.status);
   } catch (error) {
     if (error instanceof AuthenticationError) {
       console.error('   Error: Invalid API key');
@@ -65,68 +62,54 @@ async function checkHealth() {
 }
 
 // =============================================================================
-// Example 2: List Venues
+// 2. List Venues
 // =============================================================================
 
 async function listVenues() {
-  console.log('2. Listing Venues...');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}\n`);
+  console.log('\n2. Listing Venues...');
 
   try {
-    const venues = await client.venues.list(NAMESPACE);
-
-    console.log(`   Found ${venues.length} venue(s)\n`);
+    const venues = await client.venues.list();
+    console.log(`   Found ${venues.length} venue(s)`);
 
     if (venues.length > 0) {
       const venue = venues[0];
-      console.log('   First venue:');
-      console.log(`   - ID: ${venue.id}`);
-      console.log(`   - Name: ${venue.name}`);
-      console.log(`   - Address: ${venue.address || 'N/A'}\n`);
+      console.log(`   First: ${venue.name} (ID: ${venue.id})`);
       return venue.id;
     }
-
     return null;
   } catch (error) {
     if (error instanceof RtlsError) {
-      console.error(`   Error (${error.status}):`, error.message);
+      console.error(`   Error: ${error.message}`);
     }
     throw error;
   }
 }
 
 // =============================================================================
-// Example 3: List Assets
+// 3. List Assets
 // =============================================================================
 
 async function listAssets() {
-  console.log('3. Listing Assets...');
-  console.log(`   Endpoint: GET /assets/${NAMESPACE}\n`);
+  console.log('\n3. Listing Assets...');
 
   try {
-    const assets = await client.assets.list(NAMESPACE);
+    const assets = await client.assets.list();
+    console.log(`   Found ${assets.length} asset(s)`);
 
-    console.log(`   Found ${assets.length} asset(s)\n`);
-
-    // Show first 3 assets
-    const sample = assets.slice(0, 3);
-
-    sample.forEach((asset, i) => {
-      console.log(`   Asset ${i + 1}:`);
-      console.log(`   - MAC: ${asset.user_udid}`);
-      console.log(`   - Name: ${asset.user_name}`);
-      console.log(`   - Type: ${asset.user_type}\n`);
+    assets.slice(0, 3).forEach((asset) => {
+      console.log(`   - ${asset.user_name} (${asset.user_udid})`);
     });
   } catch (error) {
     if (error instanceof RtlsError) {
-      console.error(`   Error (${error.status}):`, error.message);
+      console.error(`   Error: ${error.message}`);
     }
     throw error;
   }
 }
 
 // =============================================================================
-// Main Execution
+// Main
 // =============================================================================
 
 async function main() {
@@ -134,11 +117,9 @@ async function main() {
     await checkHealth();
     await listVenues();
     await listAssets();
-
-    console.log('=====================================================');
-    console.log('Getting started example completed successfully!');
+    console.log('\nDone!');
   } catch (error) {
-    console.error('\nExample failed:', error);
+    console.error('\nFailed:', error.message);
     process.exit(1);
   }
 }

@@ -19,7 +19,8 @@
     "js:navigation": "node javascript/04-navigation.js",
     "js:error-handling": "node javascript/05-error-handling.js",
     "js:pagination": "node javascript/06-pagination-filtering.js",
-    "js:all": "npm run js:getting-started && npm run js:asset-tracking && npm run js:zone-geofencing && npm run js:navigation && npm run js:error-handling && npm run js:pagination",
+    "js:default-context": "node javascript/07-default-context.js",
+    "js:all": "npm run js:getting-started && npm run js:asset-tracking && npm run js:zone-geofencing && npm run js:navigation && npm run js:error-handling && npm run js:pagination && npm run js:default-context",
     "all": "npm run ts:all && npm run js:all"
   },
   "dependencies": {

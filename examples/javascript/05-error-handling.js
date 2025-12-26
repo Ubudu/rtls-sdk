@@ -1,11 +1,11 @@
 /**
- * 05 - Error Handling with Ubudu RTLS SDK (JavaScript)
+ * 05 - Error Handling with Ubudu RTLS SDK
  *
- * This example demonstrates:
+ * This example covers:
  * - Error class hierarchy
  * - Catching specific error types
+ * - ContextError for missing context
  * - Retry strategies
- * - Validation error handling
  */
 
 import { config } from 'dotenv';
@@ -25,7 +25,12 @@ import {
   RateLimitError,
   TimeoutError,
   NetworkError,
+  ContextError,
 } from '@ubudu/rtls-sdk';
+
+// =============================================================================
+// Configuration
+// =============================================================================
 
 const NAMESPACE = process.env.APP_NAMESPACE;
 const API_KEY = process.env.RTLS_API_KEY;
@@ -35,56 +40,68 @@ if (!NAMESPACE || !API_KEY) {
   process.exit(1);
 }
 
-console.log('Ubudu RTLS SDK - Error Handling Example (JavaScript)\n');
-console.log('====================================================\n');
+const client = createRtlsClient({
+  apiKey: API_KEY,
+  namespace: NAMESPACE,
+});
+
+console.log('Ubudu RTLS SDK - Error Handling\n');
 
 // =============================================================================
-// Example 1: Error Class Hierarchy
+// 1. Error Class Hierarchy
 // =============================================================================
 
 function showErrorHierarchy() {
-  console.log('1. Error Class Hierarchy\n');
+  console.log('1. Error Class Hierarchy');
   console.log('   RtlsError (base class)');
   console.log('   ├── AuthenticationError (401)');
   console.log('   ├── AuthorizationError (403)');
   console.log('   ├── NotFoundError (404)');
   console.log('   ├── ValidationError (400/422)');
   console.log('   ├── RateLimitError (429)');
-  console.log('   ├── TimeoutError (request timeout)');
-  console.log('   └── NetworkError (connection issues)\n');
-
-  console.log('   All errors include:');
-  console.log('   - message: string');
-  console.log('   - status: number (HTTP status code)');
-  console.log('   - body: unknown (raw API response)');
-  console.log('   - code: string (error code)\n');
+  console.log('   ├── TimeoutError');
+  console.log('   └── NetworkError');
+  console.log('   ContextError (missing required context)');
 }
 
 // =============================================================================
-// Example 2: Catching Specific Errors
+// 2. ContextError Example
 // =============================================================================
 
-async function catchSpecificErrors() {
-  console.log('2. Catching Specific Error Types\n');
+async function contextErrorExample() {
+  console.log('\n2. ContextError Example...');
 
-  const client = createRtlsClient({ apiKey: API_KEY });
-
-  console.log('   Attempting to get non-existent asset...');
+  // Create client without namespace
+  const emptyClient = createRtlsClient({ apiKey: API_KEY });
 
   try {
-    await client.assets.get(NAMESPACE, 'NONEXISTENT:12:34:56:78:90');
-    console.log('   Unexpected: Asset was found');
+    await emptyClient.assets.list();
+    console.log('   Unexpected: succeeded');
+  } catch (error) {
+    if (error instanceof ContextError) {
+      console.log(`   Caught ContextError: ${error.field}`);
+      console.log(`   Suggestion: ${error.suggestion}`);
+    } else {
+      throw error;
+    }
+  }
+}
+
+// =============================================================================
+// 3. NotFoundError Example
+// =============================================================================
+
+async function notFoundExample() {
+  console.log('\n3. NotFoundError Example...');
+
+  try {
+    await client.assets.get('NONEXISTENT:12:34:56:78:90');
+    console.log('   Unexpected: found');
   } catch (error) {
     if (error instanceof NotFoundError) {
-      console.log('   Caught NotFoundError (expected)');
-      console.log(`   - Status: ${error.status}`);
-      console.log(`   - Message: ${error.message}\n`);
-    } else if (error instanceof AuthenticationError) {
-      console.log('   Caught AuthenticationError');
-      console.log('   - Check your API key\n');
+      console.log(`   Caught NotFoundError: ${error.status}`);
     } else if (error instanceof RtlsError) {
-      console.log(`   Caught RtlsError: ${error.status}`);
-      console.log(`   - Message: ${error.message}\n`);
+      console.log(`   Caught RtlsError: ${error.message}`);
     } else {
       throw error;
     }
@@ -92,111 +109,99 @@ async function catchSpecificErrors() {
 }
 
 // =============================================================================
-// Example 3: Authentication Error
+// 4. AuthenticationError Example
 // =============================================================================
 
-async function demonstrateAuthError() {
-  console.log('3. Authentication Error (Invalid API Key)\n');
+async function authErrorExample() {
+  console.log('\n4. AuthenticationError Example...');
 
-  const badClient = createRtlsClient({ apiKey: 'invalid-key-12345' });
-
-  try {
-    await badClient.assets.list(NAMESPACE);
-    console.log('   Unexpected: Request succeeded');
-  } catch (error) {
-    if (error instanceof AuthenticationError) {
-      console.log('   Caught AuthenticationError');
-      console.log(`   - Status: ${error.status}`);
-      console.log('   - Action: Verify API key is correct\n');
-    } else if (error instanceof RtlsError) {
-      console.log(`   Caught RtlsError: ${error.status}`);
-      console.log(`   - Message: ${error.message}\n`);
-    } else {
-      throw error;
-    }
-  }
-}
-
-// =============================================================================
-// Example 4: Timeout Handling
-// =============================================================================
-
-async function demonstrateTimeout() {
-  console.log('4. Timeout Handling\n');
-
-  const client = createRtlsClient({
-    apiKey: API_KEY,
-    timeoutMs: 1,
+  const badClient = createRtlsClient({
+    apiKey: 'invalid-key-12345',
+    namespace: NAMESPACE,
   });
 
-  console.log('   Making request with 1ms timeout...');
-
   try {
-    await client.assets.list(NAMESPACE);
-    console.log('   Request completed (surprisingly fast!)\n');
-  } catch (error) {
-    if (error instanceof TimeoutError) {
-      console.log('   Caught TimeoutError (expected)');
-      console.log('   - Action: Increase timeout or retry\n');
-    } else if (error instanceof RtlsError) {
-      console.log(`   Caught RtlsError: ${error.status}`);
-      console.log(`   - Message: ${error.message}\n`);
-    } else {
-      console.log(`   Caught error: ${error}\n`);
-    }
-  }
-}
-
-// =============================================================================
-// Example 5: Comprehensive Error Handler
-// =============================================================================
-
-async function comprehensiveErrorHandler(operation, operationName) {
-  console.log(`5. Comprehensive Error Handler: ${operationName}\n`);
-
-  try {
-    const result = await operation();
-    console.log(`   ${operationName} succeeded\n`);
-    return result;
+    await badClient.assets.list();
+    console.log('   Unexpected: succeeded');
   } catch (error) {
     if (error instanceof AuthenticationError) {
-      console.log('   ERROR: Authentication failed');
-      console.log('   - Verify your API key');
-    } else if (error instanceof AuthorizationError) {
-      console.log('   ERROR: Not authorized');
-      console.log('   - Check permissions for this resource');
-    } else if (error instanceof NotFoundError) {
-      console.log('   ERROR: Resource not found');
-      console.log('   - Verify the ID/MAC address exists');
-    } else if (error instanceof ValidationError) {
-      console.log('   ERROR: Validation failed');
-      console.log('   - Check request parameters');
-    } else if (error instanceof RateLimitError) {
-      console.log('   ERROR: Rate limited');
-      console.log('   - Wait and retry');
-    } else if (error instanceof TimeoutError) {
-      console.log('   ERROR: Request timed out');
-      console.log('   - Retry with longer timeout');
-    } else if (error instanceof NetworkError) {
-      console.log('   ERROR: Network error');
-      console.log('   - Check internet connection');
+      console.log(`   Caught AuthenticationError: ${error.status}`);
     } else if (error instanceof RtlsError) {
-      console.log(`   ERROR: API error (${error.status})`);
-      console.log(`   - Message: ${error.message}`);
+      console.log(`   Caught RtlsError: ${error.message}`);
     } else {
-      console.log('   ERROR: Unexpected error');
-      console.log(`   - ${error}`);
+      throw error;
     }
-    console.log();
-    return null;
   }
 }
 
 // =============================================================================
-// Example 6: Retry with Exponential Backoff
+// 5. TimeoutError Example
 // =============================================================================
 
-async function withRetry(operation, maxRetries = 3, baseDelayMs = 1000) {
+async function timeoutExample() {
+  console.log('\n5. TimeoutError Example...');
+
+  const fastClient = createRtlsClient({
+    apiKey: API_KEY,
+    namespace: NAMESPACE,
+    timeoutMs: 1, // Very short timeout
+  });
+
+  try {
+    await fastClient.assets.list();
+    console.log('   Request completed');
+  } catch (error) {
+    if (error instanceof TimeoutError) {
+      console.log('   Caught TimeoutError');
+    } else {
+      console.log(`   Caught: ${error.constructor.name}`);
+    }
+  }
+}
+
+// =============================================================================
+// 6. Comprehensive Error Handler
+// =============================================================================
+
+async function handleError(error) {
+  if (error instanceof ContextError) {
+    return `Missing ${error.field}: ${error.suggestion}`;
+  } else if (error instanceof AuthenticationError) {
+    return 'Invalid API key';
+  } else if (error instanceof AuthorizationError) {
+    return 'Access denied';
+  } else if (error instanceof NotFoundError) {
+    return 'Resource not found';
+  } else if (error instanceof ValidationError) {
+    return 'Invalid parameters';
+  } else if (error instanceof RateLimitError) {
+    return 'Rate limited - retry later';
+  } else if (error instanceof TimeoutError) {
+    return 'Request timed out';
+  } else if (error instanceof NetworkError) {
+    return 'Network error';
+  } else if (error instanceof RtlsError) {
+    return `API error: ${error.status}`;
+  }
+  return 'Unknown error';
+}
+
+async function comprehensiveHandler() {
+  console.log('\n6. Comprehensive Error Handler...');
+
+  try {
+    const result = await client.assets.list();
+    console.log(`   Success: ${result.length} assets`);
+  } catch (error) {
+    console.log(`   ${await handleError(error)}`);
+  }
+}
+
+// =============================================================================
+// 7. Retry with Backoff
+// =============================================================================
+
+async function withRetry(operation, maxRetries = 3) {
   let lastError;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -205,60 +210,44 @@ async function withRetry(operation, maxRetries = 3, baseDelayMs = 1000) {
     } catch (error) {
       lastError = error;
 
+      // Don't retry client errors
       if (
         error instanceof AuthenticationError ||
-        error instanceof AuthorizationError ||
         error instanceof NotFoundError ||
-        error instanceof ValidationError
+        error instanceof ValidationError ||
+        error instanceof ContextError
       ) {
         throw error;
       }
 
-      if (
-        error instanceof RateLimitError ||
-        error instanceof TimeoutError ||
-        error instanceof NetworkError ||
-        (error instanceof RtlsError && error.status >= 500)
-      ) {
-        if (attempt < maxRetries) {
-          const delay = baseDelayMs * Math.pow(2, attempt - 1);
-          console.log(`   Attempt ${attempt} failed, retrying in ${delay}ms...`);
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          continue;
-        }
+      // Retry transient errors
+      if (attempt < maxRetries) {
+        const delay = 1000 * Math.pow(2, attempt - 1);
+        console.log(`   Attempt ${attempt} failed, retrying in ${delay}ms...`);
+        await new Promise((r) => setTimeout(r, delay));
       }
-
-      throw error;
     }
   }
 
   throw lastError;
 }
 
-async function demonstrateRetry() {
-  console.log('6. Retry with Exponential Backoff\n');
-
-  const client = createRtlsClient({ apiKey: API_KEY });
-
-  console.log('   Demonstrating retry logic (will succeed on first try):\n');
+async function retryExample() {
+  console.log('\n7. Retry with Backoff...');
 
   try {
-    const result = await withRetry(
-      () => client.assets.list(NAMESPACE),
-      3,
-      1000
-    );
-    console.log(`   Success: Got ${result.length} assets\n`);
+    const result = await withRetry(() => client.assets.list());
+    console.log(`   Success: ${result.length} assets`);
   } catch (error) {
-    console.log(`   Failed after retries: ${error}\n`);
+    console.log(`   Failed after retries: ${error.message}`);
   }
 }
 
 // =============================================================================
-// Example 7: Type Guards for Error Handling
+// 8. Type Guards
 // =============================================================================
 
-function isRetryableError(error) {
+function isRetryable(error) {
   return (
     error instanceof RateLimitError ||
     error instanceof TimeoutError ||
@@ -267,80 +256,40 @@ function isRetryableError(error) {
   );
 }
 
-function isClientError(error) {
-  return (
-    error instanceof AuthenticationError ||
-    error instanceof AuthorizationError ||
-    error instanceof NotFoundError ||
-    error instanceof ValidationError
-  );
-}
-
-function demonstrateTypeGuards() {
-  console.log('7. Type Guards for Error Classification\n');
+function typeGuardsExample() {
+  console.log('\n8. Type Guards...');
 
   const errors = [
     new AuthenticationError('Invalid key'),
-    new NotFoundError('Asset not found'),
     new RateLimitError('Too many requests'),
-    new TimeoutError('Request timed out'),
-    new RtlsError('Server error', 500, null),
+    new TimeoutError('Timed out'),
   ];
 
   errors.forEach((error) => {
-    const retryable = isRetryableError(error);
-    const clientError = isClientError(error);
-    console.log(`   ${error.constructor.name}:`);
-    console.log(`   - Retryable: ${retryable}`);
-    console.log(`   - Client error: ${clientError}\n`);
+    console.log(`   ${error.constructor.name}: retryable=${isRetryable(error)}`);
   });
 }
 
 // =============================================================================
-// Example 8: Error Properties and Methods
-// =============================================================================
-
-function demonstrateErrorProperties() {
-  console.log('8. Error Properties and Methods\n');
-
-  const error = new RtlsError('Test error', 500, { detail: 'Server issue' }, 'SERVER_ERROR');
-
-  console.log('   RtlsError properties:');
-  console.log(`   - message: ${error.message}`);
-  console.log(`   - status: ${error.status}`);
-  console.log(`   - code: ${error.code}`);
-  console.log(`   - body: ${JSON.stringify(error.body)}`);
-  console.log(`   - name: ${error.name}`);
-
-  console.log('\n   RtlsError methods:');
-  console.log(`   - isStatus(500): ${error.isStatus(500)}`);
-  console.log(`   - isStatus(404): ${error.isStatus(404)}`);
-  console.log(`   - isClientError(): ${error.isClientError()}`);
-  console.log(`   - isServerError(): ${error.isServerError()}\n`);
-}
-
-// =============================================================================
-// Main Execution
+// Main
 // =============================================================================
 
 async function main() {
-  showErrorHierarchy();
-  await catchSpecificErrors();
-  await demonstrateAuthError();
-  await demonstrateTimeout();
+  try {
+    showErrorHierarchy();
+    await contextErrorExample();
+    await notFoundExample();
+    await authErrorExample();
+    await timeoutExample();
+    await comprehensiveHandler();
+    await retryExample();
+    typeGuardsExample();
 
-  const client = createRtlsClient({ apiKey: API_KEY });
-  await comprehensiveErrorHandler(
-    () => client.assets.list(NAMESPACE),
-    'List Assets'
-  );
-
-  await demonstrateRetry();
-  demonstrateTypeGuards();
-  demonstrateErrorProperties();
-
-  console.log('====================================================');
-  console.log('Error handling example completed!');
+    console.log('\nDone!');
+  } catch (error) {
+    console.error('Failed:', error.message);
+    process.exit(1);
+  }
 }
 
 main();
