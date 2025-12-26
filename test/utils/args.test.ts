@@ -31,6 +31,7 @@ function createMockClient(
       if (m === undefined) throw new ContextError('Map ID', 'Set it');
       return m;
     }),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 }
 
@@ -118,6 +119,7 @@ describe('resolveVenueArgs', () => {
 
   it('throws when venueId missing in legacy mode', () => {
     const client = createMockClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => resolveVenueArgs(client, 'ns', undefined as any)).toThrow();
   });
 });

@@ -227,6 +227,7 @@ export class VenuesResource {
     arg2?: string | number | RequestOptions,
     arg3?: RequestOptions
   ): Promise<POI[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const geoJson = await this.listPois(arg1 as any, arg2 as any, arg3);
     return extractPoisFromGeoJSON(geoJson);
   }
@@ -297,6 +298,7 @@ export class VenuesResource {
     arg3?: string | number | RequestOptions,
     arg4?: RequestOptions
   ): Promise<POI[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const geoJson = await this.listMapPois(arg1 as any, arg2 as any, arg3 as any, arg4);
     return extractPoisFromGeoJSON(geoJson);
   }
@@ -360,6 +362,7 @@ export class VenuesResource {
     arg2?: string | number | RequestOptions,
     arg3?: RequestOptions
   ): Promise<PathNode[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const geoJson = await this.listPaths(arg1 as any, arg2 as any, arg3);
     return extractPathNodesFromGeoJSON(geoJson);
   }
@@ -381,6 +384,7 @@ export class VenuesResource {
     arg2?: string | number | RequestOptions,
     arg3?: RequestOptions
   ): Promise<PathSegment[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const geoJson = await this.listPaths(arg1 as any, arg2 as any, arg3);
     return extractPathSegmentsFromGeoJSON(geoJson);
   }
@@ -399,6 +403,7 @@ export class VenuesResource {
     arg1?: string | RequestOptions,
     arg2?: RequestOptions
   ): AsyncGenerator<Record<string, unknown>> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const venues = await this.list(arg1 as any, arg2);
     for (const venue of venues) {
       yield venue;

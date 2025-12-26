@@ -96,6 +96,7 @@ export class TypedEventEmitter<TEvents extends EventMap> {
         try {
           (handler as EventHandler<TEvents[K]>)(data);
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error(`Error in event handler for "${String(event)}":`, error);
         }
       }
@@ -128,7 +129,10 @@ export class TypedEventEmitter<TEvents extends EventMap> {
 
 /**
  * Debug logger for WebSocket connections
+ *
+ * Note: Console usage is intentional in this class as it's a logging utility.
  */
+/* eslint-disable no-console */
 export class DebugLogger {
   private enabled: boolean;
   private prefix: string;
@@ -191,3 +195,4 @@ export class DebugLogger {
     }
   }
 }
+/* eslint-enable no-console */

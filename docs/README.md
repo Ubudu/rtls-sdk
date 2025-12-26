@@ -10,8 +10,10 @@ Welcome to the Ubudu RTLS SDK documentation. This SDK provides TypeScript/JavaSc
 | [Asset Tracking](./guides/asset-tracking.md) | Asset CRUD, positions, history, statistics |
 | [Zone & Geofencing](./guides/zone-geofencing.md) | Zones, spatial queries, presence detection |
 | [Navigation](./guides/navigation.md) | POIs, paths, indoor routing |
+| [WebSocket Streaming](./guides/websocket.md) | Real-time positions, zones, alerts |
 | [Error Handling](./guides/error-handling.md) | Error types, retry strategies |
 | [Advanced Patterns](./guides/advanced-patterns.md) | Pagination, filtering, batch processing |
+| [Migration to v2](./guides/migration-v2.md) | Migrating to default context API |
 | [Release Setup](./guides/release-setup.md) | CI/CD for GitHub and npm publishing |
 
 ## Examples
@@ -65,6 +67,7 @@ The SDK provides access to these API resources:
 | Alerts | `client.alerts` | Alert rules |
 | Dashboards | `client.dashboards` | Dashboard configuration |
 | Navigation | `client.navigation` | Indoor routing |
+| WebSocket | `RtlsWebSocketClient` | Real-time streaming |
 
 ## Development
 
@@ -76,7 +79,8 @@ The SDK provides access to these API resources:
 | 2 | [02_API_VALIDATION_WORKPACKAGE.md](./development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing |
 | 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](./development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment |
 | 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](./development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Documentation & examples |
-| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](./development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | PENDING | Default context & ergonomics |
+| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](./development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics |
+| 6 | [06_WEBSOCKET_CLIENT_WORKPACKAGE.md](./development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | COMPLETED | WebSocket real-time client |
 
 ## Support
 

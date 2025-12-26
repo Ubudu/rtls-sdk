@@ -21,6 +21,9 @@
     "js:pagination": "node javascript/06-pagination-filtering.js",
     "js:default-context": "node javascript/07-default-context.js",
     "js:all": "npm run js:getting-started && npm run js:asset-tracking && npm run js:zone-geofencing && npm run js:navigation && npm run js:error-handling && npm run js:pagination && npm run js:default-context",
+    "ws:subscriber": "npx tsx websocket-subscriber.ts",
+    "ws:publisher": "npx tsx websocket-publisher.ts",
+    "ws:unified": "npx tsx websocket-unified.ts",
     "all": "npm run ts:all && npm run js:all"
   },
   "dependencies": {

@@ -23,7 +23,7 @@ module.exports = {
   ignorePatterns: ['dist/', 'node_modules/', 'src/generated/', 'examples/'],
   overrides: [
     {
-      files: ['test/integration/**/*.ts'],
+      files: ['test/integration/**/*.ts', 'test/**/*.integration.test.ts'],
       rules: {
         'no-console': 'off',
       },

@@ -167,6 +167,7 @@ export class MockWebSocket {
    */
   simulateMessage(data: unknown): void {
     if (this.readyState !== WebSocketReadyState.OPEN) {
+      // eslint-disable-next-line no-console
       console.warn('MockWebSocket: Cannot simulate message when not open');
       return;
     }

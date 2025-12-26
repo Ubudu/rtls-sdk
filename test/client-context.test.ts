@@ -222,6 +222,7 @@ describe('RtlsClient context management', () => {
   });
 
   describe('context resolution', () => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     it('requireNs throws ContextError when namespace not set', () => {
       const client = createRtlsClient({ apiKey: 'test' });
 
@@ -251,5 +252,6 @@ describe('RtlsClient context management', () => {
 
       expect((client as any).requireVenue()).toBe(123);
     });
+    /* eslint-enable @typescript-eslint/no-explicit-any */
   });
 });
