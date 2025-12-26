@@ -135,3 +135,83 @@ export type {
   SpatialQueryOptions,
   RadiusQueryOptions,
 } from './resources';
+
+// ─── WebSocket Exports ──────────────────────────────────────────────────────
+
+// WebSocket client classes
+export {
+  RtlsWebSocketClient,
+  RtlsWebSocketSubscriber,
+  RtlsWebSocketPublisher,
+} from './websocket';
+
+// WebSocket types and utilities
+export {
+  // Subscription type enum/const
+  SubscriptionType,
+
+  // Type guards
+  isPositionMessage,
+  isZoneEntryExitMessage,
+  isZoneStatsMessage,
+  isAlertMessage,
+  isAssetMessage,
+  isSubscriptionConfirmation,
+  classifyMessage,
+
+  // MAC address utilities
+  normalizeMacAddress,
+  isValidMacAddress,
+
+  // Error classes
+  WebSocketError,
+  WebSocketConnectionError,
+  WebSocketAuthenticationError,
+  WebSocketSubscriptionError,
+  WebSocketSendError,
+
+  // Constants
+  WEBSOCKET_URLS,
+  WEBSOCKET_DEFAULTS,
+  POSITION_ORIGIN,
+} from './websocket';
+
+// WebSocket type exports
+export type {
+  // Configuration types
+  WebSocketClientConfig,
+  WebSocketSubscriberConfig,
+  WebSocketPublisherConfig,
+  WebSocketBaseConfig,
+
+  // Event maps
+  SubscriberEventMap,
+  PublisherEventMap,
+
+  // Message types
+  PositionMessage,
+  ZoneEntryExitMessage,
+  ZoneStatsMessage,
+  AlertMessage,
+  AssetMessage,
+  WebSocketMessage,
+
+  // Publishing types
+  PublishPositionData as WebSocketPublishPositionData,
+  PublishResult,
+  BatchPublishResult,
+
+  // Subscription types
+  SubscriptionResult,
+  SubscribeMessage,
+  SubscriptionConfirmation,
+
+  // Connection types
+  ConnectionState,
+  ConnectionStatus,
+  UnifiedConnectionStatus,
+  ConnectionEventData,
+  DisconnectionEventData,
+  ErrorEventData,
+  ReconnectionEventData,
+} from './websocket';

@@ -45,6 +45,29 @@ npm run js:pagination
 npm run js:all
 ```
 
+### WebSocket Examples
+
+WebSocket examples demonstrate real-time data streaming capabilities:
+
+```bash
+# Using npm scripts (from examples directory)
+npm run ws:subscriber   # Subscribe to real-time updates
+npm run ws:publisher    # Publish position data
+npm run ws:unified      # Combined subscriber/publisher
+
+# Or run directly from project root
+npx tsx examples/websocket-subscriber.ts
+npx tsx examples/websocket-publisher.ts
+npx tsx examples/websocket-unified.ts
+```
+
+Environment variables for WebSocket examples:
+- `RTLS_API_KEY` - Your API key (required)
+- `APP_NAMESPACE` - Your namespace (required)
+- `MAP_UUID` - Map UUID (required for publisher)
+- `DEBUG` - Set to 'true' for debug logging
+- `RUN_TIME_SECONDS` - Duration to run (default: 60)
+
 ## Example Categories
 
 | Example | Description |
@@ -55,3 +78,6 @@ npm run js:all
 | 04-navigation | POIs, paths, indoor routing |
 | 05-error-handling | Error types, retry strategies, validation |
 | 06-pagination-filtering | Iterators, filters, batch operations |
+| websocket-subscriber | Real-time position, zone, and alert streaming |
+| websocket-publisher | Publishing position data to RTLS |
+| websocket-unified | Combined publisher/subscriber client |

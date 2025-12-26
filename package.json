@@ -14,6 +14,7 @@
     "real-time-location",
     "indoor-positioning",
     "asset-tracking",
+    "websocket",
     "typescript"
   ],
   "engines": {
@@ -49,6 +50,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:ws": "vitest run test/websocket",
+    "test:ws:watch": "vitest watch test/websocket",
+    "test:ws:integration": "vitest run --config vitest.integration.config.ts test/websocket/*.integration.test.ts",
     "test:examples": "cd examples && npm install && npm run all",
     "test:examples:ts": "cd examples && npm install && npm run ts:all",
     "test:examples:js": "cd examples && npm install && npm run js:all",
@@ -63,8 +67,17 @@
   "dependencies": {
     "openapi-fetch": "^0.13.0"
   },
+  "peerDependencies": {
+    "ws": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ws": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/node": "^20.11.0",
+    "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "@vitest/coverage-v8": "^2.0.0",
@@ -75,6 +88,7 @@
     "prettier": "^3.2.0",
     "tsup": "^8.0.0",
     "typescript": "^5.3.0",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "ws": "^8.18.0"
   }
 }

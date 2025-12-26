@@ -92,6 +92,7 @@ export class ZonesResource {
     arg2?: string | number | RequestOptions,
     arg3?: RequestOptions
   ): Promise<Zone[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const geoJson = await this.list(arg1 as any, arg2 as any, arg3);
     return extractZonesFromGeoJSON(geoJson);
   }
@@ -171,6 +172,7 @@ export class ZonesResource {
     arg3?: string | number | RequestOptions,
     arg4?: RequestOptions
   ): Promise<Zone[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const geoJson = await this.listByMap(arg1 as any, arg2 as any, arg3 as any, arg4);
     return extractZonesFromGeoJSON(geoJson);
   }
@@ -245,6 +247,7 @@ export class ZonesResource {
   iterate(options?: CallContext): AsyncGenerator<Zone>;
   iterate(namespace: string, venueId: string | number): AsyncGenerator<Zone>;
   async *iterate(arg1?: string | CallContext, arg2?: string | number): AsyncGenerator<Zone> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const zones = await this.listAsArray(arg1 as any, arg2 as any);
     for (const zone of zones) {
       yield zone;
@@ -267,6 +270,7 @@ export class ZonesResource {
     arg2?: string | number | RequestOptions,
     arg3?: RequestOptions
   ): Promise<Zone[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.listAsArray(arg1 as any, arg2 as any, arg3);
   }
 }

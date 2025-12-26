@@ -10,6 +10,7 @@ Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs
 - ESM, CommonJS, and browser builds included
 - Full TypeScript support with auto-generated types from OpenAPI spec
 - Simple, ergonomic API with default context
+- **WebSocket support** for real-time position streaming and publishing
 - Built-in async iterators for memory-efficient processing
 - Filter DSL for building queries
 - Comprehensive error handling with typed error classes
@@ -85,6 +86,7 @@ const client = createRtlsClient({
 - [Asset Tracking](docs/guides/asset-tracking.md) - Asset CRUD, positions, history
 - [Zone & Geofencing](docs/guides/zone-geofencing.md) - Spatial queries and presence
 - [Navigation](docs/guides/navigation.md) - POIs, paths, indoor routing
+- [WebSocket Streaming](docs/guides/websocket.md) - Real-time data streaming
 - [Error Handling](docs/guides/error-handling.md) - Error types and retry strategies
 - [Advanced Patterns](docs/guides/advanced-patterns.md) - Pagination, filtering, patterns
 - [Migration Guide v2](docs/guides/migration-v2.md) - Migrating to default context
@@ -140,6 +142,81 @@ The SDK provides access to these API resources:
 | `client.alerts` | Alert rules |
 | `client.dashboards` | Dashboard configuration |
 | `client.navigation` | Indoor routing |
+
+## WebSocket Streaming
+
+Real-time position updates, zone events, and alerts via WebSocket:
+
+```typescript
+import { RtlsWebSocketSubscriber, SubscriptionType } from 'ubudu-rtls-sdk';
+
+const subscriber = new RtlsWebSocketSubscriber({
+  apiKey: 'your-api-key',
+  namespace: 'your-namespace',
+});
+
+// Register event handlers
+subscriber.on('POSITIONS', (pos) => {
+  console.log(`Tag ${pos.user_uuid} at ${pos.lat}, ${pos.lon}`);
+});
+
+subscriber.on('ALERTS', (alert) => {
+  console.log(`Alert: ${alert.params.title}`);
+});
+
+// Connect and subscribe
+await subscriber.connect();
+await subscriber.subscribe([
+  SubscriptionType.POSITIONS,
+  SubscriptionType.ALERTS,
+]);
+
+// Later: disconnect
+await subscriber.disconnect();
+```
+
+### Publishing Positions
+
+Publish positions from external tracking sources:
+
+```typescript
+import { RtlsWebSocketPublisher } from 'ubudu-rtls-sdk';
+
+const publisher = new RtlsWebSocketPublisher({
+  apiKey: 'your-api-key',
+  namespace: 'your-namespace',
+  mapUuid: 'your-map-uuid',  // Required for publishing
+});
+
+await publisher.connect();
+await publisher.sendPosition({
+  macAddress: 'aabbccddeeff',
+  latitude: 48.8566,
+  longitude: 2.3522,
+  name: 'Asset-123',
+});
+```
+
+### Creating from REST Client
+
+```typescript
+const client = createRtlsClient({
+  apiKey: 'your-api-key',
+  namespace: 'my-namespace',
+});
+
+// Create WebSocket client that shares configuration
+const ws = client.createWebSocket({ mapUuid: 'map-uuid' });
+await ws.connect();
+```
+
+For Node.js environments, install the `ws` package:
+
+```bash
+npm install ws
+```
+
+See [WebSocket Guide](docs/guides/websocket.md) for complete documentation.
 
 ## Filtering
 
@@ -297,6 +374,7 @@ For contributors and maintainers, see [CLAUDE.md](CLAUDE.md) for development gui
 | Done | [WP3: SDK Alignment](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | v1.0.0 breaking changes (28 tasks) |
 | Done | [WP4: SDK Documentation](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | Examples & guides (52 tasks) |
 | Done | [WP5: SDK Ergonomics](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | Default context & ergonomics (33 tasks) |
+| Done | [WP6: WebSocket Client](docs/development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | WebSocket real-time client (67 tasks) |
 
 ### Quick Start (Development)
 

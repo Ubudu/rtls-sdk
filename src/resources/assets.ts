@@ -401,6 +401,7 @@ export class AssetsResource {
     arg2?: ListAssetsOptions
   ): AsyncGenerator<Record<string, unknown>> {
     // Assets API returns all items at once, no pagination needed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const assets = await this.list(arg1 as any, arg2);
     for (const asset of assets) {
       yield asset;
@@ -433,6 +434,7 @@ export class AssetsResource {
     arg2?: ListAssetsOptions | RequestOptions,
     arg3?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.list(arg1 as any, arg2 as any, arg3);
   }
 }
