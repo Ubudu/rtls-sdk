@@ -45,7 +45,10 @@ export class PositionsResource {
    * const positions = await client.positions.listCached('my-namespace');
    */
   async listCached(requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async listCached(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCached(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async listCached(
     arg1?: string | RequestOptions,
     arg2?: RequestOptions
@@ -83,8 +86,15 @@ export class PositionsResource {
    * // Explicit namespace (legacy)
    * const position = await client.positions.getCached('my-namespace', 'AA:BB:CC:DD:EE:FF');
    */
-  async getCached(macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async getCached(namespace: string, macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async getCached(
+    macAddress: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async getCached(
+    namespace: string,
+    macAddress: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async getCached(
     arg1: string,
     arg2?: string | RequestOptions,
@@ -126,8 +136,15 @@ export class PositionsResource {
    * // Explicit namespace (legacy)
    * const position = await client.positions.getLast('my-namespace', 'AA:BB:CC:DD:EE:FF');
    */
-  async getLast(macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async getLast(namespace: string, macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async getLast(
+    macAddress: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async getLast(
+    namespace: string,
+    macAddress: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async getLast(
     arg1: string,
     arg2?: string | RequestOptions,
@@ -170,8 +187,15 @@ export class PositionsResource {
    * // Explicit namespace (legacy)
    * const positions = await client.positions.listLast('my-namespace');
    */
-  async listLast(options?: ListLastPositionsOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async listLast(namespace: string, options?: ListLastPositionsOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listLast(
+    options?: ListLastPositionsOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async listLast(
+    namespace: string,
+    options?: ListLastPositionsOptions,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async listLast(
     arg1?: string | (ListLastPositionsOptions & CallContext),
     arg2?: ListLastPositionsOptions | RequestOptions,
@@ -191,7 +215,8 @@ export class PositionsResource {
       requestOptions = arg2 as RequestOptions | undefined;
     }
 
-    const { key, queryString, mapUuids, timestampFrom, timestampTo, ...queryOptions } = options ?? {};
+    const { key, queryString, mapUuids, timestampFrom, timestampTo, ...queryOptions } =
+      options ?? {};
 
     return this.client['request'](
       (fetchOpts) =>
@@ -229,8 +254,15 @@ export class PositionsResource {
    * // Explicit namespace (legacy)
    * const history = await client.positions.getHistory('my-namespace', {...});
    */
-  async getHistory(options: PositionHistoryOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async getHistory(namespace: string, options: PositionHistoryOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getHistory(
+    options: PositionHistoryOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async getHistory(
+    namespace: string,
+    options: PositionHistoryOptions,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async getHistory(
     arg1: string | (PositionHistoryOptions & CallContext),
     arg2?: PositionHistoryOptions | RequestOptions,
@@ -280,8 +312,17 @@ export class PositionsResource {
    * // Explicit namespace (legacy)
    * await client.positions.publish('my-namespace', { user_udid: 'asset-id', lat: 48.85, lon: 2.35 });
    */
-  async publish(position: PublishPositionData, options?: { patchAssetData?: boolean } & CallContext, requestOptions?: RequestOptions): Promise<void>;
-  async publish(namespace: string, position: PublishPositionData, options?: { patchAssetData?: boolean }, requestOptions?: RequestOptions): Promise<void>;
+  async publish(
+    position: PublishPositionData,
+    options?: { patchAssetData?: boolean } & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<void>;
+  async publish(
+    namespace: string,
+    position: PublishPositionData,
+    options?: { patchAssetData?: boolean },
+    requestOptions?: RequestOptions
+  ): Promise<void>;
   async publish(
     arg1: string | PublishPositionData,
     arg2?: PublishPositionData | ({ patchAssetData?: boolean } & CallContext) | RequestOptions,
@@ -301,7 +342,7 @@ export class PositionsResource {
     } else {
       namespace = this.client.requireNs(arg2 as CallContext | undefined);
       position = arg1;
-      const opts = arg2 as { patchAssetData?: boolean } & CallContext | undefined;
+      const opts = arg2 as ({ patchAssetData?: boolean } & CallContext) | undefined;
       patchAssetData = opts?.patchAssetData;
       requestOptions = arg3 as RequestOptions | undefined;
     }

@@ -98,5 +98,4 @@ describe('VenuesResource with context', () => {
       expect(mockClient.requireVenue).toHaveBeenCalled();
     });
   });
-
 });

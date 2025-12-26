@@ -6,6 +6,9 @@ stages:
 
 variables:
   NODE_VERSION: "20"
+  # Avoid "shallow file has changed" race condition with concurrent jobs
+  GIT_DEPTH: 0
+  GIT_STRATEGY: clone
 
 default:
   image: node:${NODE_VERSION}

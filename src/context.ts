@@ -53,10 +53,7 @@ export interface ResolvedMapContext extends RtlsContext {
  * @param overrides - Per-call context overrides
  * @returns Merged context
  */
-export function resolveContext(
-  defaults: RtlsContext,
-  overrides?: CallContext
-): RtlsContext {
+export function resolveContext(defaults: RtlsContext, overrides?: CallContext): RtlsContext {
   if (!overrides) {
     return { ...defaults };
   }
@@ -76,9 +73,7 @@ export class ContextError extends Error {
     public readonly field: string,
     public readonly suggestion: string
   ) {
-    super(
-      `${field} is required. ${suggestion}`
-    );
+    super(`${field} is required. ${suggestion}`);
     this.name = 'ContextError';
   }
 }

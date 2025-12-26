@@ -159,11 +159,18 @@ export function resolveMapArgs<T extends object>(
  * Removes namespace, venueId, mapId, level from options before passing to API.
  */
 export function stripContextFromOptions<T extends object>(
-  options: T & CallContext | undefined
+  options: (T & CallContext) | undefined
 ): Omit<T, keyof CallContext> | undefined {
   if (!options) return undefined;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { namespace: _ns, venueId: _vid, mapId: _mid, level: _lvl, ...rest } = options as T & CallContext;
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const {
+    namespace: _ns,
+    venueId: _vid,
+    mapId: _mid,
+    level: _lvl,
+    ...rest
+  } = options as T & CallContext;
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   return Object.keys(rest).length > 0 ? (rest as Omit<T, keyof CallContext>) : undefined;
 }

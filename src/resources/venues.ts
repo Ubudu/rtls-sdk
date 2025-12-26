@@ -32,7 +32,10 @@ export class VenuesResource {
    * const venues = await client.venues.list('my-namespace');
    */
   async list(requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async list(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async list(
     arg1?: string | RequestOptions,
     arg2?: RequestOptions
@@ -74,8 +77,15 @@ export class VenuesResource {
    * // Explicit namespace and venue (legacy)
    * const venue = await client.venues.get('my-namespace', 456);
    */
-  async get(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async get(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async get(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async get(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async get(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -117,8 +127,15 @@ export class VenuesResource {
    * // Explicit (legacy)
    * const maps = await client.venues.listMaps('my-namespace', 456);
    */
-  async listMaps(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async listMaps(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listMaps(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async listMaps(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async listMaps(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -156,8 +173,15 @@ export class VenuesResource {
   /**
    * List POIs for a venue as GeoJSON FeatureCollection.
    */
-  async listPois(options?: CallContext, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
-  async listPois(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
+  async listPois(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<POIFeatureCollection>;
+  async listPois(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<POIFeatureCollection>;
   async listPois(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -193,7 +217,11 @@ export class VenuesResource {
    * List POIs for a venue as flat array.
    */
   async listPoisAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<POI[]>;
-  async listPoisAsArray(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<POI[]>;
+  async listPoisAsArray(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<POI[]>;
   async listPoisAsArray(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -208,8 +236,16 @@ export class VenuesResource {
   /**
    * List POIs for a specific map as GeoJSON FeatureCollection.
    */
-  async listMapPois(options?: CallContext, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
-  async listMapPois(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<POIFeatureCollection>;
+  async listMapPois(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<POIFeatureCollection>;
+  async listMapPois(
+    namespace: string,
+    venueId: string | number,
+    mapId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<POIFeatureCollection>;
   async listMapPois(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -249,7 +285,12 @@ export class VenuesResource {
    * List POIs for a specific map as flat array.
    */
   async listMapPoisAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<POI[]>;
-  async listMapPoisAsArray(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<POI[]>;
+  async listMapPoisAsArray(
+    namespace: string,
+    venueId: string | number,
+    mapId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<POI[]>;
   async listMapPoisAsArray(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -265,8 +306,15 @@ export class VenuesResource {
   /**
    * List navigation paths for a venue as GeoJSON FeatureCollection.
    */
-  async listPaths(options?: CallContext, requestOptions?: RequestOptions): Promise<PathFeatureCollection>;
-  async listPaths(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<PathFeatureCollection>;
+  async listPaths(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<PathFeatureCollection>;
+  async listPaths(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<PathFeatureCollection>;
   async listPaths(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -302,7 +350,11 @@ export class VenuesResource {
    * List path nodes for a venue as flat array.
    */
   async listPathNodes(options?: CallContext, requestOptions?: RequestOptions): Promise<PathNode[]>;
-  async listPathNodes(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<PathNode[]>;
+  async listPathNodes(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<PathNode[]>;
   async listPathNodes(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -315,8 +367,15 @@ export class VenuesResource {
   /**
    * List path segments for a venue as flat array.
    */
-  async listPathSegments(options?: CallContext, requestOptions?: RequestOptions): Promise<PathSegment[]>;
-  async listPathSegments(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<PathSegment[]>;
+  async listPathSegments(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<PathSegment[]>;
+  async listPathSegments(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<PathSegment[]>;
   async listPathSegments(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -332,7 +391,10 @@ export class VenuesResource {
    * Iterate over all venues.
    */
   iterate(requestOptions?: RequestOptions): AsyncGenerator<Record<string, unknown>>;
-  iterate(namespace: string, requestOptions?: RequestOptions): AsyncGenerator<Record<string, unknown>>;
+  iterate(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): AsyncGenerator<Record<string, unknown>>;
   async *iterate(
     arg1?: string | RequestOptions,
     arg2?: RequestOptions

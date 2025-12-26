@@ -81,10 +81,7 @@ describe.skipIf(!hasCredentials())('Context Integration Tests', () => {
     it('setters are chainable', () => {
       const client = createRtlsClient({ apiKey: API_KEY! });
 
-      const result = client
-        .setNamespace(NAMESPACE!)
-        .setVenue(123)
-        .setLevel(0);
+      const result = client.setNamespace(NAMESPACE!).setVenue(123).setLevel(0);
 
       expect(result).toBe(client);
       expect(client.namespace).toBe(NAMESPACE);

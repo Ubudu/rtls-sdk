@@ -84,7 +84,11 @@ describe('PositionsResource with context', () => {
 
     it('uses explicit namespace (legacy)', async () => {
       mockRequest.mockResolvedValue([]);
-      await resource.getHistory('explicit-ns', { timestampFrom: 1000, timestampTo: 2000, value: 'test-udid' });
+      await resource.getHistory('explicit-ns', {
+        timestampFrom: 1000,
+        timestampTo: 2000,
+        value: 'test-udid',
+      });
       expect(mockRequest).toHaveBeenCalled();
     });
   });

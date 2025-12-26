@@ -8,11 +8,13 @@ import {
 import { ContextError } from '../../src/context';
 
 // Mock client
-function createMockClient(context: {
-  namespace?: string;
-  venueId?: number;
-  mapId?: number;
-} = {}) {
+function createMockClient(
+  context: {
+    namespace?: string;
+    venueId?: number;
+    mapId?: number;
+  } = {}
+) {
   return {
     requireNs: vi.fn((overrides?: { namespace?: string }) => {
       const ns = overrides?.namespace ?? context.namespace;

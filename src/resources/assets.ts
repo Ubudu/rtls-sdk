@@ -1,7 +1,12 @@
 import type { BaseClient, RequestOptions } from '../client/base';
 import type { QueryOptions, FilterOptions } from '../types';
 import type { CallContext } from '../context';
-import { buildQueryParams, extractDataArray, resolveNamespaceArgs, stripContextFromOptions } from '../utils';
+import {
+  buildQueryParams,
+  extractDataArray,
+  resolveNamespaceArgs,
+  stripContextFromOptions,
+} from '../utils';
 
 /** Options for listing assets */
 export type ListAssetsOptions = QueryOptions & FilterOptions & Record<string, unknown>;
@@ -29,14 +34,25 @@ export class AssetsResource {
    * // Override namespace in options
    * const assets = await client.assets.list({ namespace: 'other-ns', limit: 10 });
    */
-  async list(options?: ListAssetsParams, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async list(namespace: string, options?: ListAssetsOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    options?: ListAssetsParams,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async list(
+    namespace: string,
+    options?: ListAssetsOptions,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async list(
     arg1?: string | ListAssetsParams,
     arg2?: ListAssetsOptions | RequestOptions,
     arg3?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
-    const { namespace, options } = resolveNamespaceArgs<ListAssetsOptions>(this.client, arg1, arg2 as ListAssetsOptions);
+    const { namespace, options } = resolveNamespaceArgs<ListAssetsOptions>(
+      this.client,
+      arg1,
+      arg2 as ListAssetsOptions
+    );
     const requestOptions = typeof arg1 === 'string' ? arg3 : (arg2 as RequestOptions | undefined);
     const cleanOptions = stripContextFromOptions(options);
     const params = buildQueryParams(cleanOptions);
@@ -65,7 +81,11 @@ export class AssetsResource {
    * const asset = await client.assets.get('my-namespace', 'AA:BB:CC:DD:EE:FF');
    */
   async get(macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async get(namespace: string, macAddress: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async get(
+    namespace: string,
+    macAddress: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async get(
     arg1: string,
     arg2?: string | RequestOptions,
@@ -109,8 +129,17 @@ export class AssetsResource {
    * // Explicit namespace (legacy)
    * await client.assets.create('my-namespace', 'AA:BB:CC:DD:EE:FF', { user_name: 'Forklift 1' });
    */
-  async create(macAddress: string, asset: Record<string, unknown>, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async create(namespace: string, macAddress: string, asset: Record<string, unknown>, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async create(
+    macAddress: string,
+    asset: Record<string, unknown>,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async create(
+    namespace: string,
+    macAddress: string,
+    asset: Record<string, unknown>,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async create(
     arg1: string,
     arg2: string | Record<string, unknown>,
@@ -159,8 +188,17 @@ export class AssetsResource {
    * // Explicit namespace (legacy)
    * await client.assets.update('my-namespace', 'AA:BB:CC:DD:EE:FF', { user_name: 'Updated' });
    */
-  async update(macAddress: string, updates: Record<string, unknown>, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async update(namespace: string, macAddress: string, updates: Record<string, unknown>, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async update(
+    macAddress: string,
+    updates: Record<string, unknown>,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async update(
+    namespace: string,
+    macAddress: string,
+    updates: Record<string, unknown>,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async update(
     arg1: string,
     arg2: string | Record<string, unknown>,
@@ -208,12 +246,12 @@ export class AssetsResource {
    * await client.assets.delete('my-namespace', 'AA:BB:CC:DD:EE:FF');
    */
   async delete(macAddress: string, requestOptions?: RequestOptions): Promise<void>;
-  async delete(namespace: string, macAddress: string, requestOptions?: RequestOptions): Promise<void>;
   async delete(
-    arg1: string,
-    arg2?: string | RequestOptions,
-    arg3?: RequestOptions
-  ): Promise<void> {
+    namespace: string,
+    macAddress: string,
+    requestOptions?: RequestOptions
+  ): Promise<void>;
+  async delete(arg1: string, arg2?: string | RequestOptions, arg3?: RequestOptions): Promise<void> {
     let namespace: string;
     let macAddress: string;
     let requestOptions: RequestOptions | undefined;
@@ -250,8 +288,15 @@ export class AssetsResource {
    * // Explicit namespace (legacy)
    * await client.assets.batchSave('my-namespace', [...]);
    */
-  async batchSave(assets: Record<string, unknown>[], requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async batchSave(namespace: string, assets: Record<string, unknown>[], requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async batchSave(
+    assets: Record<string, unknown>[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async batchSave(
+    namespace: string,
+    assets: Record<string, unknown>[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async batchSave(
     arg1: string | Record<string, unknown>[],
     arg2?: Record<string, unknown>[] | RequestOptions,
@@ -294,8 +339,15 @@ export class AssetsResource {
    * // Explicit namespace (legacy)
    * await client.assets.batchDelete('my-namespace', [...]);
    */
-  async batchDelete(macAddresses: string[], requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async batchDelete(namespace: string, macAddresses: string[], requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async batchDelete(
+    macAddresses: string[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async batchDelete(
+    namespace: string,
+    macAddresses: string[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async batchDelete(
     arg1: string | string[],
     arg2?: string[] | RequestOptions,
@@ -367,8 +419,15 @@ export class AssetsResource {
    * // Explicit namespace (legacy)
    * const allAssets = await client.assets.getAll('my-namespace');
    */
-  async getAll(options?: ListAssetsParams, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async getAll(namespace: string, options?: ListAssetsOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getAll(
+    options?: ListAssetsParams,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async getAll(
+    namespace: string,
+    options?: ListAssetsOptions,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async getAll(
     arg1?: string | ListAssetsParams,
     arg2?: ListAssetsOptions | RequestOptions,

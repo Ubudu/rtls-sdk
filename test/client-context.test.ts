@@ -72,11 +72,7 @@ describe('RtlsClient context management', () => {
     });
 
     it('setters are chainable', () => {
-      const result = client
-        .setNamespace('ns')
-        .setVenue(1)
-        .setMap(2)
-        .setLevel(3);
+      const result = client.setNamespace('ns').setVenue(1).setMap(2).setLevel(3);
 
       expect(result).toBe(client);
       expect(client.namespace).toBe('ns');
@@ -99,12 +95,7 @@ describe('RtlsClient context management', () => {
     });
 
     it('clearContext removes all context', () => {
-      client
-        .setNamespace('ns')
-        .setVenue(1)
-        .setMap(2)
-        .setLevel(3)
-        .clearContext();
+      client.setNamespace('ns').setVenue(1).setMap(2).setLevel(3).clearContext();
 
       expect(client.namespace).toBeUndefined();
       expect(client.venueId).toBeUndefined();

@@ -29,8 +29,15 @@ export class ZonesResource {
    * // Explicit namespace and venue (legacy)
    * const zones = await client.zones.list('my-namespace', 456);
    */
-  async list(options?: CallContext, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
-  async list(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
+  async list(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<ZoneFeatureCollection>;
+  async list(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<ZoneFeatureCollection>;
   async list(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -75,7 +82,11 @@ export class ZonesResource {
    * const zones = await client.zones.listAsArray('my-namespace', 456);
    */
   async listAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<Zone[]>;
-  async listAsArray(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async listAsArray(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Zone[]>;
   async listAsArray(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -97,8 +108,16 @@ export class ZonesResource {
    * // Explicit (legacy)
    * const zones = await client.zones.listByMap('my-namespace', 456, 789);
    */
-  async listByMap(options?: CallContext, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
-  async listByMap(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<ZoneFeatureCollection>;
+  async listByMap(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<ZoneFeatureCollection>;
+  async listByMap(
+    namespace: string,
+    venueId: string | number,
+    mapId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<ZoneFeatureCollection>;
   async listByMap(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -140,7 +159,12 @@ export class ZonesResource {
    * List zones for a specific map as flat array.
    */
   async listByMapAsArray(options?: CallContext, requestOptions?: RequestOptions): Promise<Zone[]>;
-  async listByMapAsArray(namespace: string, venueId: string | number, mapId: string | number, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async listByMapAsArray(
+    namespace: string,
+    venueId: string | number,
+    mapId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Zone[]>;
   async listByMapAsArray(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,
@@ -166,8 +190,15 @@ export class ZonesResource {
    * // Explicit namespace (legacy)
    * const presence = await client.zones.getPresence('my-namespace', {...});
    */
-  async getPresence(options: ZonePresenceOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async getPresence(namespace: string, options: ZonePresenceOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getPresence(
+    options: ZonePresenceOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async getPresence(
+    namespace: string,
+    options: ZonePresenceOptions,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async getPresence(
     arg1: string | (ZonePresenceOptions & CallContext),
     arg2?: ZonePresenceOptions | RequestOptions,
@@ -213,10 +244,7 @@ export class ZonesResource {
    */
   iterate(options?: CallContext): AsyncGenerator<Zone>;
   iterate(namespace: string, venueId: string | number): AsyncGenerator<Zone>;
-  async *iterate(
-    arg1?: string | CallContext,
-    arg2?: string | number
-  ): AsyncGenerator<Zone> {
+  async *iterate(arg1?: string | CallContext, arg2?: string | number): AsyncGenerator<Zone> {
     const zones = await this.listAsArray(arg1 as any, arg2 as any);
     for (const zone of zones) {
       yield zone;
@@ -229,7 +257,11 @@ export class ZonesResource {
    * Get all zones as array.
    */
   async getAll(options?: CallContext, requestOptions?: RequestOptions): Promise<Zone[]>;
-  async getAll(namespace: string, venueId: string | number, requestOptions?: RequestOptions): Promise<Zone[]>;
+  async getAll(
+    namespace: string,
+    venueId: string | number,
+    requestOptions?: RequestOptions
+  ): Promise<Zone[]>;
   async getAll(
     arg1?: string | CallContext,
     arg2?: string | number | RequestOptions,

@@ -34,8 +34,14 @@ export class DashboardsResource {
    * // Explicit namespace (legacy)
    * const dashboards = await client.dashboards.list('my-namespace');
    */
-  async list(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async list(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async list(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async list(
     arg1?: string | CallContext,
     arg2?: RequestOptions
@@ -63,8 +69,14 @@ export class DashboardsResource {
 
   // ─── List Created Dashboards ────────────────────────────────────────────────
 
-  async listCreated(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async listCreated(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCreated(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async listCreated(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async listCreated(
     arg1?: string | CallContext,
     arg2?: RequestOptions
@@ -92,8 +104,14 @@ export class DashboardsResource {
 
   // ─── List Shared Dashboards ─────────────────────────────────────────────────
 
-  async listShared(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async listShared(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listShared(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async listShared(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async listShared(
     arg1?: string | CallContext,
     arg2?: RequestOptions
@@ -121,8 +139,14 @@ export class DashboardsResource {
 
   // ─── List Selected Dashboards ───────────────────────────────────────────────
 
-  async listSelected(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async listSelected(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listSelected(
+    options?: CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async listSelected(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async listSelected(
     arg1?: string | CallContext,
     arg2?: RequestOptions

@@ -43,8 +43,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.zonesContainingPoint('my-namespace', { lat: 48.8, lon: 2.3 });
    */
-  async zonesContainingPoint(options: PointQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<ZonesContainingPointResult>;
-  async zonesContainingPoint(namespace: string, options: PointQueryOptions, requestOptions?: RequestOptions): Promise<ZonesContainingPointResult>;
+  async zonesContainingPoint(
+    options: PointQueryOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<ZonesContainingPointResult>;
+  async zonesContainingPoint(
+    namespace: string,
+    options: PointQueryOptions,
+    requestOptions?: RequestOptions
+  ): Promise<ZonesContainingPointResult>;
   async zonesContainingPoint(
     arg1: string | (PointQueryOptions & CallContext),
     arg2?: PointQueryOptions | RequestOptions,
@@ -93,8 +100,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.nearestZones('my-namespace', { lat: 48.8, lon: 2.3 });
    */
-  async nearestZones(options: NearestQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<NearestZonesResult>;
-  async nearestZones(namespace: string, options: NearestQueryOptions, requestOptions?: RequestOptions): Promise<NearestZonesResult>;
+  async nearestZones(
+    options: NearestQueryOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<NearestZonesResult>;
+  async nearestZones(
+    namespace: string,
+    options: NearestQueryOptions,
+    requestOptions?: RequestOptions
+  ): Promise<NearestZonesResult>;
   async nearestZones(
     arg1: string | (NearestQueryOptions & CallContext),
     arg2?: NearestQueryOptions | RequestOptions,
@@ -145,8 +159,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.zonesWithinRadius('my-namespace', { ... });
    */
-  async zonesWithinRadius(options: RadiusQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<ZonesWithinRadiusResult>;
-  async zonesWithinRadius(namespace: string, options: RadiusQueryOptions, requestOptions?: RequestOptions): Promise<ZonesWithinRadiusResult>;
+  async zonesWithinRadius(
+    options: RadiusQueryOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<ZonesWithinRadiusResult>;
+  async zonesWithinRadius(
+    namespace: string,
+    options: RadiusQueryOptions,
+    requestOptions?: RequestOptions
+  ): Promise<ZonesWithinRadiusResult>;
   async zonesWithinRadius(
     arg1: string | (RadiusQueryOptions & CallContext),
     arg2?: RadiusQueryOptions | RequestOptions,
@@ -198,8 +219,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.analyzeCustomZones('my-namespace', { ... });
    */
-  async analyzeCustomZones(request: { lat: number; lon: number; customZones: unknown[] } & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async analyzeCustomZones(namespace: string, request: AnalyzeCustomZonesRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async analyzeCustomZones(
+    request: { lat: number; lon: number; customZones: unknown[] } & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async analyzeCustomZones(
+    namespace: string,
+    request: AnalyzeCustomZonesRequest,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async analyzeCustomZones(
     arg1: string | ({ lat: number; lon: number; customZones: unknown[] } & CallContext),
     arg2?: AnalyzeCustomZonesRequest | RequestOptions,
@@ -248,8 +276,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.nearestPois('my-namespace', { lat: 48.8, lon: 2.3 });
    */
-  async nearestPois(options: NearestQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<NearestPoisResult>;
-  async nearestPois(namespace: string, options: NearestQueryOptions, requestOptions?: RequestOptions): Promise<NearestPoisResult>;
+  async nearestPois(
+    options: NearestQueryOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<NearestPoisResult>;
+  async nearestPois(
+    namespace: string,
+    options: NearestQueryOptions,
+    requestOptions?: RequestOptions
+  ): Promise<NearestPoisResult>;
   async nearestPois(
     arg1: string | (NearestQueryOptions & CallContext),
     arg2?: NearestQueryOptions | RequestOptions,
@@ -300,8 +335,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.poisWithinRadius('my-namespace', { ... });
    */
-  async poisWithinRadius(options: RadiusQueryOptions & CallContext, requestOptions?: RequestOptions): Promise<PoisWithinRadiusResult>;
-  async poisWithinRadius(namespace: string, options: RadiusQueryOptions, requestOptions?: RequestOptions): Promise<PoisWithinRadiusResult>;
+  async poisWithinRadius(
+    options: RadiusQueryOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<PoisWithinRadiusResult>;
+  async poisWithinRadius(
+    namespace: string,
+    options: RadiusQueryOptions,
+    requestOptions?: RequestOptions
+  ): Promise<PoisWithinRadiusResult>;
   async poisWithinRadius(
     arg1: string | (RadiusQueryOptions & CallContext),
     arg2?: RadiusQueryOptions | RequestOptions,
@@ -353,8 +395,15 @@ export class SpatialResource {
    * // Explicit namespace (legacy)
    * const result = await client.spatial.analyzeCustomPois('my-namespace', { ... });
    */
-  async analyzeCustomPois(request: { lat: number; lon: number; customPois: unknown[] } & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
-  async analyzeCustomPois(namespace: string, request: AnalyzeCustomPoisRequest, requestOptions?: RequestOptions): Promise<Record<string, unknown>>;
+  async analyzeCustomPois(
+    request: { lat: number; lon: number; customPois: unknown[] } & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
+  async analyzeCustomPois(
+    namespace: string,
+    request: AnalyzeCustomPoisRequest,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>>;
   async analyzeCustomPois(
     arg1: string | ({ lat: number; lon: number; customPois: unknown[] } & CallContext),
     arg2?: AnalyzeCustomPoisRequest | RequestOptions,

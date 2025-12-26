@@ -23,7 +23,10 @@ export class AlertsResource {
    * const rules = await client.alerts.getRules('my-namespace');
    */
   async getRules(requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async getRules(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async getRules(
+    namespace: string,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async getRules(
     arg1?: string | RequestOptions,
     arg2?: RequestOptions
@@ -61,8 +64,15 @@ export class AlertsResource {
    * // Explicit namespace (legacy)
    * await client.alerts.saveRules('my-namespace', [{ ... }]);
    */
-  async saveRules(rules: Record<string, unknown>[], requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async saveRules(namespace: string, rules: Record<string, unknown>[], requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async saveRules(
+    rules: Record<string, unknown>[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async saveRules(
+    namespace: string,
+    rules: Record<string, unknown>[],
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async saveRules(
     arg1: string | Record<string, unknown>[],
     arg2?: Record<string, unknown>[] | RequestOptions,
@@ -108,8 +118,15 @@ export class AlertsResource {
    * // Explicit namespace (legacy)
    * const alerts = await client.alerts.list('my-namespace', { ... });
    */
-  async list(options: GetAlertsOptions & CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
-  async list(namespace: string, options: GetAlertsOptions, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(
+    options: GetAlertsOptions & CallContext,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
+  async list(
+    namespace: string,
+    options: GetAlertsOptions,
+    requestOptions?: RequestOptions
+  ): Promise<Record<string, unknown>[]>;
   async list(
     arg1: string | (GetAlertsOptions & CallContext),
     arg2?: GetAlertsOptions | RequestOptions,

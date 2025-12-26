@@ -109,7 +109,9 @@ describe('AssetsResource with context', () => {
         namespace: 'default-ns',
       });
 
-      const result = await client.assets.create('explicit-ns', 'AA:BB:CC:DD:EE:FF', { user_name: 'Test' });
+      const result = await client.assets.create('explicit-ns', 'AA:BB:CC:DD:EE:FF', {
+        user_name: 'Test',
+      });
 
       expect(result).toHaveProperty('user_name', 'Test');
     });
