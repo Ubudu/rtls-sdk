@@ -1,8 +1,9 @@
-import { BaseClient, type RequestOptions } from '../client/base';
+import type { BaseClient, RequestOptions } from '../client/base';
+import type { CallContext } from '../context';
 
 export interface CreateDashboardData {
   name: string;
-  namespace: string;
+  namespace?: string;
   data?: Record<string, unknown>;
 }
 
@@ -20,10 +21,36 @@ export interface SharePermissions {
 export class DashboardsResource {
   constructor(private client: BaseClient) {}
 
+  // ─── List Dashboards ────────────────────────────────────────────────────────
+
+  /**
+   * List all dashboards, optionally filtered by namespace.
+   * Uses client's default namespace if available.
+   *
+   * @example
+   * // Using default namespace
+   * const dashboards = await client.dashboards.list();
+   *
+   * // Explicit namespace (legacy)
+   * const dashboards = await client.dashboards.list('my-namespace');
+   */
+  async list(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async list(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
   async list(
-    namespace?: string,
-    requestOptions?: RequestOptions
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/dashboards', {
@@ -34,10 +61,25 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>[]>;
   }
 
+  // ─── List Created Dashboards ────────────────────────────────────────────────
+
+  async listCreated(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listCreated(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
   async listCreated(
-    namespace?: string,
-    requestOptions?: RequestOptions
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/dashboards/created', {
@@ -48,10 +90,25 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>[]>;
   }
 
+  // ─── List Shared Dashboards ─────────────────────────────────────────────────
+
+  async listShared(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listShared(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
   async listShared(
-    namespace?: string,
-    requestOptions?: RequestOptions
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/dashboards/shared', {
@@ -62,10 +119,25 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>[]>;
   }
 
+  // ─── List Selected Dashboards ───────────────────────────────────────────────
+
+  async listSelected(options?: CallContext, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
+  async listSelected(namespace: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>[]>;
   async listSelected(
-    namespace?: string,
-    requestOptions?: RequestOptions
+    arg1?: string | CallContext,
+    arg2?: RequestOptions
   ): Promise<Record<string, unknown>[]> {
+    let namespace: string | undefined;
+    let requestOptions: RequestOptions | undefined;
+
+    if (typeof arg1 === 'string') {
+      namespace = arg1;
+      requestOptions = arg2;
+    } else {
+      namespace = arg1?.namespace ?? this.client.namespace;
+      requestOptions = arg2;
+    }
+
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.GET('/dashboards/selected', {
@@ -75,6 +147,8 @@ export class DashboardsResource {
       requestOptions
     ) as unknown as Promise<Record<string, unknown>[]>;
   }
+
+  // ─── Get Dashboard ──────────────────────────────────────────────────────────
 
   async get(id: string, requestOptions?: RequestOptions): Promise<Record<string, unknown>> {
     return this.client['request'](
@@ -87,14 +161,24 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>>;
   }
 
+  // ─── Create Dashboard ───────────────────────────────────────────────────────
+
+  /**
+   * Create a new dashboard.
+   * Uses client's default namespace if not specified in data.
+   */
   async create(
     data: CreateDashboardData,
     requestOptions?: RequestOptions
   ): Promise<Record<string, unknown>> {
-    // Transform SDK field names to API field names
+    const namespace = data.namespace ?? this.client.namespace;
+    if (!namespace) {
+      throw new Error('Namespace is required for creating a dashboard');
+    }
+
     const apiData = {
       name: data.name,
-      application_namespace: data.namespace, // API expects application_namespace
+      application_namespace: namespace,
       data: data.data ?? {},
     };
 
@@ -107,6 +191,8 @@ export class DashboardsResource {
       requestOptions
     ) as unknown as Promise<Record<string, unknown>>;
   }
+
+  // ─── Update Dashboard ───────────────────────────────────────────────────────
 
   async update(
     id: string,
@@ -124,6 +210,8 @@ export class DashboardsResource {
     ) as unknown as Promise<Record<string, unknown>>;
   }
 
+  // ─── Delete Dashboard ───────────────────────────────────────────────────────
+
   async delete(id: string, requestOptions?: RequestOptions): Promise<void> {
     await this.client['request'](
       (fetchOpts) =>
@@ -135,21 +223,26 @@ export class DashboardsResource {
     );
   }
 
+  // ─── Share Dashboard ────────────────────────────────────────────────────────
+
   async share(
     id: string,
-    users: Array<{ username: string; permissions: SharePermissions }>,
+    email: string,
+    permissions: SharePermissions,
     requestOptions?: RequestOptions
   ): Promise<Record<string, unknown>> {
     return this.client['request'](
       (fetchOpts) =>
         this.client.raw.POST('/dashboards/{id}/share', {
           params: { path: { id } },
-          body: { users } as never,
+          body: { users: [{ username: email, permissions }] } as never,
           ...fetchOpts,
         }),
       requestOptions
     ) as unknown as Promise<Record<string, unknown>>;
   }
+
+  // ─── Unshare Dashboard ──────────────────────────────────────────────────────
 
   async unshare(
     id: string,
