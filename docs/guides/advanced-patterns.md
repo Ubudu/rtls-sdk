@@ -2,6 +2,15 @@
 
 This guide covers pagination, filtering, and advanced usage patterns with the Ubudu RTLS SDK.
 
+> **Note:** All examples assume you have configured a client with default context:
+> ```typescript
+> const client = createRtlsClient({
+>   apiKey: 'your-key',
+>   namespace: 'your-namespace',
+>   venueId: 123,
+> });
+> ```
+
 ## Pagination
 
 ### Async Iterator Pattern
@@ -9,8 +18,8 @@ This guide covers pagination, filtering, and advanced usage patterns with the Ub
 The SDK provides async iterators for memory-efficient data processing:
 
 ```typescript
-// Process items one at a time
-for await (const asset of client.assets.iterate('namespace')) {
+// Process items one at a time (uses default namespace)
+for await (const asset of client.assets.iterate()) {
   console.log(asset.user_name);
 
   // Can break early
@@ -21,11 +30,11 @@ for await (const asset of client.assets.iterate('namespace')) {
 ### Collecting All Results
 
 ```typescript
-// Get all assets as array
-const assets = await client.assets.getAll('namespace');
+// Get all assets as array (uses default namespace)
+const assets = await client.assets.getAll();
 
 // Equivalent to
-const assets = await client.assets.list('namespace');
+const assets2 = await client.assets.list();
 ```
 
 ### Batch Processing
@@ -42,7 +51,8 @@ async function processBatches<T>(
   }
 }
 
-const assets = await client.assets.list('namespace');
+// Uses default namespace
+const assets = await client.assets.list();
 await processBatches(assets, 10, async (batch) => {
   // Process batch of 10 assets
   console.log(`Processing ${batch.length} assets`);
@@ -112,7 +122,8 @@ const combined = combineFilters(
   filters.exists('last_seen', true)
 );
 
-const assets = await client.assets.list('namespace', combined);
+// Uses default namespace
+const assets = await client.assets.list(combined);
 ```
 
 ### Raw Filter Function
@@ -131,12 +142,13 @@ const customFilter = filter('custom_field', 'eq', 'value');
 ### Applying Filters
 
 ```typescript
-const forklifts = await client.assets.list('namespace', {
+// Uses default namespace
+const forklifts = await client.assets.list({
   ...filters.equals('user_type', 'forklift')
 });
 
-// With iteration
-for await (const asset of client.assets.iterate('namespace', {
+// With iteration (uses default namespace)
+for await (const asset of client.assets.iterate({
   ...filters.equals('user_type', 'forklift')
 })) {
   console.log(asset);
@@ -170,10 +182,10 @@ async function processInParallel<T, R>(
   return results;
 }
 
-// Process 5 assets at a time
-const assets = await client.assets.list('namespace');
+// Process 5 assets at a time (uses default namespace)
+const assets = await client.assets.list();
 await processInParallel(assets.slice(0, 20), 5, async (asset) => {
-  const history = await client.assets.getHistory('namespace', asset.user_udid, {
+  const history = await client.assets.getHistory(asset.user_udid, {
     startTime: Date.now() - 3600000,
     endTime: Date.now()
   });
@@ -206,8 +218,9 @@ class AssetCache {
 
 const cache = new AssetCache(60000); // 1 minute TTL
 
+// Uses default namespace
 const assets = await cache.get('all-assets', () =>
-  client.assets.list('namespace')
+  client.assets.list()
 );
 ```
 
@@ -252,7 +265,8 @@ const limiter = new RateLimiter(10); // 10 requests per second
 
 async function rateLimitedFetch() {
   await limiter.acquire();
-  return client.assets.list('namespace');
+  // Uses default namespace
+  return client.assets.list();
 }
 ```
 
@@ -268,9 +282,9 @@ async function* transformStream<T, R>(
   }
 }
 
-// Transform assets as they're fetched
+// Transform assets as they're fetched (uses default namespace)
 const names = transformStream(
-  client.assets.iterate('namespace'),
+  client.assets.iterate(),
   (asset) => asset.user_name
 );
 
@@ -294,9 +308,9 @@ async function aggregate<T, A>(
   return accumulator;
 }
 
-// Count assets by type
+// Count assets by type (uses default namespace)
 const typeCounts = await aggregate(
-  client.assets.iterate('namespace'),
+  client.assets.iterate(),
   (acc, asset) => {
     const type = asset.user_type || 'unknown';
     acc[type] = (acc[type] || 0) + 1;
@@ -311,11 +325,13 @@ console.log(typeCounts);
 ### Nested Resource Iteration
 
 ```typescript
-// Iterate through venues and their zones
-for await (const venue of client.venues.iterate('namespace')) {
+// Iterate through venues and their zones (uses default namespace)
+for await (const venue of client.venues.iterate()) {
   console.log(`Venue: ${venue.name}`);
 
-  for await (const zone of client.zones.iterate('namespace', venue.id)) {
+  // Create venue-scoped client for zone iteration
+  const venueClient = client.forVenue(venue.id);
+  for await (const zone of venueClient.zones.iterate()) {
     console.log(`  Zone: ${zone.name}`);
   }
 }
@@ -347,9 +363,9 @@ async function* resilientIterator<T>(
   }
 }
 
-// Use with recovery
+// Use with recovery (uses default namespace)
 for await (const asset of resilientIterator(
-  () => client.assets.iterate('namespace')
+  () => client.assets.iterate()
 )) {
   console.log(asset);
 }
@@ -388,7 +404,69 @@ const query = new QueryBuilder()
   .contains('user_name', 'warehouse')
   .build();
 
-const assets = await client.assets.list('namespace', query);
+// Uses default namespace
+const assets = await client.assets.list(query);
+```
+
+## Context Patterns
+
+### Multi-tenant Applications
+
+```typescript
+// Base client with shared configuration
+const baseClient = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
+});
+
+// Create tenant-specific clients
+function getClientForTenant(tenantNamespace: string) {
+  return baseClient.forNamespace(tenantNamespace);
+}
+
+const tenant1Client = getClientForTenant('tenant-1');
+const tenant2Client = getClientForTenant('tenant-2');
+
+// Each client uses its own namespace
+const tenant1Assets = await tenant1Client.assets.list();
+const tenant2Assets = await tenant2Client.assets.list();
+```
+
+### Parallel Multi-venue Operations
+
+```typescript
+// Work with multiple venues in parallel
+const venueIds = [123, 456, 789];
+
+const venueClients = venueIds.map(id => client.forVenue(id));
+
+const allZones = await Promise.all(
+  venueClients.map(c => c.zones.listAsArray())
+);
+
+console.log(`Total zones across ${venueIds.length} venues: ${allZones.flat().length}`);
+```
+
+### Context-aware Utility Functions
+
+```typescript
+// Utility that works with any scoped client
+async function getVenueStats(scopedClient: RtlsClient) {
+  const [zones, pois, assets] = await Promise.all([
+    scopedClient.zones.listAsArray(),
+    scopedClient.venues.listPoisAsArray(),
+    scopedClient.assets.list(),
+  ]);
+
+  return {
+    zoneCount: zones.length,
+    poiCount: pois.length,
+    assetCount: assets.length,
+  };
+}
+
+// Use with scoped clients
+const venue1Stats = await getVenueStats(client.forVenue(123));
+const venue2Stats = await getVenueStats(client.forVenue(456));
 ```
 
 ## See Also
@@ -396,3 +474,4 @@ const assets = await client.assets.list('namespace', query);
 - [Getting Started](./getting-started.md)
 - [Asset Tracking](./asset-tracking.md)
 - [Error Handling](./error-handling.md)
+- [Migration Guide](./migration-v2.md)

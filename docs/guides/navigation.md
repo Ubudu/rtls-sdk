@@ -14,13 +14,15 @@ The navigation system consists of:
 
 | Operation | Method | Returns |
 |-----------|--------|---------|
-| List POIs (GeoJSON) | `client.venues.listPois(ns, venueId)` | `POIFeatureCollection` |
-| List POIs (array) | `client.venues.listPoisAsArray(ns, venueId)` | `POI[]` |
-| List paths (GeoJSON) | `client.venues.listPaths(ns, venueId)` | `PathFeatureCollection` |
-| List path nodes | `client.venues.listPathNodes(ns, venueId)` | `PathNode[]` |
-| List path segments | `client.venues.listPathSegments(ns, venueId)` | `PathSegment[]` |
-| Nearest POIs | `client.spatial.nearestPois(ns, opts)` | `NearestPoisResult` |
-| POIs in radius | `client.spatial.poisWithinRadius(ns, opts)` | `PoisWithinRadiusResult` |
+| List POIs (GeoJSON) | `client.venues.listPois()` | `POIFeatureCollection` |
+| List POIs (array) | `client.venues.listPoisAsArray()` | `POI[]` |
+| List paths (GeoJSON) | `client.venues.listPaths()` | `PathFeatureCollection` |
+| List path nodes | `client.venues.listPathNodes()` | `PathNode[]` |
+| List path segments | `client.venues.listPathSegments()` | `PathSegment[]` |
+| Nearest POIs | `client.spatial.nearestPois(opts)` | `NearestPoisResult` |
+| POIs in radius | `client.spatial.poisWithinRadius(opts)` | `PoisWithinRadiusResult` |
+
+> **Note:** All methods use the default namespace and venueId from client configuration. You can override per-call with `{ namespace: 'other', venueId: 456 }` or use explicit arguments for backward compatibility.
 
 ## Points of Interest (POIs)
 
@@ -29,9 +31,15 @@ The navigation system consists of:
 ```typescript
 import { createRtlsClient, type POIFeatureCollection } from '@ubudu/rtls-sdk';
 
-const client = createRtlsClient({ apiKey: 'your-key' });
+// Configure with default namespace and venue
+const client = createRtlsClient({
+  apiKey: 'your-key',
+  namespace: 'your-namespace',
+  venueId: 123,
+});
 
-const geoJson: POIFeatureCollection = await client.venues.listPois('namespace', venueId);
+// Uses default namespace and venueId
+const geoJson: POIFeatureCollection = await client.venues.listPois();
 
 geoJson.features.forEach(feature => {
   console.log(`POI: ${feature.properties.name}`);
@@ -45,7 +53,8 @@ geoJson.features.forEach(feature => {
 ```typescript
 import { type POI } from '@ubudu/rtls-sdk';
 
-const pois: POI[] = await client.venues.listPoisAsArray('namespace', venueId);
+// Uses default namespace and venueId
+const pois: POI[] = await client.venues.listPoisAsArray();
 
 pois.forEach(poi => {
   console.log(`${poi.name} at (${poi.lat}, ${poi.lng})`);
@@ -57,7 +66,8 @@ pois.forEach(poi => {
 
 ```typescript
 // Get POIs for a specific floor/map
-const mapPois = await client.venues.listMapPoisAsArray('namespace', venueId, mapId);
+// Uses default namespace and venueId, with specific mapId
+const mapPois = await client.venues.listMapPoisAsArray({ mapId: 456 });
 ```
 
 ## Spatial POI Queries
@@ -65,7 +75,8 @@ const mapPois = await client.venues.listMapPoisAsArray('namespace', venueId, map
 ### Find Nearest POIs
 
 ```typescript
-const result = await client.spatial.nearestPois('namespace', {
+// Uses default namespace
+const result = await client.spatial.nearestPois({
   lat: 48.8566,
   lon: 2.3522,
   limit: 5,
@@ -82,7 +93,8 @@ result.pois.forEach(poi => {
 ### Find POIs Within Radius
 
 ```typescript
-const result = await client.spatial.poisWithinRadius('namespace', {
+// Uses default namespace
+const result = await client.spatial.poisWithinRadius({
   lat: 48.8566,
   lon: 2.3522,
   radiusMeters: 100,
@@ -102,7 +114,8 @@ result.pois.forEach(poi => {
 The paths endpoint returns a GeoJSON FeatureCollection containing both path nodes (Points) and path segments (LineStrings):
 
 ```typescript
-const geoJson = await client.venues.listPaths('namespace', venueId);
+// Uses default namespace and venueId
+const geoJson = await client.venues.listPaths();
 
 const nodes = geoJson.features.filter(f => f.properties.type === 'path_node');
 const segments = geoJson.features.filter(f => f.properties.type === 'path_segment');
@@ -115,7 +128,8 @@ console.log(`Nodes: ${nodes.length}, Segments: ${segments.length}`);
 ```typescript
 import { type PathNode } from '@ubudu/rtls-sdk';
 
-const nodes: PathNode[] = await client.venues.listPathNodes('namespace', venueId);
+// Uses default namespace and venueId
+const nodes: PathNode[] = await client.venues.listPathNodes();
 
 nodes.forEach(node => {
   console.log(`Node ${node.id}: ${node.name}`);
@@ -131,7 +145,8 @@ nodes.forEach(node => {
 ```typescript
 import { type PathSegment } from '@ubudu/rtls-sdk';
 
-const segments: PathSegment[] = await client.venues.listPathSegments('namespace', venueId);
+// Uses default namespace and venueId
+const segments: PathSegment[] = await client.venues.listPathSegments();
 
 segments.forEach(segment => {
   console.log(`Segment ${segment.id}`);
@@ -149,7 +164,8 @@ The navigation API provides route calculation between points.
 ### Shortest Path
 
 ```typescript
-const route = await client.navigation.shortestPath('namespace', {
+// Uses default namespace
+const route = await client.navigation.shortestPath({
   from: { lat: 48.8566, lon: 2.3522 },
   to: { lat: 48.8584, lon: 2.2945 },
   level: 0 // Optional: starting level
@@ -168,7 +184,8 @@ route.path.forEach((node, i) => {
 For wheelchair-accessible routing that avoids stairs:
 
 ```typescript
-const route = await client.navigation.accessiblePath('namespace', {
+// Uses default namespace
+const route = await client.navigation.accessiblePath({
   from: { lat: 48.8566, lon: 2.3522 },
   to: { lat: 48.8584, lon: 2.2945 }
 });
@@ -181,7 +198,8 @@ const route = await client.navigation.accessiblePath('namespace', {
 Plan a route visiting multiple waypoints:
 
 ```typescript
-const route = await client.navigation.multiStop('namespace', {
+// Uses default namespace
+const route = await client.navigation.multiStop({
   origin: { lat: 48.8566, lon: 2.3522 },
   destinations: [
     { lat: 48.8570, lon: 2.3530 },
@@ -203,9 +221,9 @@ import {
   extractPathSegmentsFromGeoJSON
 } from '@ubudu/rtls-sdk';
 
-// Fetch GeoJSON
-const poisGeoJson = await client.venues.listPois('namespace', venueId);
-const pathsGeoJson = await client.venues.listPaths('namespace', venueId);
+// Fetch GeoJSON (uses default namespace and venueId)
+const poisGeoJson = await client.venues.listPois();
+const pathsGeoJson = await client.venues.listPaths();
 
 // Extract as arrays
 const pois = extractPoisFromGeoJSON(poisGeoJson);
@@ -218,12 +236,13 @@ const pathSegments = extractPathSegmentsFromGeoJSON(pathsGeoJson);
 ### Find Nearest POI to an Asset
 
 ```typescript
-async function findNearestPoi(namespace: string, macAddress: string) {
+// Uses default namespace from client
+async function findNearestPoi(macAddress: string) {
   // Get asset's current position
-  const position = await client.positions.getCached(namespace, macAddress);
+  const position = await client.positions.getCached(macAddress);
 
   // Find nearest POI
-  const result = await client.spatial.nearestPois(namespace, {
+  const result = await client.spatial.nearestPois({
     lat: position.lat,
     lon: position.lon,
     limit: 1
@@ -236,15 +255,16 @@ async function findNearestPoi(namespace: string, macAddress: string) {
 ### Navigate to POI
 
 ```typescript
-async function navigateToPoi(namespace: string, fromLat: number, fromLon: number, poiId: number) {
+// Uses default namespace and venueId from client
+async function navigateToPoi(fromLat: number, fromLon: number, poiId: number) {
   // Get POI details
-  const pois = await client.venues.listPoisAsArray(namespace, venueId);
+  const pois = await client.venues.listPoisAsArray();
   const poi = pois.find(p => p.id === poiId);
 
   if (!poi) throw new Error('POI not found');
 
   // Calculate route
-  const route = await client.navigation.shortestPath(namespace, {
+  const route = await client.navigation.shortestPath({
     from: { lat: fromLat, lon: fromLon },
     to: { lat: poi.lat, lon: poi.lng }
   });
@@ -256,9 +276,10 @@ async function navigateToPoi(namespace: string, fromLat: number, fromLon: number
 ### Build Navigation Graph
 
 ```typescript
-async function buildNavigationGraph(namespace: string, venueId: number) {
-  const nodes = await client.venues.listPathNodes(namespace, venueId);
-  const segments = await client.venues.listPathSegments(namespace, venueId);
+// Uses default namespace and venueId from client
+async function buildNavigationGraph() {
+  const nodes = await client.venues.listPathNodes();
+  const segments = await client.venues.listPathSegments();
 
   // Create adjacency list
   const graph = new Map<number, { nodeId: number; weight: number }[]>();
@@ -284,19 +305,34 @@ async function buildNavigationGraph(namespace: string, venueId: number) {
 }
 ```
 
+### Multi-venue Navigation
+
+```typescript
+// Create venue-scoped clients
+const venue1Client = client.forVenue(123);
+const venue2Client = client.forVenue(456);
+
+// Get POIs from different venues
+const venue1Pois = await venue1Client.venues.listPoisAsArray();
+const venue2Pois = await venue2Client.venues.listPoisAsArray();
+```
+
 ## Error Handling
 
 ```typescript
-import { RtlsError, NotFoundError } from '@ubudu/rtls-sdk';
+import { RtlsError, NotFoundError, ContextError } from '@ubudu/rtls-sdk';
 
 try {
-  const route = await client.navigation.shortestPath('namespace', {
+  // Uses default namespace
+  const route = await client.navigation.shortestPath({
     from: { lat: 0, lon: 0 },
     to: { lat: 1, lon: 1 }
   });
 } catch (error) {
   if (error instanceof NotFoundError) {
     console.log('No route found between points');
+  } else if (error instanceof ContextError) {
+    console.log(`Missing context: ${error.field}`);
   } else if (error instanceof RtlsError) {
     console.log(`Navigation error: ${error.message}`);
   }
@@ -308,3 +344,4 @@ try {
 - [Getting Started](./getting-started.md)
 - [Zone & Geofencing](./zone-geofencing.md)
 - [Asset Tracking](./asset-tracking.md)
+- [Migration Guide](./migration-v2.md)

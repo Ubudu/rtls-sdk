@@ -10,33 +10,40 @@ Asset tracking is the core functionality of the RTLS system. Assets represent ph
 
 | Operation | Method | Returns |
 |-----------|--------|---------|
-| List assets | `client.assets.list(namespace)` | `Asset[]` |
-| Get single asset | `client.assets.get(namespace, mac)` | `Asset` |
-| Create asset | `client.assets.create(namespace, mac, data)` | `Asset` |
-| Update asset | `client.assets.update(namespace, mac, updates)` | `Asset` |
-| Delete asset | `client.assets.delete(namespace, mac)` | `void` |
-| Get positions | `client.positions.listCached(namespace)` | `Position[]` |
-| Get history | `client.assets.getHistory(namespace, mac, range)` | `Position[]` |
+| List assets | `client.assets.list()` | `Asset[]` |
+| Get single asset | `client.assets.get(mac)` | `Asset` |
+| Create asset | `client.assets.create(mac, data)` | `Asset` |
+| Update asset | `client.assets.update(mac, updates)` | `Asset` |
+| Delete asset | `client.assets.delete(mac)` | `void` |
+| Get positions | `client.positions.listCached()` | `Position[]` |
+| Get history | `client.assets.getHistory(mac, range)` | `Position[]` |
+
+> **Note:** All methods use the default namespace from client configuration. You can override per-call with `{ namespace: 'other' }` or use explicit namespace as first argument for backward compatibility.
 
 ## Listing Assets
 
 ### TypeScript
 
 ```typescript
-import { createRtlsClient, type Asset } from '@ubudu/rtls-sdk';
+import { createRtlsClient, type Asset, filters } from '@ubudu/rtls-sdk';
 
-const client = createRtlsClient({ apiKey: 'your-key' });
+// Configure with default namespace
+const client = createRtlsClient({
+  apiKey: 'your-key',
+  namespace: 'your-namespace',
+});
 
-// List all assets
-const assets = await client.assets.list('your-namespace');
+// List all assets (uses default namespace)
+const assets = await client.assets.list();
 console.log(`Found ${assets.length} assets`);
 
 // With filtering
-import { filters } from '@ubudu/rtls-sdk';
-
-const forklifts = await client.assets.list('namespace', {
+const forklifts = await client.assets.list({
   ...filters.equals('user_type', 'forklift')
 });
+
+// Override namespace for specific call
+const otherAssets = await client.assets.list({ namespace: 'other-ns' });
 ```
 
 ### JavaScript
@@ -44,9 +51,12 @@ const forklifts = await client.assets.list('namespace', {
 ```javascript
 import { createRtlsClient, filters } from '@ubudu/rtls-sdk';
 
-const client = createRtlsClient({ apiKey: 'your-key' });
+const client = createRtlsClient({
+  apiKey: 'your-key',
+  namespace: 'your-namespace',
+});
 
-const assets = await client.assets.list('your-namespace');
+const assets = await client.assets.list();
 console.log(`Found ${assets.length} assets`);
 ```
 
@@ -55,7 +65,8 @@ console.log(`Found ${assets.length} assets`);
 Cached positions provide the last known location of all active assets.
 
 ```typescript
-const positions = await client.positions.listCached('namespace');
+// Uses default namespace
+const positions = await client.positions.listCached();
 
 for (const pos of positions) {
   console.log(`${pos.user_udid} at (${pos.lat}, ${pos.lon})`);
@@ -70,7 +81,8 @@ Retrieve historical positions for analysis and reporting.
 const endTime = Date.now();
 const startTime = endTime - 24 * 60 * 60 * 1000; // 24 hours ago
 
-const history = await client.assets.getHistory('namespace', 'AA:BB:CC:DD:EE:FF', {
+// Uses default namespace
+const history = await client.assets.getHistory('AA:BB:CC:DD:EE:FF', {
   startTime,
   endTime
 });
@@ -83,7 +95,8 @@ console.log(`Found ${history.length} position records`);
 For memory-efficient processing of large asset lists:
 
 ```typescript
-for await (const asset of client.assets.iterate('namespace')) {
+// Uses default namespace
+for await (const asset of client.assets.iterate()) {
   // Process each asset
   console.log(asset.user_name);
 }
@@ -94,7 +107,8 @@ for await (const asset of client.assets.iterate('namespace')) {
 Get aggregated statistics for your fleet:
 
 ```typescript
-const stats = await client.assets.getStats('namespace', {
+// Uses default namespace
+const stats = await client.assets.getStats({
   startTime: Date.now() - 86400000,
   endTime: Date.now()
 });
@@ -103,7 +117,8 @@ const stats = await client.assets.getStats('namespace', {
 ## Creating Assets
 
 ```typescript
-const newAsset = await client.assets.create('namespace', 'AA:BB:CC:DD:EE:FF', {
+// Uses default namespace
+const newAsset = await client.assets.create('AA:BB:CC:DD:EE:FF', {
   user_name: 'Forklift 1',
   user_type: 'forklift',
   color: '#FF5500',
@@ -115,7 +130,8 @@ const newAsset = await client.assets.create('namespace', 'AA:BB:CC:DD:EE:FF', {
 ## Updating Assets
 
 ```typescript
-const updated = await client.assets.update('namespace', 'AA:BB:CC:DD:EE:FF', {
+// Uses default namespace
+const updated = await client.assets.update('AA:BB:CC:DD:EE:FF', {
   user_name: 'Forklift 1 - Updated',
   tags: ['warehouse', 'section-b']
 });
@@ -124,7 +140,8 @@ const updated = await client.assets.update('namespace', 'AA:BB:CC:DD:EE:FF', {
 ## Deleting Assets
 
 ```typescript
-await client.assets.delete('namespace', 'AA:BB:CC:DD:EE:FF');
+// Uses default namespace
+await client.assets.delete('AA:BB:CC:DD:EE:FF');
 ```
 
 ## Batch Operations
@@ -132,14 +149,15 @@ await client.assets.delete('namespace', 'AA:BB:CC:DD:EE:FF');
 For bulk operations:
 
 ```typescript
+// Uses default namespace
 // Create/update multiple assets
-await client.assets.batchSave('namespace', [
+await client.assets.batchSave([
   { user_udid: 'AA:BB:CC:DD:EE:01', user_name: 'Asset 1' },
   { user_udid: 'AA:BB:CC:DD:EE:02', user_name: 'Asset 2' },
 ]);
 
 // Delete multiple assets
-await client.assets.batchDelete('namespace', [
+await client.assets.batchDelete([
   'AA:BB:CC:DD:EE:01',
   'AA:BB:CC:DD:EE:02'
 ]);
@@ -150,11 +168,12 @@ await client.assets.batchDelete('namespace', [
 ### Tracking Active Assets
 
 ```typescript
-async function getActiveAssets(namespace: string) {
-  const positions = await client.positions.listCached(namespace);
+// Uses default namespace from client
+async function getActiveAssets() {
+  const positions = await client.positions.listCached();
   const activeIds = new Set(positions.map(p => p.user_udid));
 
-  const assets = await client.assets.list(namespace);
+  const assets = await client.assets.list();
   return assets.filter(a => activeIds.has(a.user_udid));
 }
 ```
@@ -164,9 +183,24 @@ async function getActiveAssets(namespace: string) {
 ```typescript
 import { filters } from '@ubudu/rtls-sdk';
 
-const forklifts = await client.assets.list('namespace', {
+// Uses default namespace
+const forklifts = await client.assets.list({
   ...filters.equals('user_type', 'forklift')
 });
+```
+
+### Multi-venue Asset Tracking
+
+```typescript
+// Create venue-scoped clients
+const venue1Client = client.forVenue(123);
+const venue2Client = client.forVenue(456);
+
+// Track assets in parallel
+const [venue1Assets, venue2Assets] = await Promise.all([
+  venue1Client.assets.list(),
+  venue2Client.assets.list(),
+]);
 ```
 
 ### Finding Assets in a Zone
@@ -176,13 +210,15 @@ See the [Zone & Geofencing Guide](./zone-geofencing.md) for spatial queries.
 ## Error Handling
 
 ```typescript
-import { NotFoundError, RtlsError } from '@ubudu/rtls-sdk';
+import { NotFoundError, ContextError, RtlsError } from '@ubudu/rtls-sdk';
 
 try {
-  const asset = await client.assets.get('namespace', 'invalid-mac');
+  const asset = await client.assets.get('invalid-mac');
 } catch (error) {
   if (error instanceof NotFoundError) {
     console.log('Asset not found');
+  } else if (error instanceof ContextError) {
+    console.log(`Missing context: ${error.field}`);
   } else if (error instanceof RtlsError) {
     console.log(`API error: ${error.status} - ${error.message}`);
   }
@@ -194,3 +230,4 @@ try {
 - [Getting Started](./getting-started.md)
 - [Error Handling](./error-handling.md)
 - [Pagination & Filtering](./advanced-patterns.md)
+- [Migration Guide](./migration-v2.md)

@@ -27,25 +27,34 @@ npm install @ubudu/rtls-sdk
 ```typescript
 import { createRtlsClient } from '@ubudu/rtls-sdk';
 
+// Configure once with default context
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,
+  namespace: 'my-namespace',  // Default for all calls
+  venueId: 123,               // Default venue (optional)
 });
 
 // Check API health
 const health = await client.health();
 
-// List assets
-const assets = await client.assets.list('my-namespace');
+// List assets (uses default namespace)
+const assets = await client.assets.list();
 
 // Get real-time positions
-const positions = await client.positions.listCached('my-namespace');
+const positions = await client.positions.listCached();
+
+// Override namespace for specific call
+const otherAssets = await client.assets.list({ namespace: 'other-ns' });
 
 // Spatial query
-const nearbyZones = await client.spatial.nearestZones('my-namespace', {
+const nearbyZones = await client.spatial.nearestZones({
   lat: 48.8566,
   lon: 2.3522,
   limit: 5,
 });
+
+// Legacy syntax still works
+const legacyAssets = await client.assets.list('explicit-namespace');
 ```
 
 ## Documentation
@@ -56,6 +65,7 @@ const nearbyZones = await client.spatial.nearestZones('my-namespace', {
 - [Navigation](docs/guides/navigation.md) - POIs, paths, indoor routing
 - [Error Handling](docs/guides/error-handling.md) - Error types and retry strategies
 - [Advanced Patterns](docs/guides/advanced-patterns.md) - Pagination, filtering, patterns
+- [Migration Guide v2](docs/guides/migration-v2.md) - Migrating to default context
 - [API Reference](docs/api/README.md) - Complete API documentation
 
 ## Examples
@@ -178,7 +188,37 @@ const client = createRtlsClient({
   apiKey: 'your-api-key',           // Required: API key
   baseUrl: 'https://rtls.ubudu.com/api', // Optional: API base URL
   timeoutMs: 30000,                  // Optional: Request timeout (default: 30s)
+  namespace: 'my-namespace',         // Optional: Default namespace
+  venueId: 123,                      // Optional: Default venue ID
+  mapId: 456,                        // Optional: Default map ID
+  level: 0,                          // Optional: Default floor level
 });
+```
+
+## Default Context
+
+Configure defaults once and use throughout your application:
+
+```typescript
+// Create client with defaults
+const client = createRtlsClient({
+  apiKey: 'your-api-key',
+  namespace: 'production',
+  venueId: 123,
+});
+
+// All calls use defaults - no namespace parameter needed
+const assets = await client.assets.list();
+const zones = await client.zones.list();
+
+// Override for specific calls
+const stagingAssets = await client.assets.list({ namespace: 'staging' });
+
+// Change defaults at runtime
+client.setNamespace('other-namespace').setVenue(456);
+
+// Create scoped clients (immutable)
+const venue2Client = client.forVenue(789);
 ```
 
 ## Requirements
@@ -198,6 +238,7 @@ For contributors and maintainers, see [CLAUDE.md](CLAUDE.md) for development gui
 | Done | [WP2: API Validation](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | Live API testing (68 tasks) |
 | Done | [WP3: SDK Alignment](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | v1.0.0 breaking changes (28 tasks) |
 | Done | [WP4: SDK Documentation](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | Examples & guides (52 tasks) |
+| Done | [WP5: SDK Ergonomics](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | Default context & ergonomics (33 tasks) |
 
 ### Quick Start (Development)
 
