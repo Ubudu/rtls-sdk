@@ -29,7 +29,7 @@ In the Profile Settings page:
 
 1. Click **COPY APP NAMESPACE** to copy your Application Namespace
 2. In the **API Keys** section, select an expiration period and click **CREATE NEW KEY**
-3. Copy the generated API key (it will only be shown once)
+3. Click the eye icon to view and copy your API key (requires being logged in with the appropriate role)
 
 ![Profile Settings Page](./images/rtls-profile-settings.png)
 
