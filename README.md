@@ -278,12 +278,12 @@ const venue2Client = client.forVenue(789);
 
 ### Browser Support
 
-| Browser | Minimum Version |
-|---------|-----------------|
-| Chrome | 94+ |
-| Firefox | 93+ |
-| Safari | 15+ |
-| Edge | 94+ |
+| Browser | Minimum Version | Released |
+|---------|-----------------|----------|
+| Chrome | 94+ | Sep 2021 |
+| Firefox | 93+ | Oct 2021 |
+| Safari | 15+ | Sep 2021 |
+| Edge | 94+ | Sep 2021 |
 
 ## Development
 
