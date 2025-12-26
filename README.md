@@ -7,14 +7,14 @@ Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs
 
 ## Features
 
+- Works with JavaScript and TypeScript
+- ESM, CommonJS, and browser builds included
 - Full TypeScript support with auto-generated types from OpenAPI spec
-- Works in Node.js (>=18) and modern browsers
-- Simple, ergonomic API design
+- Simple, ergonomic API with default context
 - Built-in async iterators for memory-efficient processing
-- Type-safe filter DSL
+- Filter DSL for building queries
 - Comprehensive error handling with typed error classes
 - Request timeout and cancellation support
-- Tree-shakeable ESM and CJS builds
 
 ## Installation
 
@@ -24,18 +24,16 @@ npm install @ubudu/rtls-sdk
 
 ## Quick Start
 
-```typescript
+### JavaScript (ESM)
+
+```javascript
 import { createRtlsClient } from '@ubudu/rtls-sdk';
 
 // Configure once with default context
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,
-  namespace: 'my-namespace',  // Default for all calls
-  venueId: 123,               // Default venue (optional)
+  namespace: 'my-namespace',
 });
-
-// Check API health
-const health = await client.health();
 
 // List assets (uses default namespace)
 const assets = await client.assets.list();
@@ -43,18 +41,43 @@ const assets = await client.assets.list();
 // Get real-time positions
 const positions = await client.positions.listCached();
 
-// Override namespace for specific call
-const otherAssets = await client.assets.list({ namespace: 'other-ns' });
+// Set venue for venue-scoped calls
+client.setVenue(123);
+const zones = await client.zones.list();
+```
 
-// Spatial query
+### TypeScript
+
+```typescript
+import { createRtlsClient, Asset, Position } from '@ubudu/rtls-sdk';
+
+const client = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
+  namespace: 'my-namespace',
+  venueId: 123,
+});
+
+// Full type safety
+const assets: Asset[] = await client.assets.list();
+const positions: Position[] = await client.positions.listCached();
+
+// Spatial queries
 const nearbyZones = await client.spatial.nearestZones({
   lat: 48.8566,
   lon: 2.3522,
   limit: 5,
 });
+```
 
-// Legacy syntax still works
-const legacyAssets = await client.assets.list('explicit-namespace');
+### CommonJS
+
+```javascript
+const { createRtlsClient } = require('@ubudu/rtls-sdk');
+
+const client = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
+  namespace: 'my-namespace',
+});
 ```
 
 ## Documentation
@@ -70,23 +93,38 @@ const legacyAssets = await client.assets.list('explicit-namespace');
 
 ## Examples
 
-Run the examples in the [examples/](examples/) directory:
+Both JavaScript and TypeScript examples are available in [examples/](examples/):
 
 ```bash
 cd examples
 npm install
 cp .env.example .env  # Add your credentials
+```
 
-# TypeScript examples
+### JavaScript Examples
+
+```bash
+npm run js:getting-started     # Basic SDK setup
+npm run js:asset-tracking      # Assets and positions
+npm run js:zone-geofencing     # Zones and spatial queries
+npm run js:navigation          # POIs and navigation paths
+npm run js:error-handling      # Error types and retry
+npm run js:pagination          # Iterators and filters
+npm run js:default-context     # Default context patterns
+npm run js:all                 # Run all JS examples
+```
+
+### TypeScript Examples
+
+```bash
 npm run ts:getting-started
 npm run ts:asset-tracking
 npm run ts:zone-geofencing
 npm run ts:navigation
 npm run ts:error-handling
 npm run ts:pagination
-
-# JavaScript examples
-npm run js:all
+npm run ts:default-context
+npm run ts:all                 # Run all TS examples
 ```
 
 ## Resources
@@ -106,17 +144,22 @@ The SDK provides access to these API resources:
 
 ## Filtering
 
-Build type-safe filters using the filter helpers:
+Build filters using the filter helpers:
 
-```typescript
-import { filters, combineFilters } from '@ubudu/rtls-sdk';
+```javascript
+import { createRtlsClient, filters, combineFilters } from '@ubudu/rtls-sdk';
+
+const client = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
+  namespace: 'my-namespace',
+});
 
 const query = combineFilters(
   filters.equals('user_type', 'forklift'),
   filters.contains('user_name', 'warehouse'),
 );
 
-const assets = await client.assets.list('namespace', query);
+const assets = await client.assets.list(query);
 ```
 
 ### Available Filter Operators
@@ -142,11 +185,12 @@ const assets = await client.assets.list('namespace', query);
 
 Memory-efficient processing of large datasets:
 
-```typescript
-for await (const asset of client.assets.iterate('namespace')) {
+```javascript
+// Uses default namespace from client
+for await (const asset of client.assets.iterate()) {
   console.log(asset.user_name);
 
-  // Can break early
+  // Can break early without fetching all data
   if (someCondition) break;
 }
 ```
@@ -155,26 +199,29 @@ for await (const asset of client.assets.iterate('namespace')) {
 
 The SDK provides typed errors for different failure scenarios:
 
-```typescript
+```javascript
 import {
+  createRtlsClient,
   RtlsError,
   AuthenticationError,
   NotFoundError,
-  ValidationError,
-  RateLimitError,
-  TimeoutError,
-  NetworkError,
+  ContextError,
 } from '@ubudu/rtls-sdk';
 
+const client = createRtlsClient({
+  apiKey: process.env.RTLS_API_KEY,
+  namespace: 'my-namespace',
+});
+
 try {
-  await client.assets.get('namespace', 'invalid-mac');
+  await client.assets.get('invalid-mac');
 } catch (error) {
   if (error instanceof NotFoundError) {
     console.log('Asset not found');
   } else if (error instanceof AuthenticationError) {
     console.log('Check your API key');
-  } else if (error instanceof RateLimitError) {
-    console.log(`Retry after ${error.retryAfter}ms`);
+  } else if (error instanceof ContextError) {
+    console.log(`Missing: ${error.field} - ${error.suggestion}`);
   } else if (error instanceof RtlsError) {
     console.log(`API error: ${error.status} - ${error.message}`);
   }
@@ -183,7 +230,7 @@ try {
 
 ## Configuration Options
 
-```typescript
+```javascript
 const client = createRtlsClient({
   apiKey: 'your-api-key',           // Required: API key
   baseUrl: 'https://rtls.ubudu.com/api', // Optional: API base URL
@@ -199,23 +246,26 @@ const client = createRtlsClient({
 
 Configure defaults once and use throughout your application:
 
-```typescript
+```javascript
 // Create client with defaults
 const client = createRtlsClient({
   apiKey: 'your-api-key',
   namespace: 'production',
-  venueId: 123,
 });
 
-// All calls use defaults - no namespace parameter needed
+// Discover and set venue at runtime
+const venues = await client.venues.list();
+client.setVenue(venues[0].id);
+
+// All calls use defaults - no parameters needed
 const assets = await client.assets.list();
 const zones = await client.zones.list();
 
 // Override for specific calls
 const stagingAssets = await client.assets.list({ namespace: 'staging' });
 
-// Change defaults at runtime
-client.setNamespace('other-namespace').setVenue(456);
+// Chainable setters
+client.setNamespace('other').setVenue(456).setLevel(0);
 
 // Create scoped clients (immutable)
 const venue2Client = client.forVenue(789);
@@ -223,8 +273,9 @@ const venue2Client = client.forVenue(789);
 
 ## Requirements
 
-- Node.js >= 18
-- TypeScript >= 5.0 (for TypeScript users)
+- Node.js >= 18 (JavaScript or TypeScript)
+- Modern browsers with ES2022 support
+- TypeScript >= 5.0 (optional, for type checking)
 
 ## Development
 
