@@ -15,7 +15,6 @@ import {
   createPositionMessage,
   createZoneEntryMessage,
   createAlertMessage,
-  createSubscriptionConfirmation,
 } from './mocks/fixtures';
 
 describe('RtlsWebSocketSubscriber', () => {

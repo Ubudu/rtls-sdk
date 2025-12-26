@@ -85,7 +85,7 @@ docs/
 | 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment for v1.0.0 (28 tasks, 11 phases) |
 | 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Examples & documentation (52 tasks, 12 phases) |
 | 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics (33 tasks, 10 phases) |
-| 6 | [06_WEBSOCKET_CLIENT_WORKPACKAGE.md](docs/development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | NOT STARTED | WebSocket real-time client (67 tasks, 12 phases) |
+| 6 | [06_WEBSOCKET_CLIENT_WORKPACKAGE.md](docs/development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | COMPLETED | WebSocket real-time client (67 tasks, 12 phases) |
 
 #### Work Package #6 Reference Materials
 

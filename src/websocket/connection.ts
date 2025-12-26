@@ -163,7 +163,7 @@ export abstract class BaseWebSocketConnection<
           this.ws = new WebSocket(url);
         } else {
           // Node.js environment - require ws package
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
           const WebSocketNode = require('ws');
           this.ws = new WebSocketNode(url, {
             handshakeTimeout: this.config.connectionTimeout,

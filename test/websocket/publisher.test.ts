@@ -2,7 +2,7 @@
  * RtlsWebSocketPublisher Unit Tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { RtlsWebSocketPublisher, POSITION_ORIGIN } from '../../src/websocket';
 import {
   MockWebSocket,
