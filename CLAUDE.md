@@ -85,12 +85,24 @@ docs/
 | 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment for v1.0.0 (28 tasks, 11 phases) |
 | 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Examples & documentation (52 tasks, 12 phases) |
 | 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics (33 tasks, 10 phases) |
+| 6 | [06_WEBSOCKET_CLIENT_WORKPACKAGE.md](docs/development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | NOT STARTED | WebSocket real-time client (67 tasks, 12 phases) |
 
-### Pending Work
+#### Work Package #6 Reference Materials
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| WebSocket Client | TODO | Real-time position streaming. Waiting for RTLS API changes. |
+WP #6 includes 10 appendices in `docs/development/websocket-reference/`:
+
+| Appendix | Description |
+|----------|-------------|
+| [APPENDIX_A_TYPES.md](docs/development/websocket-reference/APPENDIX_A_TYPES.md) | TypeScript definitions from reference JS client |
+| [APPENDIX_B_MOCK_WEBSOCKET.md](docs/development/websocket-reference/APPENDIX_B_MOCK_WEBSOCKET.md) | Mock WebSocket for unit testing |
+| [APPENDIX_C_PUBLISHER.md](docs/development/websocket-reference/APPENDIX_C_PUBLISHER.md) | Publisher implementation patterns |
+| [APPENDIX_D_MESSAGE_DETECTION.md](docs/development/websocket-reference/APPENDIX_D_MESSAGE_DETECTION.md) | Message classification logic |
+| [APPENDIX_E_SUBSCRIBER_EXAMPLE.md](docs/development/websocket-reference/APPENDIX_E_SUBSCRIBER_EXAMPLE.md) | Complete subscriber example |
+| [APPENDIX_F_PUBLISHER_EXAMPLE.md](docs/development/websocket-reference/APPENDIX_F_PUBLISHER_EXAMPLE.md) | Complete publisher example |
+| [APPENDIX_G_UNIFIED_EXAMPLE.md](docs/development/websocket-reference/APPENDIX_G_UNIFIED_EXAMPLE.md) | Unified client example |
+| [APPENDIX_H_CONFIGURATION.md](docs/development/websocket-reference/APPENDIX_H_CONFIGURATION.md) | Configuration reference |
+| [APPENDIX_I_TEST_PATTERNS.md](docs/development/websocket-reference/APPENDIX_I_TEST_PATTERNS.md) | Test patterns |
+| [APPENDIX_J_AUTHENTICATION.md](docs/development/websocket-reference/APPENDIX_J_AUTHENTICATION.md) | Authentication specification |
 
 ### Reports (from WP #2)
 
