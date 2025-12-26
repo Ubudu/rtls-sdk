@@ -86,6 +86,12 @@ docs/
 | 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Examples & documentation (52 tasks, 12 phases) |
 | 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics (33 tasks, 10 phases) |
 
+### Pending Work
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| WebSocket Client | TODO | Real-time position streaming. Waiting for RTLS API changes. |
+
 ### Reports (from WP #2)
 
 - [API_VALIDATION_RESULTS.md](docs/development/API_VALIDATION_RESULTS.md) - Test results for each endpoint
