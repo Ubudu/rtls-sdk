@@ -3,7 +3,6 @@
 Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs).
 
 [![npm version](https://badge.fury.io/js/ubudu-rtls-sdk.svg)](https://www.npmjs.com/package/ubudu-rtls-sdk)
-[![CI](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml)
 
 ## Features
 
