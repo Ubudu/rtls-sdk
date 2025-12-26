@@ -274,8 +274,16 @@ const venue2Client = client.forVenue(789);
 ## Requirements
 
 - Node.js >= 18 (JavaScript or TypeScript)
-- Modern browsers with ES2022 support
 - TypeScript >= 5.0 (optional, for type checking)
+
+### Browser Support
+
+| Browser | Minimum Version |
+|---------|-----------------|
+| Chrome | 94+ |
+| Firefox | 93+ |
+| Safari | 15+ |
+| Edge | 94+ |
 
 ## Development
 
