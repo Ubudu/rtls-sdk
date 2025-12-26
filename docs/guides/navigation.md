@@ -29,7 +29,7 @@ The navigation system consists of:
 ### Listing POIs as GeoJSON
 
 ```typescript
-import { createRtlsClient, type POIFeatureCollection } from '@ubudu/rtls-sdk';
+import { createRtlsClient, type POIFeatureCollection } from 'ubudu-rtls-sdk';
 
 // Configure with default namespace and venue
 const client = createRtlsClient({
@@ -51,7 +51,7 @@ geoJson.features.forEach(feature => {
 ### Listing POIs as Array
 
 ```typescript
-import { type POI } from '@ubudu/rtls-sdk';
+import { type POI } from 'ubudu-rtls-sdk';
 
 // Uses default namespace and venueId
 const pois: POI[] = await client.venues.listPoisAsArray();
@@ -126,7 +126,7 @@ console.log(`Nodes: ${nodes.length}, Segments: ${segments.length}`);
 ### Extracting Path Nodes
 
 ```typescript
-import { type PathNode } from '@ubudu/rtls-sdk';
+import { type PathNode } from 'ubudu-rtls-sdk';
 
 // Uses default namespace and venueId
 const nodes: PathNode[] = await client.venues.listPathNodes();
@@ -143,7 +143,7 @@ nodes.forEach(node => {
 ### Extracting Path Segments
 
 ```typescript
-import { type PathSegment } from '@ubudu/rtls-sdk';
+import { type PathSegment } from 'ubudu-rtls-sdk';
 
 // Uses default namespace and venueId
 const segments: PathSegment[] = await client.venues.listPathSegments();
@@ -219,7 +219,7 @@ import {
   extractPoisFromGeoJSON,
   extractPathNodesFromGeoJSON,
   extractPathSegmentsFromGeoJSON
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 // Fetch GeoJSON (uses default namespace and venueId)
 const poisGeoJson = await client.venues.listPois();
@@ -320,7 +320,7 @@ const venue2Pois = await venue2Client.venues.listPoisAsArray();
 ## Error Handling
 
 ```typescript
-import { RtlsError, NotFoundError, ContextError } from '@ubudu/rtls-sdk';
+import { RtlsError, NotFoundError, ContextError } from 'ubudu-rtls-sdk';
 
 try {
   // Uses default namespace

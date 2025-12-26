@@ -1,8 +1,8 @@
-# @ubudu/rtls-sdk
+# ubudu-rtls-sdk
 
 Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs).
 
-[![npm version](https://badge.fury.io/js/%40ubudu%2Frtls-sdk.svg)](https://www.npmjs.com/package/@ubudu/rtls-sdk)
+[![npm version](https://badge.fury.io/js/ubudu-rtls-sdk.svg)](https://www.npmjs.com/package/ubudu-rtls-sdk)
 [![CI](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml)
 
 ## Features
@@ -19,7 +19,7 @@ Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs
 ## Installation
 
 ```bash
-npm install @ubudu/rtls-sdk
+npm install ubudu-rtls-sdk
 ```
 
 ## Quick Start
@@ -27,7 +27,7 @@ npm install @ubudu/rtls-sdk
 ### JavaScript (ESM)
 
 ```javascript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 // Configure once with default context
 const client = createRtlsClient({
@@ -49,7 +49,7 @@ const zones = await client.zones.list();
 ### TypeScript
 
 ```typescript
-import { createRtlsClient, Asset, Position } from '@ubudu/rtls-sdk';
+import { createRtlsClient, Asset, Position } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,
@@ -72,7 +72,7 @@ const nearbyZones = await client.spatial.nearestZones({
 ### CommonJS
 
 ```javascript
-const { createRtlsClient } = require('@ubudu/rtls-sdk');
+const { createRtlsClient } = require('ubudu-rtls-sdk');
 
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,
@@ -147,7 +147,7 @@ The SDK provides access to these API resources:
 Build filters using the filter helpers:
 
 ```javascript
-import { createRtlsClient, filters, combineFilters } from '@ubudu/rtls-sdk';
+import { createRtlsClient, filters, combineFilters } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,
@@ -206,7 +206,7 @@ import {
   AuthenticationError,
   NotFoundError,
   ContextError,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,

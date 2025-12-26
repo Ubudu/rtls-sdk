@@ -100,7 +100,7 @@ await client.assets.list();
 Handle with:
 
 ```typescript
-import { ContextError } from '@ubudu/rtls-sdk';
+import { ContextError } from 'ubudu-rtls-sdk';
 
 try {
   await client.assets.list();
@@ -123,7 +123,7 @@ import type {
   ResolvedNamespaceContext,
   ResolvedVenueContext,
   ResolvedMapContext,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 ```
 
 ## Common Patterns

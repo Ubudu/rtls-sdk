@@ -61,7 +61,7 @@ test -d test/mocks && test -d test/resources && test -d .github/workflows && ech
 
 ```json
 {
-  "name": "@ubudu/rtls-sdk",
+  "name": "ubudu-rtls-sdk",
   "version": "0.1.0",
   "description": "Official TypeScript SDK for the Ubudu RTLS API",
   "author": "Ubudu",
@@ -128,7 +128,7 @@ test -d test/mocks && test -d test/resources && test -d .github/workflows && ech
 
 **Verification**:
 ```bash
-node -e "const p = require('./package.json'); console.log(p.name === '@ubudu/rtls-sdk' ? 'PASS' : 'FAIL')"
+node -e "const p = require('./package.json'); console.log(p.name === 'ubudu-rtls-sdk' ? 'PASS' : 'FAIL')"
 ```
 
 ---
@@ -3020,11 +3020,11 @@ ls -la .github/workflows/ && echo "Phase 7 Complete"
 **Action**: Write file `README.md`
 
 ```markdown
-# @ubudu/rtls-sdk
+# ubudu-rtls-sdk
 
 Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs).
 
-[![npm version](https://badge.fury.io/js/%40ubudu%2Frtls-sdk.svg)](https://www.npmjs.com/package/@ubudu/rtls-sdk)
+[![npm version](https://badge.fury.io/js/%40ubudu%2Frtls-sdk.svg)](https://www.npmjs.com/package/ubudu-rtls-sdk)
 [![CI](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ubudu/rtls-sdk/actions/workflows/ci.yml)
 
 ## Features
@@ -3040,13 +3040,13 @@ Official TypeScript SDK for the [Ubudu RTLS API](https://rtls.ubudu.com/api/docs
 ## Installation
 
 ```bash
-npm install @ubudu/rtls-sdk
+npm install ubudu-rtls-sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 const rtls = createRtlsClient({
   apiKey: process.env.UBUDU_API_KEY,
@@ -3143,7 +3143,7 @@ const nearest = await rtls.spatial.nearestAssets('namespace', {
 ## Filtering
 
 ```typescript
-import { filters, combineFilters } from '@ubudu/rtls-sdk';
+import { filters, combineFilters } from 'ubudu-rtls-sdk';
 
 const result = await rtls.assets.list('namespace', {
   ...filters.contains('name', 'forklift'),
@@ -3160,7 +3160,7 @@ const result = await rtls.assets.list('namespace', {
 ## Error Handling
 
 ```typescript
-import { RtlsError, NotFoundError } from '@ubudu/rtls-sdk';
+import { RtlsError, NotFoundError } from 'ubudu-rtls-sdk';
 
 try {
   await rtls.assets.get('namespace', 'unknown');
@@ -3284,7 +3284,7 @@ test -f CHANGELOG.md && echo "PASS" || echo "FAIL"
     "start": "npx tsx index.ts"
   },
   "dependencies": {
-    "@ubudu/rtls-sdk": "file:../.."
+    "ubudu-rtls-sdk": "file:../.."
   },
   "devDependencies": {
     "tsx": "^4.7.0"
@@ -3304,7 +3304,7 @@ test -f examples/node-basic/package.json && echo "PASS" || echo "FAIL"
 **Action**: Write file `examples/node-basic/index.ts`
 
 ```typescript
-import { createRtlsClient, RtlsError, NotFoundError, filters } from '@ubudu/rtls-sdk';
+import { createRtlsClient, RtlsError, NotFoundError, filters } from 'ubudu-rtls-sdk';
 
 const NAMESPACE = process.env.RTLS_NAMESPACE ?? 'demo-namespace';
 const API_KEY = process.env.RTLS_API_KEY;

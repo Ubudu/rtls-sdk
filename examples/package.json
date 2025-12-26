@@ -1,5 +1,5 @@
 {
-  "name": "@ubudu/rtls-sdk-examples",
+  "name": "ubudu-rtls-sdk-examples",
   "version": "1.0.0",
   "private": true,
   "description": "Example scripts for Ubudu RTLS SDK",
@@ -24,7 +24,7 @@
     "all": "npm run ts:all && npm run js:all"
   },
   "dependencies": {
-    "@ubudu/rtls-sdk": "file:.."
+    "ubudu-rtls-sdk": "file:.."
   },
   "devDependencies": {
     "tsx": "^4.7.0",

@@ -4367,7 +4367,7 @@ npm run typecheck && npm run test -- test/resources/*-context.test.ts --run && e
 **Find the Quick Start code block and replace with**:
 
 ```typescript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 // Configure once with default context
 const client = createRtlsClient({
@@ -4616,7 +4616,7 @@ await client.assets.list();
 Handle with:
 
 ```typescript
-import { ContextError } from '@ubudu/rtls-sdk';
+import { ContextError } from 'ubudu-rtls-sdk';
 
 try {
   await client.assets.list();
@@ -4639,7 +4639,7 @@ import type {
   ResolvedNamespaceContext,
   ResolvedVenueContext,
   ResolvedMapContext,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 ```
 ```
 

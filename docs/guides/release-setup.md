@@ -89,7 +89,7 @@ git push origin main --tags
 
 The pipeline will automatically:
 - Push to GitHub
-- Publish `@ubudu/rtls-sdk@0.1.0` to npm
+- Publish `ubudu-rtls-sdk@0.1.0` to npm
 
 ## Variables Summary
 
@@ -109,7 +109,7 @@ The pipeline will automatically:
 ### npm publish fails
 
 - Verify the npm token is an **Automation** token
-- Check the package name `@ubudu/rtls-sdk` is available or you have access
+- Check the package name `ubudu-rtls-sdk` is available or you have access
 - Ensure the token has publish permissions
 
 ## Release Checklist
@@ -119,5 +119,5 @@ The pipeline will automatically:
 - [ ] Commit changes
 - [ ] Create and push tag: `git tag v1.0.0 && git push --tags`
 - [ ] Verify pipeline succeeds in GitLab
-- [ ] Verify package appears on [npmjs.com](https://www.npmjs.com/package/@ubudu/rtls-sdk)
+- [ ] Verify package appears on [npmjs.com](https://www.npmjs.com/package/ubudu-rtls-sdk)
 - [ ] Verify code appears on GitHub

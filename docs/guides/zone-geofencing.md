@@ -24,7 +24,7 @@ Zones are geographic areas within venues that can be used for geofencing, presen
 ### As GeoJSON FeatureCollection
 
 ```typescript
-import { createRtlsClient, type ZoneFeatureCollection } from '@ubudu/rtls-sdk';
+import { createRtlsClient, type ZoneFeatureCollection } from 'ubudu-rtls-sdk';
 
 // Configure with default namespace and venue
 const client = createRtlsClient({
@@ -49,7 +49,7 @@ geoJson.features.forEach(feature => {
 ### As Flat Array
 
 ```typescript
-import { type Zone } from '@ubudu/rtls-sdk';
+import { type Zone } from 'ubudu-rtls-sdk';
 
 // Uses default namespace and venueId
 const zones: Zone[] = await client.zones.listAsArray();
@@ -63,7 +63,7 @@ zones.forEach(zone => {
 ### Extracting from GeoJSON
 
 ```typescript
-import { extractZonesFromGeoJSON } from '@ubudu/rtls-sdk';
+import { extractZonesFromGeoJSON } from 'ubudu-rtls-sdk';
 
 // Uses default namespace and venueId
 const geoJson = await client.zones.list();
@@ -285,7 +285,7 @@ console.log(`Venue 2: ${venue2Zones.length} zones`);
 ## Error Handling
 
 ```typescript
-import { RtlsError, NotFoundError, ContextError } from '@ubudu/rtls-sdk';
+import { RtlsError, NotFoundError, ContextError } from 'ubudu-rtls-sdk';
 
 try {
   // Uses default namespace

@@ -9,7 +9,7 @@ This document provides an overview of all SDK exports and their usage.
 Creates a new RTLS client instance.
 
 ```typescript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: 'your-api-key',
@@ -186,13 +186,13 @@ import {
   TimeoutError,        // Request timeout
   NetworkError,        // Connection issues
   createError,         // Error factory
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 ```
 
 ## Filter Utilities
 
 ```typescript
-import { filters, filter, combineFilters } from '@ubudu/rtls-sdk';
+import { filters, filter, combineFilters } from 'ubudu-rtls-sdk';
 
 // Predefined filters
 filters.equals(field, value)
@@ -228,7 +228,7 @@ import {
   extractPoisFromGeoJSON,
   extractPathNodesFromGeoJSON,
   extractPathSegmentsFromGeoJSON,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 ```
 
 ## Types
@@ -281,5 +281,5 @@ import type {
   PoisWithinRadiusResult,
   ZoneWithDistance,
   POIWithDistance,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 ```

@@ -79,7 +79,7 @@ docs/
 **Implementation**:
 ```json
 {
-  "name": "@ubudu/rtls-sdk-examples",
+  "name": "ubudu-rtls-sdk-examples",
   "version": "1.0.0",
   "private": true,
   "description": "Example scripts for Ubudu RTLS SDK",
@@ -102,7 +102,7 @@ docs/
     "all": "npm run ts:all && npm run js:all"
   },
   "dependencies": {
-    "@ubudu/rtls-sdk": "file:.."
+    "ubudu-rtls-sdk": "file:.."
   },
   "devDependencies": {
     "tsx": "^4.7.0",
@@ -262,7 +262,7 @@ npm run test:examples:ts
  */
 
 import 'dotenv/config';
-import { createRtlsClient, RtlsError, AuthenticationError } from '@ubudu/rtls-sdk';
+import { createRtlsClient, RtlsError, AuthenticationError } from 'ubudu-rtls-sdk';
 
 // =============================================================================
 // Configuration
@@ -427,7 +427,7 @@ cd examples && npm run ts:getting-started
  */
 
 import 'dotenv/config';
-import { createRtlsClient, RtlsError, AuthenticationError } from '@ubudu/rtls-sdk';
+import { createRtlsClient, RtlsError, AuthenticationError } from 'ubudu-rtls-sdk';
 
 // =============================================================================
 // Configuration
@@ -666,7 +666,7 @@ import {
   RtlsError,
   NotFoundError,
   filters,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 const NAMESPACE = process.env.APP_NAMESPACE!;
 const API_KEY = process.env.RTLS_API_KEY!;
@@ -1043,7 +1043,7 @@ Asset tracking is the core functionality of the RTLS system. Assets represent ph
 ### TypeScript
 
 ```typescript
-import { createRtlsClient, type Asset } from '@ubudu/rtls-sdk';
+import { createRtlsClient, type Asset } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({ apiKey: 'your-key' });
 
@@ -1052,7 +1052,7 @@ const assets = await client.assets.list('your-namespace');
 console.log(`Found ${assets.length} assets`);
 
 // With filtering
-import { filters } from '@ubudu/rtls-sdk';
+import { filters } from 'ubudu-rtls-sdk';
 
 const forklifts = await client.assets.list('namespace', {
   ...filters.equals('user_type', 'forklift')
@@ -1062,7 +1062,7 @@ const forklifts = await client.assets.list('namespace', {
 ### JavaScript
 
 ```javascript
-import { createRtlsClient, filters } from '@ubudu/rtls-sdk';
+import { createRtlsClient, filters } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({ apiKey: 'your-key' });
 
@@ -1141,7 +1141,7 @@ See the [Zone & Geofencing Guide](./zone-geofencing.md) for spatial queries.
 ## Error Handling
 
 ```typescript
-import { NotFoundError, RtlsError } from '@ubudu/rtls-sdk';
+import { NotFoundError, RtlsError } from 'ubudu-rtls-sdk';
 
 try {
   const asset = await client.assets.get('namespace', 'invalid-mac');
@@ -1199,7 +1199,7 @@ import {
   extractZonesFromGeoJSON,
   type ZoneFeatureCollection,
   type Zone,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 const NAMESPACE = process.env.APP_NAMESPACE!;
 const API_KEY = process.env.RTLS_API_KEY!;
@@ -1641,7 +1641,7 @@ import {
   extractPathSegmentsFromGeoJSON,
   type POIFeatureCollection,
   type PathFeatureCollection,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 const NAMESPACE = process.env.APP_NAMESPACE!;
 const API_KEY = process.env.RTLS_API_KEY!;
@@ -1996,7 +1996,7 @@ import {
   RateLimitError,
   TimeoutError,
   NetworkError,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 const NAMESPACE = process.env.APP_NAMESPACE!;
 const API_KEY = process.env.RTLS_API_KEY!;

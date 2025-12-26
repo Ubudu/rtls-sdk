@@ -25,7 +25,7 @@ Asset tracking is the core functionality of the RTLS system. Assets represent ph
 ### TypeScript
 
 ```typescript
-import { createRtlsClient, type Asset, filters } from '@ubudu/rtls-sdk';
+import { createRtlsClient, type Asset, filters } from 'ubudu-rtls-sdk';
 
 // Configure with default namespace
 const client = createRtlsClient({
@@ -49,7 +49,7 @@ const otherAssets = await client.assets.list({ namespace: 'other-ns' });
 ### JavaScript
 
 ```javascript
-import { createRtlsClient, filters } from '@ubudu/rtls-sdk';
+import { createRtlsClient, filters } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: 'your-key',
@@ -181,7 +181,7 @@ async function getActiveAssets() {
 ### Finding Assets by Type
 
 ```typescript
-import { filters } from '@ubudu/rtls-sdk';
+import { filters } from 'ubudu-rtls-sdk';
 
 // Uses default namespace
 const forklifts = await client.assets.list({
@@ -210,7 +210,7 @@ See the [Zone & Geofencing Guide](./zone-geofencing.md) for spatial queries.
 ## Error Handling
 
 ```typescript
-import { NotFoundError, ContextError, RtlsError } from '@ubudu/rtls-sdk';
+import { NotFoundError, ContextError, RtlsError } from 'ubudu-rtls-sdk';
 
 try {
   const asset = await client.assets.get('invalid-mac');

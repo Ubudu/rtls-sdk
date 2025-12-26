@@ -31,7 +31,7 @@ See the [API Reference](./api/README.md) for detailed documentation of all class
 ## Quick Start
 
 ```typescript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: 'your-api-key',

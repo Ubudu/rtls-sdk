@@ -6,7 +6,7 @@
     "start": "npx tsx index.ts"
   },
   "dependencies": {
-    "@ubudu/rtls-sdk": "file:../.."
+    "ubudu-rtls-sdk": "file:../.."
   },
   "devDependencies": {
     "tsx": "^4.7.0"

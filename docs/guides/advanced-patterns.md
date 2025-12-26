@@ -66,7 +66,7 @@ await processBatches(assets, 10, async (batch) => {
 The SDK provides a fluent filter DSL:
 
 ```typescript
-import { filters, combineFilters, filter } from '@ubudu/rtls-sdk';
+import { filters, combineFilters, filter } from 'ubudu-rtls-sdk';
 ```
 
 ### Basic Operators

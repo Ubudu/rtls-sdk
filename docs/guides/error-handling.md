@@ -31,7 +31,7 @@ import {
   TimeoutError,
   NetworkError,
   ContextError,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 ```
 
 ## Error Properties
@@ -67,7 +67,7 @@ error.isServerError();    // true (5xx)
 The `ContextError` is thrown when a required context value (namespace, venueId, mapId) is missing:
 
 ```typescript
-import { createRtlsClient, ContextError } from '@ubudu/rtls-sdk';
+import { createRtlsClient, ContextError } from 'ubudu-rtls-sdk';
 
 // Client without default namespace
 const client = createRtlsClient({ apiKey: 'your-key' });
@@ -113,7 +113,7 @@ await client.assets.list('my-namespace');
 ### Basic Pattern
 
 ```typescript
-import { createRtlsClient, NotFoundError, ContextError, RtlsError } from '@ubudu/rtls-sdk';
+import { createRtlsClient, NotFoundError, ContextError, RtlsError } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: 'your-key',
@@ -303,7 +303,7 @@ try {
 The SDK provides a `createError` factory for creating appropriate error types:
 
 ```typescript
-import { createError } from '@ubudu/rtls-sdk';
+import { createError } from 'ubudu-rtls-sdk';
 
 const error = createError(404, { message: 'Asset not found' });
 console.log(error instanceof NotFoundError); // true

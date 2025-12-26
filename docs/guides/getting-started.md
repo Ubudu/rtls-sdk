@@ -5,7 +5,7 @@ This guide covers setting up and making your first API calls with the Ubudu RTLS
 ## Installation
 
 ```bash
-npm install @ubudu/rtls-sdk
+npm install ubudu-rtls-sdk
 ```
 
 ## Getting Your Credentials
@@ -48,7 +48,7 @@ RTLS_API_KEY=your-generated-api-key
 ### TypeScript
 
 ```typescript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 // Configure with default namespace (recommended)
 const client = createRtlsClient({
@@ -68,7 +68,7 @@ console.log(`Found ${assets.length} assets`);
 ### JavaScript
 
 ```javascript
-import { createRtlsClient } from '@ubudu/rtls-sdk';
+import { createRtlsClient } from 'ubudu-rtls-sdk';
 
 const client = createRtlsClient({
   apiKey: process.env.RTLS_API_KEY,
@@ -83,7 +83,7 @@ const assets = await client.assets.list();
 ### Client Options
 
 ```typescript
-import { createRtlsClient, type RtlsClientOptions } from '@ubudu/rtls-sdk';
+import { createRtlsClient, type RtlsClientOptions } from 'ubudu-rtls-sdk';
 
 const options: RtlsClientOptions = {
   apiKey: 'your-api-key',       // Required: API key for authentication
@@ -265,7 +265,7 @@ import {
   AuthenticationError,
   ContextError,
   RtlsError,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 try {
   const asset = await client.assets.get('AA:BB:CC:DD:EE:FF');
@@ -300,7 +300,7 @@ for await (const asset of client.assets.iterate()) {
 ## Filtering
 
 ```typescript
-import { filters } from '@ubudu/rtls-sdk';
+import { filters } from 'ubudu-rtls-sdk';
 
 // Filter by type (uses default namespace)
 const forklifts = await client.assets.list({
@@ -308,7 +308,7 @@ const forklifts = await client.assets.list({
 });
 
 // Combine filters
-import { combineFilters } from '@ubudu/rtls-sdk';
+import { combineFilters } from 'ubudu-rtls-sdk';
 
 const query = combineFilters(
   filters.equals('user_type', 'forklift'),
@@ -333,7 +333,7 @@ import type {
   PathSegment,
   RtlsContext,
   CallContext,
-} from '@ubudu/rtls-sdk';
+} from 'ubudu-rtls-sdk';
 
 // Uses default namespace from client
 const asset: Asset = await client.assets.get('AA:BB:CC:DD:EE:FF');
