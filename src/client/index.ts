@@ -8,6 +8,7 @@ import { DashboardsResource } from '../resources/dashboards';
 import { NavigationResource } from '../resources/navigation';
 import { SpatialResource } from '../resources/spatial';
 import type { RtlsContext } from '../context';
+import { RtlsWebSocketClient, type WebSocketClientConfig } from '../websocket';
 
 export { type RtlsClientOptions, type RequestOptions } from './base';
 
@@ -225,6 +226,54 @@ export class RtlsClient extends BaseClient {
       venueId: context.venueId ?? this._context.venueId,
       mapId: context.mapId ?? this._context.mapId,
       level: context.level ?? this._context.level,
+    });
+  }
+
+  // ─── WebSocket Client Factory ─────────────────────────────────────────────
+
+  /**
+   * Create a WebSocket client that shares configuration with this client.
+   *
+   * The WebSocket client inherits the API key and namespace from this client,
+   * allowing real-time streaming without reconfiguring authentication.
+   *
+   * @param options - Additional WebSocket-specific options
+   * @returns Configured WebSocket client
+   *
+   * @example
+   * ```typescript
+   * const client = new RtlsClient({ apiKey: 'key', namespace: 'ns' });
+   *
+   * // Create WebSocket client for subscribing to events
+   * const ws = client.createWebSocket();
+   * ws.on('POSITIONS', (pos) => console.log(pos));
+   * await ws.connect();
+   * await ws.subscribe([SubscriptionType.POSITIONS]);
+   *
+   * // Create WebSocket client for publishing positions
+   * const wsPublisher = client.createWebSocket({ mapUuid: 'map-id' });
+   * await wsPublisher.connect();
+   * await wsPublisher.sendPosition({
+   *   macAddress: 'aabbccddeeff',
+   *   latitude: 48.8566,
+   *   longitude: 2.3522,
+   * });
+   * ```
+   */
+  createWebSocket(options?: Partial<WebSocketClientConfig>): RtlsWebSocketClient {
+    const namespace = this._context.namespace;
+
+    if (!namespace) {
+      throw new Error(
+        'Cannot create WebSocket client: namespace is required. ' +
+        'Either set a namespace on this client or provide one in options.'
+      );
+    }
+
+    return new RtlsWebSocketClient({
+      apiKey: this.options.apiKey,
+      namespace,
+      ...options,
     });
   }
 }
