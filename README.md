@@ -112,7 +112,10 @@ npm run js:navigation          # POIs and navigation paths
 npm run js:error-handling      # Error types and retry
 npm run js:pagination          # Iterators and filters
 npm run js:default-context     # Default context patterns
-npm run js:all                 # Run all JS examples
+npm run js:websocket-subscriber  # Real-time event subscription
+npm run js:websocket-publisher   # Position publishing
+npm run js:websocket-unified     # Combined pub/sub client
+npm run js:all                 # Run all JS examples (except WebSocket)
 ```
 
 ### TypeScript Examples
@@ -125,8 +128,14 @@ npm run ts:navigation
 npm run ts:error-handling
 npm run ts:pagination
 npm run ts:default-context
-npm run ts:all                 # Run all TS examples
+npm run ts:websocket-subscriber  # Real-time event subscription
+npm run ts:websocket-publisher   # Position publishing
+npm run ts:websocket-unified     # Combined pub/sub client
+npm run ts:all                 # Run all TS examples (except WebSocket)
 ```
+
+> **Note**: WebSocket examples require `MAP_UUID` environment variable for publishing.
+> They are not included in `js:all`/`ts:all` since they require additional setup.
 
 ## Resources
 

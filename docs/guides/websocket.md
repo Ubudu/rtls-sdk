@@ -468,3 +468,29 @@ async function main() {
 
 main().catch(console.error);
 ```
+
+## Runnable Examples
+
+Full working examples are available in both JavaScript and TypeScript:
+
+### TypeScript
+
+```bash
+cd examples
+npm install
+npm run ts:websocket-subscriber   # Subscribe to real-time events
+npm run ts:websocket-publisher    # Publish positions
+npm run ts:websocket-unified      # Combined pub/sub client
+```
+
+### JavaScript
+
+```bash
+cd examples
+npm install
+npm run js:websocket-subscriber   # Subscribe to real-time events
+npm run js:websocket-publisher    # Publish positions
+npm run js:websocket-unified      # Combined pub/sub client
+```
+
+> **Note**: WebSocket publisher and unified examples require the `MAP_UUID` environment variable.
