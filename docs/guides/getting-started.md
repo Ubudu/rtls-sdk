@@ -8,6 +8,41 @@ This guide covers setting up and making your first API calls with the Ubudu RTLS
 npm install @ubudu/rtls-sdk
 ```
 
+## Getting Your Credentials
+
+To use the SDK, you need two credentials from the Ubudu RTLS platform:
+
+- **Application Namespace** - Your unique application identifier
+- **API Key** - Authentication key for API access
+
+> **Note:** API access must be enabled for your account. Contact your administrator if you don't see the API Keys section in your profile.
+
+### Step 1: Access Profile Settings
+
+Log in to [rtls.ubudu.com](https://rtls.ubudu.com) (or your custom instance like `client-rtls.ubudu.com`) and click on your username in the top-right corner, then select **PROFILE SETTINGS**.
+
+![Access Profile Settings](./images/rtls-profile-menu.png)
+
+### Step 2: Copy Namespace and Create API Key
+
+In the Profile Settings page:
+
+1. Click **COPY APP NAMESPACE** to copy your Application Namespace
+2. In the **API Keys** section, select an expiration period and click **CREATE NEW KEY**
+3. Copy the generated API key (it will only be shown once)
+
+![Profile Settings Page](./images/rtls-profile-settings.png)
+
+### Step 3: Configure Your Environment
+
+Store your credentials securely in environment variables:
+
+```bash
+# .env file
+APP_NAMESPACE=your-copied-namespace
+RTLS_API_KEY=your-generated-api-key
+```
+
 ## Quick Start
 
 ### TypeScript
@@ -63,15 +98,9 @@ const options: RtlsClientOptions = {
 const client = createRtlsClient(options);
 ```
 
-### Environment Variables
+### Using Environment Variables
 
-We recommend using environment variables for credentials:
-
-```bash
-# .env file
-APP_NAMESPACE=your-namespace
-RTLS_API_KEY=your-api-key
-```
+Load credentials from your `.env` file:
 
 ```typescript
 import 'dotenv/config';
