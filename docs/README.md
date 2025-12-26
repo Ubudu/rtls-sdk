@@ -69,19 +69,6 @@ The SDK provides access to these API resources:
 | Navigation | `client.navigation` | Indoor routing |
 | WebSocket | `RtlsWebSocketClient` | Real-time streaming |
 
-## Development
-
-### Work Packages
-
-| # | Document | Status | Description |
-|---|----------|--------|-------------|
-| 1 | [01_WORK_PACKAGE.md](./development/01_WORK_PACKAGE.md) | COMPLETED | SDK implementation |
-| 2 | [02_API_VALIDATION_WORKPACKAGE.md](./development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing |
-| 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](./development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment |
-| 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](./development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Documentation & examples |
-| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](./development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics |
-| 6 | [06_WEBSOCKET_CLIENT_WORKPACKAGE.md](./development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | COMPLETED | WebSocket real-time client |
-
 ## Support
 
 - [GitHub Issues](https://github.com/ubudu/rtls-sdk/issues) - Report bugs or request features

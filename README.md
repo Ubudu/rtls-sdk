@@ -374,17 +374,6 @@ const venue2Client = client.forVenue(789);
 
 For contributors and maintainers, see [CLAUDE.md](CLAUDE.md) for development guidance.
 
-### Work Packages
-
-| Status | Work Package | Description |
-|--------|--------------|-------------|
-| Done | [WP1: SDK Implementation](docs/development/01_WORK_PACKAGE.md) | Core SDK implementation (47 tasks) |
-| Done | [WP2: API Validation](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | Live API testing (68 tasks) |
-| Done | [WP3: SDK Alignment](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | v1.0.0 breaking changes (28 tasks) |
-| Done | [WP4: SDK Documentation](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | Examples & guides (52 tasks) |
-| Done | [WP5: SDK Ergonomics](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | Default context & ergonomics (33 tasks) |
-| Done | [WP6: WebSocket Client](docs/development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | WebSocket real-time client (67 tasks) |
-
 ### Quick Start (Development)
 
 ```bash

@@ -55,8 +55,8 @@ test/
 
 docs/
 ├── README.md            # Documentation index
-├── guides/              # How-to guides (release setup, etc.)
-└── development/         # Implementation specs (work package)
+├── guides/              # How-to guides (WebSocket, asset tracking, etc.)
+└── api/                 # API reference
 ```
 
 ### Key Design Patterns
@@ -76,50 +76,13 @@ docs/
 
 ## Documentation
 
-### Work Packages
-
-| # | Document | Status | Description |
-|---|----------|--------|-------------|
-| 1 | [01_WORK_PACKAGE.md](docs/development/01_WORK_PACKAGE.md) | COMPLETED | SDK implementation (47 tasks, 9 phases) |
-| 2 | [02_API_VALIDATION_WORKPACKAGE.md](docs/development/02_API_VALIDATION_WORKPACKAGE.md) | COMPLETED | API validation testing (68 tasks, 11 phases) |
-| 3 | [03_SDK_ALIGNMENT_WORKPACKAGE.md](docs/development/03_SDK_ALIGNMENT_WORKPACKAGE.md) | COMPLETED | SDK alignment for v1.0.0 (28 tasks, 11 phases) |
-| 4 | [04_SDK_DOCUMENTATION_WORKPACKAGE.md](docs/development/04_SDK_DOCUMENTATION_WORKPACKAGE.md) | COMPLETED | Examples & documentation (52 tasks, 12 phases) |
-| 5 | [05_SDK_ERGONOMICS_WORKPACKAGE.md](docs/development/05_SDK_ERGONOMICS_WORKPACKAGE.md) | COMPLETED | Default context & ergonomics (33 tasks, 10 phases) |
-| 6 | [06_WEBSOCKET_CLIENT_WORKPACKAGE.md](docs/development/06_WEBSOCKET_CLIENT_WORKPACKAGE.md) | COMPLETED | WebSocket real-time client (67 tasks, 12 phases) |
-
-#### Work Package #6 Reference Materials
-
-WP #6 includes 10 appendices in `docs/development/websocket-reference/`:
-
-| Appendix | Description |
-|----------|-------------|
-| [APPENDIX_A_TYPES.md](docs/development/websocket-reference/APPENDIX_A_TYPES.md) | TypeScript definitions from reference JS client |
-| [APPENDIX_B_MOCK_WEBSOCKET.md](docs/development/websocket-reference/APPENDIX_B_MOCK_WEBSOCKET.md) | Mock WebSocket for unit testing |
-| [APPENDIX_C_PUBLISHER.md](docs/development/websocket-reference/APPENDIX_C_PUBLISHER.md) | Publisher implementation patterns |
-| [APPENDIX_D_MESSAGE_DETECTION.md](docs/development/websocket-reference/APPENDIX_D_MESSAGE_DETECTION.md) | Message classification logic |
-| [APPENDIX_E_SUBSCRIBER_EXAMPLE.md](docs/development/websocket-reference/APPENDIX_E_SUBSCRIBER_EXAMPLE.md) | Complete subscriber example |
-| [APPENDIX_F_PUBLISHER_EXAMPLE.md](docs/development/websocket-reference/APPENDIX_F_PUBLISHER_EXAMPLE.md) | Complete publisher example |
-| [APPENDIX_G_UNIFIED_EXAMPLE.md](docs/development/websocket-reference/APPENDIX_G_UNIFIED_EXAMPLE.md) | Unified client example |
-| [APPENDIX_H_CONFIGURATION.md](docs/development/websocket-reference/APPENDIX_H_CONFIGURATION.md) | Configuration reference |
-| [APPENDIX_I_TEST_PATTERNS.md](docs/development/websocket-reference/APPENDIX_I_TEST_PATTERNS.md) | Test patterns |
-| [APPENDIX_J_AUTHENTICATION.md](docs/development/websocket-reference/APPENDIX_J_AUTHENTICATION.md) | Authentication specification |
-
-### Reports (from WP #2)
-
-- [API_VALIDATION_RESULTS.md](docs/development/API_VALIDATION_RESULTS.md) - Test results for each endpoint
-- [API_SCHEMA_REPORT.md](docs/development/API_SCHEMA_REPORT.md) - Actual vs expected schemas
-- [SDK_FIX_RECOMMENDATIONS.md](docs/development/SDK_FIX_RECOMMENDATIONS.md) - Required SDK changes
-
-### API Documentation Proposals
-
-- [04_SWAGGER_DOCUMENTATION_CHANGES.md](docs/development/04_SWAGGER_DOCUMENTATION_CHANGES.md) - Proposed Swagger spec updates for RTLS API team
-
 ### Guides
 
 - [Getting Started](docs/guides/getting-started.md) - Installation, configuration, first API calls
 - [Asset Tracking](docs/guides/asset-tracking.md) - Asset CRUD, positions, history, statistics
 - [Zone & Geofencing](docs/guides/zone-geofencing.md) - Zones, spatial queries, presence detection
 - [Navigation](docs/guides/navigation.md) - POIs, paths, indoor routing
+- [WebSocket Streaming](docs/guides/websocket.md) - Real-time position streaming and publishing
 - [Error Handling](docs/guides/error-handling.md) - Error types, retry strategies
 - [Advanced Patterns](docs/guides/advanced-patterns.md) - Pagination, filtering, batch processing
 - [Migration Guide v2](docs/guides/migration-v2.md) - Migrating to default context
