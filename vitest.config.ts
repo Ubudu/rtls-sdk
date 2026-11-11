@@ -11,6 +11,9 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    // Several tests start child processes (CLI and compiler runs); on a loaded CI runner they need more than the
+    // 5 s default. Tests that assert a duration do so themselves.
+    testTimeout: 30_000,
     environment: 'node',
     include: ['test/**/*.test.ts'],
     exclude: ['**/*.int.test.ts', 'test/contract/**', 'test/types/**', '**/node_modules/**'],
