@@ -598,9 +598,18 @@ describe('pack-smoke Bun consumer runtime (P0 §5.9 step 7)', () => {
     };
     const offline = section(gitlab, '\noffline:', '\nlive-readonly:');
     expect(offline).toContain(`BUN_VERSION: "${BUN_MIN_VERSION}"`);
-    expect(offline).toMatch(
-      /- npm ci [^\n]*\n\s+- npm install --global [^\n]*"bun@\$BUN_VERSION"\n\s+- npm run ci:offline\n/
+    // The job runs its steps through the wrapper (Docker and shell executors alike); the steps are in a script.
+    expect(offline).toContain(
+      '- sh scripts/ci/in-container.sh "node:${NODE_VERSION}" sh scripts/ci/offline.sh\n'
     );
+    const steps = readFileSync(join(REPO_ROOT, 'scripts', 'ci', 'offline.sh'), 'utf8');
+    expect(steps).toMatch(
+      /\nnpm ci [^\n]*\nnpm install --global [^\n]*"bun@\$BUN_VERSION"\n(?:[^\n]*\n)*?npm run ci:offline\n/
+    );
+    for (const release of ['publish.sh', 'push-mirror.sh'])
+      expect(readFileSync(join(REPO_ROOT, 'scripts', 'ci', release), 'utf8')).not.toMatch(
+        /\bbun\b/i
+      );
     expect(section(gitlab, '\npush-to-github:')).not.toMatch(/\bbun\b/i);
     const build = section(github, '\n  build:', '\n  publish-dry-run:');
     expect(build).toMatch(

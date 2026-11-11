@@ -16,6 +16,11 @@ mirror.
 | `release` | `push-to-github` | tags `vX.Y.Z` | pushes the tagged commit to the mirror's `main` and pushes the tag |
 | `release` | `publish-npm` | tags `vX.Y.Z` | `npm run generate`, `npm run build`, `npm publish --access public` |
 
+The jobs run on either kind of GitLab runner. On a Docker executor a job runs inside its `image`. On a shell
+executor (a host with docker, git and a shell, where `image` is ignored) `scripts/ci/in-container.sh` starts the
+job's Node image for each step, with the checkout mounted; the steps themselves are `scripts/ci/offline.sh`,
+`scripts/ci/publish.sh` and `scripts/ci/push-mirror.sh`.
+
 Release jobs start only after the `offline` stage of the tag pipeline has passed. Nothing in the offline lane
 reaches the network after the installs.
 
