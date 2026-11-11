@@ -51,10 +51,17 @@ function sseBody(steps: readonly Step[]): ReadableStream<Uint8Array> {
   });
 }
 
+/**
+ * Requests seen by the handlers of this file. Holding them keeps each request's signal alive until the test ends:
+ * a request that nothing references can be collected, and its signal then never reports the abort.
+ */
+const handled: Request[] = [];
+
 /** Serves the steps as text/event-stream; `seen` records whether the request signal fired. */
 function serve(steps: readonly Step[], seen?: { aborted: boolean }): void {
   server.use(
     http.get(STREAM, ({ request }) => {
+      handled.push(request);
       request.signal.addEventListener('abort', () => {
         if (seen) seen.aborted = true;
       });
