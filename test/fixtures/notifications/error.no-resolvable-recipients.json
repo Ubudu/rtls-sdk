@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "send where no user recipient is left.",
+  "status": 400,
+  "body": {
+    "error": "no_resolvable_recipients",
+    "message": "no recipient could be resolved"
+  }
+}

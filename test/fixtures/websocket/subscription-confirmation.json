@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "Reply of the broker to a SUBSCRIBE frame: exactly the namespace and the action, nothing about the accepted types or tag filter.",
+  "_nonHttp": "WS-M12",
+  "_usi": ["USI-P8-4"],
+  "body": { "app_namespace": "test_namespace", "action": "subscribeEvent" }
+}

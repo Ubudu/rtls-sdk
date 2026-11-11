@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "400 of update with an id that is not an ObjectId (USI-P7-8): same cast error text, status 400.",
+  "status": 400,
+  "body": {
+    "error": "Cast to ObjectId failed for value \"not-an-id\" (type string) at path \"_id\" for model \"MappingProfile\""
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "_source": "spec",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-18.",
+  "_operation": "GET /api/spatial/assets/:namespace/nearest-to-point",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "reference_point": { "lat": 48.8, "lon": 2.3 },
+    "total_assets": 5,
+    "assets": [
+      {
+        "user_udid": "025d4b000001",
+        "user_name": "Asset 1",
+        "external_id": "ext-1",
+        "position": { "lat": 48.8, "lon": 2.3 },
+        "distance_meters": 0,
+        "timestamp": "2026-11-11T13:31:58Z",
+        "zone": { "color": "#77bb41", "id": 1, "name": "Zone 1", "tags": ["tag-1"] },
+        "data": { "k": 1 },
+        "speed": 0.02129476114634553,
+        "model": "tools",
+        "color": "#C05C72",
+        "path": "/site/area"
+      },
+      {
+        "user_udid": "025d4b000002",
+        "user_name": "Asset 2",
+        "external_id": "ext-2",
+        "position": { "lat": 48.8000028, "lon": 2.2999927 },
+        "distance_meters": 0.6172126385234888,
+        "timestamp": "2026-11-11T13:31:58Z",
+        "zone": { "color": "#77bb41", "id": 1, "name": "Zone 1", "tags": ["tag-1"] },
+        "data": { "k": 1 },
+        "speed": 0.02291179957134074,
+        "model": "default",
+        "color": "#247BA0",
+        "path": "/site/area"
+      },
+      {
+        "user_udid": "025d4b000003",
+        "user_name": "Asset 3",
+        "external_id": "ext-3",
+        "position": { "lat": 48.7999944, "lon": 2.2999919 },
+        "distance_meters": 0.8604914102686724,
+        "timestamp": "2026-11-11T13:32:01Z",
+        "zone": { "color": "#77bb41", "id": 1, "name": "Zone 1", "tags": ["tag-1"] },
+        "data": { "k": 1 },
+        "speed": 0.006187593031071594,
+        "model": "default",
+        "color": "#247BA0",
+        "path": "/site/area"
+      }
+    ]
+  }
+}

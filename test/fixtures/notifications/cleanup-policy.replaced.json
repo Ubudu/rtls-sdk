@@ -1,0 +1,14 @@
+{
+  "_source": "spec",
+  "_operation": "PUT /notifications/{namespace}/cleanup-policy",
+  "status": 200,
+  "body": {
+    "_id": "65d000000000000000000001",
+    "app_namespace": "ns-test",
+    "user_id": "64f000000000000000000001",
+    "auto_archive_days": 20,
+    "auto_purge_days": 90,
+    "updated_at": 1730000000000,
+    "__v": 0
+  }
+}

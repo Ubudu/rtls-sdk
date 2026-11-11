@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N5: a document with a name and no rules array; the engine evaluates nothing.",
+  "status": 200,
+  "body": {
+    "name": "n"
+  }
+}

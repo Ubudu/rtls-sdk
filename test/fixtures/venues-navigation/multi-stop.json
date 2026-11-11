@@ -1,0 +1,63 @@
+{
+  "_source": "server-code",
+  "_note": "Written from the rtls-api 3.3.8 multi-stop response shape (MultiStopWire): stop nodes carry isStop, a 1-based stopIndex into the input stops and stopName (default 'Stop <n>'); multiStopInfo has algorithm and optimizationDistance only when optimised. Synthetic ids and coordinates; never captured live.",
+  "_operation": "POST /spatial/navigate/{namespace}/multi-stop",
+  "status": 200,
+  "body": {
+    "success": true,
+    "path": [
+      {
+        "id": 101,
+        "name": "Node 101",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0001, 20.0001],
+        "x": 10.0001,
+        "y": 20.0001
+      },
+      {
+        "id": 102,
+        "name": "Node 102",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0002, 20.0001],
+        "x": 10.0002,
+        "y": 20.0001,
+        "isStop": true,
+        "stopIndex": 2,
+        "stopName": "Stop 2"
+      },
+      {
+        "id": 103,
+        "name": "Corridor",
+        "type": "elevator",
+        "level": 0,
+        "coordinates": [10.0003, 20.0002],
+        "x": 10.0003,
+        "y": 20.0002
+      },
+      {
+        "id": 104,
+        "name": "Node 104",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0004, 20.0002],
+        "x": 10.0004,
+        "y": 20.0002,
+        "isStop": true,
+        "stopIndex": 1,
+        "stopName": "B"
+      }
+    ],
+    "distance": 41.7,
+    "estimatedTime": 34.75,
+    "algorithm": "astar",
+    "dataSource": "real",
+    "multiStopInfo": {
+      "optimized": true,
+      "stopCount": 2,
+      "algorithm": "twoOpt",
+      "optimizationDistance": 41.7
+    }
+  }
+}

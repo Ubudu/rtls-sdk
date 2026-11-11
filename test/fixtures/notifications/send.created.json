@@ -1,0 +1,39 @@
+{
+  "_source": "spec",
+  "_note": "201: bare array of the created items of all recipients (one for a self-send), with _id and without deliveries.",
+  "_operation": "POST /notifications/{namespace}/send",
+  "status": 201,
+  "body": [
+    {
+      "_id": "665f1c2e9b1d4a0012345601",
+      "app_namespace": "ns-test",
+      "user_id": "user-1",
+      "event_id": "0b6c1f0e-2f43-4c1a-9a51-1d2f3e4a5b61",
+      "kind": "direct_message",
+      "event_type": "NOTIFICATION",
+      "severity": "info",
+      "title": "Cold room door open",
+      "body": "The **north** door has been open for 5 minutes.",
+      "source": "operator",
+      "source_ref": "user:user-1",
+      "conversation_id": "conv-1",
+      "params": {
+        "displayMessage": "Door open"
+      },
+      "thread_key": "dm:conv-1",
+      "search_text": "cold room door open the north door has been open for 5 minutes.",
+      "read": false,
+      "read_at": null,
+      "acknowledged": false,
+      "acked_at": null,
+      "acked_by": null,
+      "archived": false,
+      "archived_at": null,
+      "pinned": false,
+      "muted": false,
+      "snooze_until": null,
+      "created_at": 1718983070000,
+      "__v": 0
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "Any {id} route with an unknown or non-ObjectId id.",
+  "status": 404,
+  "body": {
+    "error": "not_found"
+  }
+}

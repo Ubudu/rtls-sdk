@@ -1,0 +1,17 @@
+{
+  "_source": "spec",
+  "_operation": "GET /notifications/{namespace}/saved-views/{id}",
+  "status": 200,
+  "body": {
+    "_id": "65c000000000000000000001",
+    "app_namespace": "ns-test",
+    "user_id": "64f000000000000000000001",
+    "name": "sdk-test-view",
+    "query": {
+      "state": "unread",
+      "from": 1000
+    },
+    "created_at": 1730000000000,
+    "__v": 0
+  }
+}

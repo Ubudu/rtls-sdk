@@ -1,0 +1,57 @@
+{
+  "_source": "server-code",
+  "_note": "The venue details of venue-details.json plus metadata.openingHours as the server's venue-details transform builds it (week and specificDays maps of 'HH:MM - HH:MM' or 'Closed'); the live Demo Factory venue has no opening hours, so this key is written by hand. Synthetic values.",
+  "_operation": "GET /venues/{namespace}/{venueId}",
+  "status": 200,
+  "body": {
+    "id": 35433,
+    "name": "Venue A",
+    "address": "Address A",
+    "coordinates": {
+      "lat": 45.5,
+      "lng": 4.5
+    },
+    "metadata": {
+      "externalVenueId": 35433,
+      "applicationNamespace": "test-ns",
+      "createdAt": "2026-09-05T13:43:42.225Z",
+      "updatedAt": "2026-09-06T11:10:43.945Z",
+      "isActive": true,
+      "timezone": "Europe/Paris",
+      "context": {
+        "description": "Placeholder description",
+        "venueType": "Placeholder venueType",
+        "primaryActivities": "Placeholder primaryActivities"
+      },
+      "statistics": {
+        "totalZones": 10,
+        "totalPOIs": 0,
+        "totalPathNodes": 104,
+        "totalPathSegments": 142,
+        "floors": [0],
+        "lastDataSync": "2026-09-05T13:43:42.222Z"
+      },
+      "openingHours": {
+        "week": {
+          "monday": "08:00 - 18:00",
+          "tuesday": "08:00 - 18:00",
+          "wednesday": "08:00 - 18:00",
+          "thursday": "08:00 - 18:00",
+          "friday": "08:00 - 17:00",
+          "saturday": "Closed",
+          "sunday": "Closed"
+        },
+        "specificDays": {
+          "2026-12-25": "Closed"
+        }
+      }
+    },
+    "statistics": {
+      "zones": 10,
+      "pois": 0,
+      "pathNodes": 104,
+      "pathSegments": 142,
+      "floors": [0]
+    }
+  }
+}

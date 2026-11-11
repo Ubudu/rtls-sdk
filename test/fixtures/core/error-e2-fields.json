@@ -1,0 +1,11 @@
+{
+  "_source": "server-code",
+  "_note": "E2 envelope with a fields array: the reserved-field guard of the asset writes (upsert, patch, batch save) names the offending data fields. The spec declares a 400 without content for the upsert.",
+  "_operation": "POST /assets/{app_namespace}/{mac_address}",
+  "status": 400,
+  "body": {
+    "error": "reserved_field_namespace",
+    "message": "Field names under data use a reserved namespace",
+    "fields": ["data.sensor_x"]
+  }
+}

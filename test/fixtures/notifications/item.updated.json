@@ -1,0 +1,41 @@
+{
+  "_source": "spec",
+  "_note": "PATCH { mission: { status } } answers the updated lean item.",
+  "_operation": "PATCH /notifications/{namespace}/{id}",
+  "status": 200,
+  "body": {
+    "_id": "665f1c2e9b1d4a0012345602",
+    "app_namespace": "ns-test",
+    "user_id": "user-1",
+    "event_id": "6a2d9e47-1b3c-4f5a-8e6d-7c8b9a0f1e2d",
+    "kind": "mission",
+    "event_type": "NOTIFICATION",
+    "severity": "warning",
+    "title": "Check freezer 3",
+    "body": "Temperature is drifting; please check **freezer 3**.",
+    "source": "operator",
+    "source_ref": "user:user-1",
+    "params": {},
+    "thread_key": "mission:m-1",
+    "search_text": "check freezer 3 temperature is drifting; please check freezer 3.",
+    "read": false,
+    "read_at": null,
+    "acknowledged": false,
+    "acked_at": null,
+    "acked_by": null,
+    "archived": false,
+    "archived_at": null,
+    "pinned": false,
+    "muted": false,
+    "snooze_until": null,
+    "deliveries": [],
+    "created_at": 1718983010000,
+    "__v": 0,
+    "mission": {
+      "assignee": "user-1",
+      "status": "in_progress",
+      "due": 1718986610000
+    },
+    "mission_id": "m-1"
+  }
+}

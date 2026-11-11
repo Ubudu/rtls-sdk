@@ -1,0 +1,10 @@
+{
+  "_source": "spec",
+  "_operation": "DELETE /assets/{app_namespace}",
+  "_note": "MACs are echoed as sent.",
+  "status": 200,
+  "body": {
+    "deleted": ["025d4b000011"],
+    "not_found": ["025d4b000012"]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "PATCH on an item that is not a mission (checked before the status).",
+  "status": 409,
+  "body": {
+    "error": "not_a_mission"
+  }
+}

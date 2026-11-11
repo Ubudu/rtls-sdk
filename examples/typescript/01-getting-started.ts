@@ -1,159 +1,58 @@
+// Write section: tier none; budget positions=0 notifications=0 ble=0 etl=0; read skips none
 /**
- * 01 - Getting Started with Ubudu RTLS SDK
+ * 01 - Getting started
  *
- * This example demonstrates:
- * - Setting up the SDK client
- * - Checking API health
- * - Making your first API call
- * - Understanding the response format
+ * Creates a client from the example configuration, checks the API health, selects the first venue as the default
+ * context, reads maps, assets and cached positions, and checks and formats a MAC address. Read-only.
+ *
+ *   npm run ts -- typescript/01-getting-started.ts      (from examples/)
  */
+import { createRtlsClient, formatMac, isValidMac, type Asset } from 'ubudu-rtls-sdk';
+import { runExample } from '../shared/config.js';
 
-import { config } from 'dotenv';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+await runExample('01-getting-started', async ({ config, log }) => {
+  // 1. An explicit client: credentials and namespace come from the configuration, never from source code.
+  const client = createRtlsClient({
+    apiKey: config.apiKey,
+    namespace: config.namespace,
+    baseUrl: config.baseUrl,
+  });
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, '../../.env') });
+  // 2. Health check (GET /health).
+  const health = await client.health();
+  log(`health: ${health.status}`);
 
-import { createRtlsClient, RtlsError, AuthenticationError } from '@ubudu/rtls-sdk';
+  // 3. Venues: the first one becomes the default venue of the client.
+  const venues = await client.venues.list();
+  log(`venues: ${venues.length}`);
+  const venue = venues[0];
+  if (!venue) throw new Error('the namespace has no venue');
+  log(`first venue: id=${venue.id} name=${venue.name}`);
+  client.setVenue(venue.id);
 
-// =============================================================================
-// Configuration
-// =============================================================================
+  // 4. Maps of the default venue.
+  const maps = await client.venues.listMaps();
+  log(`maps: ${maps.length}${maps[0] ? `, first map level ${maps[0].level}` : ''}`);
 
-const NAMESPACE = process.env.APP_NAMESPACE!;
-const API_KEY = process.env.RTLS_API_KEY!;
+  // 5. Assets are namespace-wide (not venue-scoped). Results are typed.
+  const assets = await client.assets.list();
+  log(`assets: ${assets.length}`);
+  for (const asset of assets.slice(0, 3)) {
+    log(`  ${asset.user_name} (${asset.user_type ?? 'no type'})`);
+  }
+  const first: Asset | undefined = assets[0];
+  log(`first asset has a name: ${typeof first?.user_name === 'string'}`);
 
-if (!NAMESPACE || !API_KEY) {
-  console.error('Error: Missing required environment variables');
-  console.error('Please set APP_NAMESPACE and RTLS_API_KEY in your .env file');
-  process.exit(1);
-}
+  // 6. Cached positions: the last known position of every tracked asset.
+  const positions = await client.positions.listCached();
+  log(`cached positions: ${positions.length}`);
+  let newest: string | undefined;
+  for (const p of positions) {
+    if (newest === undefined || Date.parse(p.timestamp) > Date.parse(newest)) newest = p.timestamp;
+  }
+  log(`newest position: ${newest ?? 'none'}`);
 
-// =============================================================================
-// Initialize the SDK Client
-// =============================================================================
-
-// Create a client instance with default context
-const client = createRtlsClient({
-  apiKey: API_KEY,
-  namespace: NAMESPACE, // Default namespace for all calls
-  // Optional: customize timeout (default: 30000ms)
-  timeoutMs: 10000,
+  // 7. MAC helpers: isValidMac() accepts any separator and case; formatMac() returns the display form.
+  const typed = '02-5d-4b-00-00-01';
+  log(`isValidMac(${typed}): ${isValidMac(typed)}, formatMac: ${formatMac(typed)}`);
 });
-
-console.log('Ubudu RTLS SDK - Getting Started Example\n');
-console.log('========================================\n');
-
-// =============================================================================
-// Example 1: Health Check
-// =============================================================================
-
-async function checkHealth(): Promise<void> {
-  console.log('1. Checking API Health...');
-  console.log('   Endpoint: GET /health\n');
-
-  try {
-    const health = await client.health();
-    console.log('   Status:', health);
-    console.log('   Result: API is healthy and ready\n');
-  } catch (error) {
-    if (error instanceof AuthenticationError) {
-      console.error('   Error: Invalid API key');
-    } else if (error instanceof RtlsError) {
-      console.error('   Error:', error.message);
-    }
-    throw error;
-  }
-}
-
-// =============================================================================
-// Example 2: List Venues
-// =============================================================================
-
-async function listVenues(): Promise<number | null> {
-  console.log('2. Listing Venues...');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE} (using default namespace)\n`);
-
-  try {
-    // Uses default namespace from client config
-    const venues = await client.venues.list();
-
-    console.log(`   Found ${venues.length} venue(s)\n`);
-
-    if (venues.length > 0) {
-      const venue = venues[0] as { id: number; name: string; address?: string };
-      console.log('   First venue:');
-      console.log(`   - ID: ${venue.id}`);
-      console.log(`   - Name: ${venue.name}`);
-      console.log(`   - Address: ${venue.address || 'N/A'}\n`);
-      return venue.id;
-    }
-
-    return null;
-  } catch (error) {
-    if (error instanceof RtlsError) {
-      console.error(`   Error (${error.status}):`, error.message);
-    }
-    throw error;
-  }
-}
-
-// =============================================================================
-// Example 3: List Assets
-// =============================================================================
-
-async function listAssets(): Promise<void> {
-  console.log('3. Listing Assets...');
-  console.log(`   Endpoint: GET /assets/${NAMESPACE} (using default namespace)\n`);
-
-  try {
-    // Uses default namespace from client config
-    const assets = await client.assets.list();
-
-    console.log(`   Found ${assets.length} asset(s)\n`);
-
-    // Show first 3 assets
-    const sample = assets.slice(0, 3) as Array<{
-      user_udid: string;
-      user_name: string;
-      user_type: string;
-    }>;
-
-    sample.forEach((asset, i) => {
-      console.log(`   Asset ${i + 1}:`);
-      console.log(`   - MAC: ${asset.user_udid}`);
-      console.log(`   - Name: ${asset.user_name}`);
-      console.log(`   - Type: ${asset.user_type}\n`);
-    });
-  } catch (error) {
-    if (error instanceof RtlsError) {
-      console.error(`   Error (${error.status}):`, error.message);
-    }
-    throw error;
-  }
-}
-
-// =============================================================================
-// Main Execution
-// =============================================================================
-
-async function main(): Promise<void> {
-  try {
-    await checkHealth();
-    await listVenues();
-    await listAssets();
-
-    console.log('========================================');
-    console.log('Getting started example completed successfully!');
-    console.log('\nNext steps:');
-    console.log('- Run 02-asset-tracking.ts for asset management');
-    console.log('- Run 03-zone-geofencing.ts for spatial queries');
-    console.log('- Run 04-navigation.ts for indoor routing');
-  } catch (error) {
-    console.error('\nExample failed:', error);
-    process.exit(1);
-  }
-}
-
-main();

@@ -1,0 +1,58 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N2: a canonical document with an extra top-level key written by another client, which the SDK keeps.",
+  "status": 200,
+  "body": {
+    "name": "Example rules",
+    "rules": [
+      {
+        "id": "example-rule-1",
+        "conditions": {
+          "all": [
+            {
+              "fact": "zone_name",
+              "operator": "equal",
+              "value": "Example Zone"
+            }
+          ]
+        },
+        "event": {
+          "type": "message",
+          "params": {
+            "title": "Example",
+            "text": "{{user_name}} entered",
+            "style": "info",
+            "duration": 2000,
+            "coalescence": 60,
+            "coalescence_group": "example_{{user_udid}}"
+          }
+        }
+      },
+      {
+        "id": "example-rule-2",
+        "disabled": true,
+        "conditions": {
+          "any": [
+            {
+              "fact": "battery_percent",
+              "operator": "lessThan",
+              "value": 20
+            }
+          ]
+        },
+        "event": {
+          "type": "delete_asset",
+          "params": {
+            "title": "Example",
+            "coalescence": 1,
+            "coalescence_group": "example"
+          }
+        }
+      }
+    ],
+    "editorMeta": {
+      "layout": "compact",
+      "version": 2
+    }
+  }
+}

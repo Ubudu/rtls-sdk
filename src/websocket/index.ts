@@ -1,106 +1,118 @@
 /**
- * WebSocket Module Exports
+ * WebSocket module exports. The root re-exports this barrel (`export * from './websocket'`).
  *
- * This module exports all WebSocket-related classes, types, and utilities.
+ * @module websocket
  */
+import { isValidMac, normalizeMac } from '../utils/mac';
 
 // Classes
-export { RtlsWebSocketClient, type ConnectOptions } from './client';
-export { RtlsWebSocketSubscriber, type SubscriptionTypes } from './subscriber';
+export { RtlsWebSocketClient } from './client';
+export { RtlsWebSocketSubscriber } from './subscriber';
 export { RtlsWebSocketPublisher } from './publisher';
 
-// Base connection (for advanced use cases)
-export { BaseWebSocketConnection, type BaseWebSocketEvents } from './connection';
-
-// Event utilities
-export { TypedEventEmitter, DebugLogger, type EventHandler, type EventMap } from './events';
-
-// All types and utilities
+// Constants
 export {
-  // Constants
   WEBSOCKET_URLS,
   WEBSOCKET_DEFAULTS,
-  POSITION_ORIGIN,
   WS_CLOSE_CODES,
-
-  // Connection types
-  type ConnectionState,
-  type WebSocketAuthMethod,
-  type WebSocketBaseConfig,
-  type WebSocketSubscriberConfig,
-  type WebSocketPublisherConfig,
-  type WebSocketClientConfig,
-
-  // Subscription types
   SubscriptionType,
-  type SubscribeMessage,
-  type SubscriptionConfirmation,
+  POSITION_ORIGIN,
+} from './types';
 
-  // Message types
-  type DeviceInfo,
-  type PositionMessage,
-  type PublishPositionData,
-  type ZoneEventType,
-  type ZoneGeometry,
-  type ZoneProperties,
-  type ZoneFeature,
-  type ZoneEntryExitMessage,
-  type ZoneStatsMessage,
-  type AlertStyle,
-  type AlertParams,
-  type AlertMessage,
-  type AssetAction,
-  type AssetData,
-  type AssetMessage,
-  type WebSocketMessage,
+// Configuration (6.1)
+export type {
+  WsCredential,
+  WebSocketLike,
+  WebSocketConstructorLike,
+  ReconnectOptions,
+  WebSocketBaseConfig,
+  WebSocketSubscriberConfig,
+  WebSocketPublisherConfig,
+  WebSocketClientConfig,
+} from './types';
 
-  // Event types
-  type ConnectionEventData,
-  type DisconnectionEventData,
-  type ErrorEventData,
-  type ReconnectionEventData,
-  type SubscriberEventMap,
-  type PublisherEventMap,
+// Subscriber (6.3)
+export type {
+  SubscriptionTypes,
+  SubscriptionSpec,
+  SubscriptionRequest,
+  SubscriptionResult,
+  SubscriptionState,
+  SubscribeMessage,
+} from './types';
 
-  // Result types
-  type SubscriptionResult,
-  type PublishResult,
-  type BatchPublishResult,
-  type ConnectionStatus,
-  type UnifiedConnectionStatus,
+// Publisher (6.4): the input type under both names
+export type {
+  WebSocketPublishPositionData,
+  WebSocketPublishPositionData as PublishPositionData,
+  PublishResult,
+  BatchPublishResult,
+} from './types';
 
-  // Error classes
-  WebSocketError,
-  WebSocketConnectionError,
-  WebSocketAuthenticationError,
-  WebSocketSubscriptionError,
-  WebSocketSendError,
+// Unified client (6.5)
+export type { WebSocketConnectOptions, UnifiedEventMap } from './types';
 
-  // Type guards
+// Events and status (6.6)
+export type {
+  ConnectionEventData,
+  DisconnectionEventData,
+  ReconnectionEventData,
+  ReconnectedEventData,
+  ReconnectFailedEventData,
+  ErrorEventData,
+  PublisherEventMap,
+  SubscriberEventMap,
+  ConnectionState,
+  ConnectionStatus,
+  UnifiedConnectionStatus,
+} from './types';
+
+// Wire messages (5.3, 6.6)
+export {
+  classifyMessage,
   isPositionMessage,
   isZoneEntryExitMessage,
   isZoneStatsMessage,
   isAlertMessage,
   isAssetMessage,
   isSubscriptionConfirmation,
-  classifyMessage,
+} from './messages';
+export type {
+  WsPositionZone,
+  WsZoneStub,
+  WsZoneFeature,
+  WsDeviceInfo,
+  WsAssetFields,
+  WsAssetData,
+  WsAlertParams,
+  PositionMessage,
+  ZoneEntryExitMessage,
+  ZoneStatsMessage,
+  AlertMessage,
+  TagLostMessage,
+  AssetMessage,
+  AlertRulesChangedMessage,
+  AssetsLibraryChangedMessage,
+  DataModelsChangedMessage,
+  SettingsChangedMessage,
+  MapDataChangedMessage,
+  SubscriptionConfirmation,
+  WebSocketMessage,
+  WebSocketMessageKind,
+} from './messages';
 
-  // MAC address utilities
-  normalizeMacAddress,
-  isValidMacAddress,
+// Errors (6.6)
+export type { WebSocketErrorInit } from './errors';
+export {
+  WebSocketError,
+  WebSocketConnectionError,
+  WebSocketAuthenticationError,
+  WebSocketSubscriptionError,
+  WebSocketSendError,
+} from './errors';
 
-  // Reconnection utilities
-  type ReconnectionStrategy,
-  DEFAULT_RECONNECTION_STRATEGY,
-  calculateReconnectDelay,
+/** @deprecated since 0.3.0 — use `normalizeMac` (throws `ValidationError` for an invalid MAC). */
+export const normalizeMacAddress: (mac: string) => string = normalizeMac;
 
-  // Test fixtures
-  POSITION_MESSAGE_FIXTURE,
-  ZONE_ENTRY_FIXTURE,
-  ZONE_STATS_FIXTURE,
-  ALERT_MESSAGE_FIXTURE,
-  ASSET_UPDATE_FIXTURE,
-  ASSET_DELETE_FIXTURE,
-  SUBSCRIPTION_CONFIRMATION_STANDARD,
-  SUBSCRIPTION_CONFIRMATION_ALT,
-} from './types';
+/** @deprecated since 0.3.0 — use `isValidMac`. */
+export const isValidMacAddress: (mac: unknown) => boolean = isValidMac;

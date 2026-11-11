@@ -1,0 +1,8 @@
+{
+  "_source": "spec",
+  "_note": "404 of a get with an absent or invisible id (recorded live, R3). The spec declares no 404 for this route.",
+  "_operation": "GET /etl/mapping-profiles/{id}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "7c4e16fb" },
+  "status": 404,
+  "body": { "error": "Mapping profile not found" }
+}

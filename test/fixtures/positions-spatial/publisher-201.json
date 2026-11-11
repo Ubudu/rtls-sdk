@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "empty 201 without Content-Type: the publisher answers a published position with status 201, an empty body and no Content-Type header.",
+  "_operation": "POST /publisher/{app_namespace}",
+  "status": 201,
+  "body": null
+}

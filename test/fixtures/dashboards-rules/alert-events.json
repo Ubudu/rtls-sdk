@@ -1,0 +1,78 @@
+{
+  "_source": "server-code",
+  "_note": "Alert events as the indexer stores them (live keys map_uuid, timestamp, event, user, zone; every value synthetic): the spec item omits zone, event.style is null for event types without a style, and post_to_email params carry no receiver here. Newest first.",
+  "_operation": "GET /es/alerts/{appNamespace}",
+  "_usi": ["USI-P5-11"],
+  "status": 200,
+  "body": [
+    {
+      "map_uuid": "00000000000000000000000000000001",
+      "timestamp": 1745596370276,
+      "event": {
+        "type": "message",
+        "params": {
+          "title": "Example message",
+          "text": "example-asset entered Example Zone",
+          "style": "info",
+          "duration": 2000,
+          "coalescence": 20,
+          "coalescence_group": "example_group"
+        },
+        "title": "Example message",
+        "style": "info"
+      },
+      "user": {
+        "udid": "example-udid-1",
+        "external_id": "example-asset",
+        "name": "example-asset",
+        "type": null,
+        "tags": [],
+        "device_info": { "model": null },
+        "data": { "battery": 80 }
+      },
+      "zone": { "id": 1, "name": "Example Zone", "tags": ["example"], "color": "#00ff00" }
+    },
+    {
+      "map_uuid": "00000000000000000000000000000001",
+      "timestamp": 1745596300000,
+      "event": {
+        "type": "post_to_email",
+        "params": {
+          "title": "Example e-mail",
+          "text": "example-asset alert",
+          "coalescence": 60,
+          "coalescence_group": "example_mail"
+        },
+        "title": "Example e-mail",
+        "style": null
+      },
+      "user": {
+        "udid": "example-udid-2",
+        "name": "example-tag",
+        "type": "default",
+        "tags": ["example"],
+        "device_info": { "model": "example-model" },
+        "data": {}
+      },
+      "zone": {}
+    },
+    {
+      "timestamp": 1745596200000,
+      "event": {
+        "type": "delete_asset",
+        "params": {
+          "title": "Example deletion",
+          "coalescence": 1,
+          "coalescence_group": "example_delete"
+        },
+        "title": "Example deletion",
+        "style": null
+      },
+      "user": {
+        "udid": "example-udid-3",
+        "data": {}
+      },
+      "zone": { "id": 2, "name": "Example Exit" }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-POS-11.",
+  "_operation": "GET /es/position_history/{appNamespace}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": [
+    {
+      "timestamp": 1794400935118,
+      "map_uuid": "map-fixture",
+      "origin": 0,
+      "location": { "lat": 48.8, "lon": 2.3 },
+      "user": "<redacted>",
+      "span": { "dist": 0.062135177188890944, "speed": 0.006213517718889094, "time_diff": 10 },
+      "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#77bb41" },
+      "dateCreated": 1788626381866,
+      "dateChanged": 1794400213386,
+      "model": "default",
+      "color": "#247BA0",
+      "path": "/site/area",
+      "origin_detail": null,
+      "declared_location": null,
+      "is_virtual": false
+    },
+    {
+      "timestamp": 1794400945344,
+      "map_uuid": "map-fixture",
+      "origin": 0,
+      "location": { "lat": 48.8000022, "lon": 2.2999983 },
+      "user": "<redacted>",
+      "span": { "dist": 0.2776758124385327, "speed": 0.025243255676230245, "time_diff": 11 },
+      "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#77bb41" },
+      "dateCreated": 1788626381866,
+      "dateChanged": 1794400213386,
+      "model": "default",
+      "color": "#247BA0",
+      "path": "/site/area",
+      "origin_detail": null,
+      "declared_location": null,
+      "is_virtual": false
+    },
+    {
+      "timestamp": 1794400955340,
+      "map_uuid": "map-fixture",
+      "origin": 0,
+      "location": { "lat": 48.8000005, "lon": 2.2999965 },
+      "user": "<redacted>",
+      "span": { "dist": 0.23271002824017592, "speed": 0.023271002824017593, "time_diff": 10 },
+      "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#77bb41" },
+      "dateCreated": 1788626381866,
+      "dateChanged": 1794400213386,
+      "model": "default",
+      "color": "#247BA0",
+      "path": "/site/area",
+      "origin_detail": null,
+      "declared_location": null,
+      "is_virtual": false
+    }
+  ]
+}

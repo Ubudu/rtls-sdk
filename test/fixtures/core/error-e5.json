@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "E5 envelope {error: <human text>, code: <UPPER_CODE>} of the AI agent turn conflicts (out of scope, mapped generically).",
+  "status": 409,
+  "body": {
+    "error": "Your previous request is still being processed.",
+    "code": "TURN_IN_FLIGHT"
+  }
+}

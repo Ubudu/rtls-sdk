@@ -1,0 +1,232 @@
+{
+  "phase": "P5",
+  "domain": "dashboards-rules",
+  "status": "complete",
+  "operations": [
+    {
+      "op": "DELETE /dashboards/{id}",
+      "decision": "wrap",
+      "sdk": ["dashboards.delete"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "W",
+      "usi": ["USI-P5-13"]
+    },
+    {
+      "op": "GET /alert_rules/{app_namespace}",
+      "decision": "wrap",
+      "sdk": ["alertRules.get", "alerts.getRules"],
+      "unit": [
+        "test/resources/dashboards-rules/alert-rules.test.ts",
+        "test/resources/dashboards-rules/alerts.test.ts"
+      ],
+      "live": [
+        "test/integration/dashboards-rules/alert-rules.read.int.test.ts",
+        "test/integration/dashboards-rules/alert-rules.config.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-1", "USI-P5-13"]
+    },
+    {
+      "op": "GET /dashboards",
+      "decision": "wrap",
+      "sdk": ["dashboards.list"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.read.int.test.ts",
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-6", "USI-P5-13"]
+    },
+    {
+      "op": "GET /dashboards/created",
+      "decision": "wrap",
+      "sdk": ["dashboards.listCreated"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.read.int.test.ts",
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-6", "USI-P5-13"]
+    },
+    {
+      "op": "GET /dashboards/selected",
+      "decision": "wrap",
+      "sdk": ["dashboards.listSelected"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.read.int.test.ts",
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-6", "USI-P5-13"]
+    },
+    {
+      "op": "GET /dashboards/shared",
+      "decision": "wrap",
+      "sdk": ["dashboards.listShared"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.read.int.test.ts",
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-6", "USI-P5-13"]
+    },
+    {
+      "op": "GET /dashboards/{id}",
+      "decision": "wrap",
+      "sdk": ["dashboards.get"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.read.int.test.ts",
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-6", "USI-P5-13"]
+    },
+    {
+      "op": "GET /es/alerts/{appNamespace}",
+      "decision": "wrap",
+      "sdk": ["alerts.list"],
+      "unit": "test/resources/dashboards-rules/alerts.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/alerts-settings-health.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "R",
+      "usi": ["USI-P5-11", "USI-P5-13"]
+    },
+    {
+      "op": "GET /health",
+      "decision": "wrap",
+      "sdk": ["client.health"],
+      "unit": "test/resources/dashboards-rules/health.test.ts",
+      "live": "test/integration/dashboards-rules/alerts-settings-health.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "GET /settings/{app_namespace}",
+      "decision": "wrap",
+      "sdk": ["settings.get", "client.getSettings"],
+      "unit": "test/resources/dashboards-rules/settings.test.ts",
+      "live": "test/integration/dashboards-rules/alerts-settings-health.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P5-12", "USI-P5-13", "USI-P5-14"]
+    },
+    {
+      "op": "GET /status/{component}",
+      "decision": "exclude",
+      "reason": "Infrastructure diagnostics; client.health() covers the client need."
+    },
+    {
+      "op": "GET /universal-filtering/documentation",
+      "decision": "exclude",
+      "reason": "Returns a pointer to documentation, no data; filtering is documented statically."
+    },
+    {
+      "op": "POST /alert_rules/{app_namespace}",
+      "decision": "wrap",
+      "sdk": [
+        "alertRules.replace",
+        "alertRules.upsertRule",
+        "alertRules.removeRule",
+        "alertRules.setRuleEnabled",
+        "alerts.saveRules"
+      ],
+      "unit": [
+        "test/resources/dashboards-rules/alert-rules.test.ts",
+        "test/resources/dashboards-rules/alerts.test.ts",
+        "test/resources/dashboards-rules/alert-rules-validation.test.ts"
+      ],
+      "live": [
+        "test/integration/dashboards-rules/alert-rules.config.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "C",
+      "usi": ["USI-P5-1", "USI-P5-2", "USI-P5-3", "USI-P5-4", "USI-P5-13", "USI-P5-14"]
+    },
+    {
+      "op": "POST /dashboards",
+      "decision": "wrap",
+      "sdk": ["dashboards.create"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "W",
+      "usi": ["USI-P5-6", "USI-P5-7", "USI-P5-8", "USI-P5-10", "USI-P5-13"]
+    },
+    {
+      "op": "POST /dashboards/{id}/share",
+      "decision": "wrap",
+      "sdk": ["dashboards.share"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "W",
+      "usi": ["USI-P5-5", "USI-P5-6", "USI-P5-13"]
+    },
+    {
+      "op": "POST /dashboards/{id}/unshare",
+      "decision": "wrap",
+      "sdk": ["dashboards.unshare"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "W",
+      "usi": ["USI-P5-7", "USI-P5-13"]
+    },
+    {
+      "op": "POST /settings/{app_namespace}",
+      "decision": "exclude",
+      "reason": "Full-replace write of the whole namespace configuration whose side effects cannot be confined to a test run; an operator task. settings.get() stays."
+    },
+    {
+      "op": "PUT /dashboards/{id}",
+      "decision": "wrap",
+      "sdk": ["dashboards.update"],
+      "unit": "test/resources/dashboards-rules/dashboards.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/dashboards.write.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "W",
+      "usi": ["USI-P5-6", "USI-P5-7", "USI-P5-8", "USI-P5-9", "USI-P5-13"]
+    }
+  ],
+  "nonHttp": [],
+  "sdkMethods": [
+    {
+      "name": "validateAlertRuleSet",
+      "unit": "test/resources/dashboards-rules/alert-rules-validation.test.ts",
+      "live": [
+        "test/integration/dashboards-rules/alert-rules.read.int.test.ts",
+        "test/integration/dashboards-rules/guards.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "ALERT_RULE_OPERATORS",
+      "unit": "test/resources/dashboards-rules/alert-rules-validation.test.ts",
+      "live": "test/integration/dashboards-rules/alert-rules.read.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "ALERT_RULE_EVENT_TYPES",
+      "unit": "test/resources/dashboards-rules/alert-rules-validation.test.ts",
+      "live": "test/integration/dashboards-rules/alert-rules.read.int.test.ts",
+      "tier": "R"
+    }
+  ]
+}

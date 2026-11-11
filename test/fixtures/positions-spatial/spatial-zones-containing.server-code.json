@@ -1,0 +1,40 @@
+{
+  "_source": "server-code",
+  "_note": "Server-code shape with one item, for typing (no live item exists while USI-P3-1 / USI-P3-2 empty the results). Synthetic geometry around lat 48.8, lon 2.3. The spec declares no 200 schema for this operation (USI-P3-10).",
+  "_operation": "GET /spatial/zones/{namespace}/containing-point",
+  "status": 200,
+  "body": {
+    "reference_point": {
+      "lat": 48.8,
+      "lon": 2.3
+    },
+    "level": null,
+    "containing_zones": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [2.2995, 48.7995],
+              [2.3005, 48.7995],
+              [2.3005, 48.8005],
+              [2.2995, 48.8005],
+              [2.2995, 48.7995]
+            ]
+          ]
+        },
+        "properties": {
+          "id": 1,
+          "name": "Zone 1",
+          "level": 0,
+          "rgb_color": "#ff0000",
+          "tags": ["tag-1"],
+          "type": "zone"
+        },
+        "level": 0
+      }
+    ],
+    "total": 1
+  }
+}

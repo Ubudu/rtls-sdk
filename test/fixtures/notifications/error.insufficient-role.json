@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "send or admin route without the needed role.",
+  "status": 403,
+  "body": {
+    "error": "insufficient_role",
+    "message": "send_notifications role required"
+  }
+}

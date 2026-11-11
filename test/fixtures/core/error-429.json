@@ -1,0 +1,12 @@
+{
+  "_source": "server-code",
+  "_note": "E2 envelope of the notification rate limiter with Retry-After in seconds (the only wrapped route that sends it).",
+  "status": 429,
+  "headers": {
+    "Retry-After": "17"
+  },
+  "body": {
+    "error": "rate_limited",
+    "message": "Too many requests, retry later"
+  }
+}

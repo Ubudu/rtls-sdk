@@ -1,0 +1,11 @@
+{
+  "_source": "server-code",
+  "_note": "Asset deletion notification sent by the API: no data key.",
+  "_nonHttp": "WS-M6",
+  "body": {
+    "type": "assets",
+    "action": "delete",
+    "app_namespace": "test_namespace",
+    "mac_address": "025d4b000001"
+  }
+}

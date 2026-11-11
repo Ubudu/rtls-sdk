@@ -1,0 +1,33 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N3: a legacy document whose rules are under decisions (no rules key); the engine falls back to decisions.",
+  "status": 200,
+  "body": {
+    "name": "Example legacy",
+    "decisions": [
+      {
+        "id": "example-rule-1",
+        "conditions": {
+          "all": [
+            {
+              "fact": "zone_name",
+              "operator": "equal",
+              "value": "Example Zone"
+            }
+          ]
+        },
+        "event": {
+          "type": "message",
+          "params": {
+            "title": "Example",
+            "text": "{{user_name}} entered",
+            "style": "info",
+            "duration": 2000,
+            "coalescence": 60,
+            "coalescence_group": "example_{{user_udid}}"
+          }
+        }
+      }
+    ]
+  }
+}

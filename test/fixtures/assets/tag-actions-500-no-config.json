@@ -1,0 +1,8 @@
+{
+  "_source": "spec",
+  "_operation": "POST /tag-actions/{appNamespace}",
+  "status": 500,
+  "body": {
+    "error": "No BLE comms configuration for namespace: test-namespace"
+  }
+}

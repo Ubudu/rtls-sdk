@@ -1,0 +1,8 @@
+{
+  "_source": "spec",
+  "_note": "Header preview of a two-column CSV (recorded live, R6): columns from the header row, sampleData as strings. The spec declares no response schema for this route.",
+  "_operation": "POST /etl/parse-excel-headers",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "7c4e16fb" },
+  "status": 200,
+  "body": { "columns": ["MAC", "Name"], "sampleData": [{ "MAC": "025d4b00002c", "Name": "x" }] }
+}

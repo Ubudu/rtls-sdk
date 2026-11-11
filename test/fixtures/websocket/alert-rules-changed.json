@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "Refetch hint sent by the API after the namespace's alert-rule document was written; no payload. Delivered only under a subscription without a type filter.",
+  "_nonHttp": "WS-M7",
+  "_usi": ["USI-P8-3"],
+  "body": { "type": "alert_rules", "action": "update", "app_namespace": "test_namespace" }
+}

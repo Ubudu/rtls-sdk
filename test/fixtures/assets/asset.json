@@ -1,0 +1,25 @@
+{
+  "_source": "spec",
+  "_operation": "GET /assets/{app_namespace}/{mac_address}",
+  "_note": "Written by hand in the shape of a Demo Factory asset (speed mode; live re-recording through recordFixture). Scrubbed: createdBy and targetApplications are test-namespace, MAC in the 025d4b range.",
+  "status": 200,
+  "body": {
+    "user_udid": "025d4b000001",
+    "user_name": "Forklift 01",
+    "user_type": "forklift",
+    "user_motion": "default",
+    "model": "UWB-TAG-A",
+    "color": "#cde201",
+    "path": "/Root/Lv 1/",
+    "tags": ["fleet", "north"],
+    "external_id": "FL-01",
+    "targetApplications": ["test-namespace"],
+    "data": {
+      "zone": "A",
+      "battery": 80
+    },
+    "createdBy": "test-namespace",
+    "dateCreated": 1744620101741,
+    "dateChanged": 1745547629256
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-10.",
+  "_operation": "GET /spatial/pois/{namespace}/nearest-to-point",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "reference_point": { "lat": 48.8, "lon": 2.3 },
+    "level": null,
+    "max_distance_meters": null,
+    "tags_filter": ["sdk-test-tag"],
+    "total_pois": 0,
+    "pois": [],
+    "hasMore": false
+  }
+}

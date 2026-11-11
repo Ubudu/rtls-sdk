@@ -1,0 +1,1863 @@
+{
+  "summary": {
+    "specVersion": "3.4.0-15bab236",
+    "total": 176,
+    "wrapped": 114,
+    "excluded": 62,
+    "byTag": {
+      "AI - Agent": {
+        "total": 7,
+        "wrapped": 0,
+        "excluded": 7
+      },
+      "AI - Rule Generation": {
+        "total": 5,
+        "wrapped": 0,
+        "excluded": 5
+      },
+      "AI Agent": {
+        "total": 3,
+        "wrapped": 0,
+        "excluded": 3
+      },
+      "AI Agent Reports": {
+        "total": 21,
+        "wrapped": 0,
+        "excluded": 21
+      },
+      "Alert Rules": {
+        "total": 2,
+        "wrapped": 2,
+        "excluded": 0
+      },
+      "Asset Documents": {
+        "total": 6,
+        "wrapped": 6,
+        "excluded": 0
+      },
+      "Asset Positions": {
+        "total": 4,
+        "wrapped": 4,
+        "excluded": 0
+      },
+      "Asset Tree": {
+        "total": 2,
+        "wrapped": 1,
+        "excluded": 1
+      },
+      "Assets Data": {
+        "total": 9,
+        "wrapped": 8,
+        "excluded": 1
+      },
+      "BLE Communications": {
+        "total": 1,
+        "wrapped": 1,
+        "excluded": 0
+      },
+      "Dashboard": {
+        "total": 10,
+        "wrapped": 10,
+        "excluded": 0
+      },
+      "Data Models": {
+        "total": 2,
+        "wrapped": 1,
+        "excluded": 1
+      },
+      "Declared Location": {
+        "total": 2,
+        "wrapped": 2,
+        "excluded": 0
+      },
+      "Elasticsearch": {
+        "total": 5,
+        "wrapped": 5,
+        "excluded": 0
+      },
+      "ESL Synchronizer": {
+        "total": 2,
+        "wrapped": 0,
+        "excluded": 2
+      },
+      "ETL": {
+        "total": 14,
+        "wrapped": 9,
+        "excluded": 5
+      },
+      "Health": {
+        "total": 2,
+        "wrapped": 1,
+        "excluded": 1
+      },
+      "Internal Service Auth": {
+        "total": 6,
+        "wrapped": 0,
+        "excluded": 6
+      },
+      "Navigation": {
+        "total": 8,
+        "wrapped": 5,
+        "excluded": 3
+      },
+      "Notifications": {
+        "total": 39,
+        "wrapped": 38,
+        "excluded": 1
+      },
+      "Settings": {
+        "total": 2,
+        "wrapped": 1,
+        "excluded": 1
+      },
+      "Spatial Analysis": {
+        "total": 12,
+        "wrapped": 12,
+        "excluded": 0
+      },
+      "Universal Filtering Documentation": {
+        "total": 1,
+        "wrapped": 0,
+        "excluded": 1
+      },
+      "Venues": {
+        "total": 11,
+        "wrapped": 8,
+        "excluded": 3
+      }
+    }
+  },
+  "rows": [
+    {
+      "tag": "AI - Agent",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/artifacts/{sessionId}/{filename}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Agent",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/events/errors",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Agent",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/events/token-usage",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Agent",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/events/tool-usage",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Agent",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reset",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Agent",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/send",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Agent",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/status",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Rule Generation",
+      "method": "GET",
+      "path": "/ai/{namespace}/config",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Rule Generation",
+      "method": "GET",
+      "path": "/ai/{namespace}/jobs",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Rule Generation",
+      "method": "GET",
+      "path": "/ai/{namespace}/jobs/{jobId}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Rule Generation",
+      "method": "POST",
+      "path": "/ai/{namespace}/rules/examples",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI - Rule Generation",
+      "method": "POST",
+      "path": "/ai/{namespace}/rules/generate",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/artifacts",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/artifacts/clear",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent",
+      "method": "DELETE",
+      "path": "/ai-agent/{namespace}/artifacts/{filename}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reports/bulk",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/drafts",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reports/drafts/clear",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "DELETE",
+      "path": "/ai-agent/{namespace}/reports/drafts/{draft_id}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/{id}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "PATCH",
+      "path": "/ai-agent/{namespace}/reports/{id}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "DELETE",
+      "path": "/ai-agent/{namespace}/reports/{id}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reports/{id}/generate",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/{id}/instances",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reports/{id}/instances/clear",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/{id}/instances/{iid}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "DELETE",
+      "path": "/ai-agent/{namespace}/reports/{id}/instances/{iid}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/{id}/instances/{iid}/view",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "POST",
+      "path": "/ai-agent/{namespace}/reports/{id}/variants/clear",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "DELETE",
+      "path": "/ai-agent/{namespace}/reports/{id}/variants/{vid}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/{id}/variants/{vid}/view",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "PUT",
+      "path": "/ai-agent/{namespace}/reports/{id}/versions",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "DELETE",
+      "path": "/ai-agent/{namespace}/reports/{id}/versions/{v}",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "AI Agent Reports",
+      "method": "GET",
+      "path": "/ai-agent/{namespace}/reports/{id}/view",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "tag": "Alert Rules",
+      "method": "GET",
+      "path": "/alert_rules/{app_namespace}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.alertRules.get(), client.alerts.getRules()",
+      "tier": "R"
+    },
+    {
+      "tag": "Alert Rules",
+      "method": "POST",
+      "path": "/alert_rules/{app_namespace}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.alertRules.replace(), client.alertRules.upsertRule(), client.alertRules.removeRule(), client.alertRules.setRuleEnabled(), client.alerts.saveRules()",
+      "tier": "C"
+    },
+    {
+      "tag": "Asset Documents",
+      "method": "GET",
+      "path": "/assets/{namespace}/documents/jobs/{jobId}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetDocuments.getJob(), client.assetDocuments.waitForJob()",
+      "tier": "R"
+    },
+    {
+      "tag": "Asset Documents",
+      "method": "GET",
+      "path": "/assets/{namespace}/{mac_address}/documents",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetDocuments.listPage(), client.assetDocuments.list()",
+      "tier": "R"
+    },
+    {
+      "tag": "Asset Documents",
+      "method": "POST",
+      "path": "/assets/{namespace}/{mac_address}/documents",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetDocuments.upload()",
+      "tier": "W"
+    },
+    {
+      "tag": "Asset Documents",
+      "method": "GET",
+      "path": "/assets/{namespace}/{mac_address}/documents/{documentId}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetDocuments.get()",
+      "tier": "W"
+    },
+    {
+      "tag": "Asset Documents",
+      "method": "DELETE",
+      "path": "/assets/{namespace}/{mac_address}/documents/{documentId}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetDocuments.delete()",
+      "tier": "W"
+    },
+    {
+      "tag": "Asset Documents",
+      "method": "GET",
+      "path": "/assets/{namespace}/{mac_address}/documents/{documentId}/download",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetDocuments.download()",
+      "tier": "W"
+    },
+    {
+      "tag": "Asset Positions",
+      "method": "GET",
+      "path": "/asset_last_position/{app_namespace}/{mac_address}",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.getLast()",
+      "tier": "R"
+    },
+    {
+      "tag": "Asset Positions",
+      "method": "GET",
+      "path": "/cache/{app_namespace}/positions",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.listCached()",
+      "tier": "R"
+    },
+    {
+      "tag": "Asset Positions",
+      "method": "GET",
+      "path": "/cache/{app_namespace}/positions/{mac_address}",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.getCached()",
+      "tier": "R"
+    },
+    {
+      "tag": "Asset Positions",
+      "method": "POST",
+      "path": "/publisher/{app_namespace}",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.publish()",
+      "tier": "S"
+    },
+    {
+      "tag": "Asset Tree",
+      "method": "GET",
+      "path": "/assets_library/{app_namespace}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assetTree.get()",
+      "tier": "R"
+    },
+    {
+      "tag": "Asset Tree",
+      "method": "POST",
+      "path": "/assets_library/{app_namespace}",
+      "phase": "P2",
+      "decision": "exclude",
+      "reason": "Full-replace write of the asset tree; done in the product UI. Read access is in scope."
+    },
+    {
+      "tag": "Assets Data",
+      "method": "GET",
+      "path": "/asset_history/{app_namespace}/{mac_address}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.getHistory()",
+      "tier": "R"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "GET",
+      "path": "/asset_stats/{app_namespace}/{start_time}/{end_time}",
+      "phase": "P2",
+      "decision": "exclude",
+      "reason": "Namespace-wide audit counters of asset-record changes; an operator report, not an integration need."
+    },
+    {
+      "tag": "Assets Data",
+      "method": "GET",
+      "path": "/assets/{app_namespace}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.list(), client.assets.iterate(), client.assets.getAll()",
+      "tier": "R"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "POST",
+      "path": "/assets/{app_namespace}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.batchSave()",
+      "tier": "W"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "DELETE",
+      "path": "/assets/{app_namespace}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.batchDelete()",
+      "allowlist": "P2-2"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "GET",
+      "path": "/assets/{app_namespace}/{mac_address}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.get()",
+      "tier": "R"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "POST",
+      "path": "/assets/{app_namespace}/{mac_address}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.create()",
+      "tier": "W"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "PATCH",
+      "path": "/assets/{app_namespace}/{mac_address}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.update()",
+      "tier": "W"
+    },
+    {
+      "tag": "Assets Data",
+      "method": "DELETE",
+      "path": "/assets/{app_namespace}/{mac_address}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.assets.delete(), client.assets.batchDelete()",
+      "tier": "W"
+    },
+    {
+      "tag": "BLE Communications",
+      "method": "POST",
+      "path": "/tag-actions/{appNamespace}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.tagActions.send()",
+      "tier": "S"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "GET",
+      "path": "/dashboards",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.list()",
+      "tier": "R"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "POST",
+      "path": "/dashboards",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.create()",
+      "tier": "W"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "GET",
+      "path": "/dashboards/created",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.listCreated()",
+      "tier": "R"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "GET",
+      "path": "/dashboards/selected",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.listSelected()",
+      "tier": "R"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "GET",
+      "path": "/dashboards/shared",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.listShared()",
+      "tier": "R"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "GET",
+      "path": "/dashboards/{id}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.get()",
+      "tier": "R"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "PUT",
+      "path": "/dashboards/{id}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.update()",
+      "tier": "W"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "DELETE",
+      "path": "/dashboards/{id}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.delete()",
+      "tier": "W"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "POST",
+      "path": "/dashboards/{id}/share",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.share()",
+      "tier": "W"
+    },
+    {
+      "tag": "Dashboard",
+      "method": "POST",
+      "path": "/dashboards/{id}/unshare",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.dashboards.unshare()",
+      "tier": "W"
+    },
+    {
+      "tag": "Data Models",
+      "method": "GET",
+      "path": "/data_filters_taxonomy/{app_namespace}",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.dataModels.get()",
+      "tier": "R"
+    },
+    {
+      "tag": "Data Models",
+      "method": "POST",
+      "path": "/data_filters_taxonomy/{app_namespace}",
+      "phase": "P2",
+      "decision": "exclude",
+      "reason": "Full-replace write of the data model; done in the product UI. Read access is in scope."
+    },
+    {
+      "tag": "Declared Location",
+      "method": "POST",
+      "path": "/assets/{namespace}/bulk-clear-declared",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.declaredLocations.bulkClear()",
+      "tier": "S"
+    },
+    {
+      "tag": "Declared Location",
+      "method": "POST",
+      "path": "/assets/{namespace}/bulk-declare",
+      "phase": "P2",
+      "decision": "wrap",
+      "sdkMethod": "client.declaredLocations.bulkDeclare()",
+      "tier": "S"
+    },
+    {
+      "tag": "Elasticsearch",
+      "method": "GET",
+      "path": "/es/alerts/{appNamespace}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.alerts.list()",
+      "tier": "R"
+    },
+    {
+      "tag": "Elasticsearch",
+      "method": "GET",
+      "path": "/es/last_positions/{appNamespace}",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.listLast()",
+      "tier": "R"
+    },
+    {
+      "tag": "Elasticsearch",
+      "method": "GET",
+      "path": "/es/position_history/{appNamespace}",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.getHistory()",
+      "tier": "R"
+    },
+    {
+      "tag": "Elasticsearch",
+      "method": "POST",
+      "path": "/es/query/{appNamespace}/{dataType}",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.positions.query()",
+      "tier": "R"
+    },
+    {
+      "tag": "Elasticsearch",
+      "method": "GET",
+      "path": "/es/zone_presence/{appNamespace}",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.zones.getPresence()",
+      "tier": "R"
+    },
+    {
+      "tag": "ESL Synchronizer",
+      "method": "GET",
+      "path": "/esl/config/pdi-event-tracking",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "ESL synchronizer configuration is deployment-level configuration."
+    },
+    {
+      "tag": "ESL Synchronizer",
+      "method": "PUT",
+      "path": "/esl/config/pdi-event-tracking",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "ESL synchronizer configuration is deployment-level configuration."
+    },
+    {
+      "tag": "ETL",
+      "method": "GET",
+      "path": "/etl/activities",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.activities.listPage(), client.etl.activities.iterate()",
+      "tier": "R"
+    },
+    {
+      "tag": "ETL",
+      "method": "GET",
+      "path": "/etl/check-mappings",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy diagnostic paired with fix-mapping; its only meaningful field is keyColumns.length > 0 on list()/listAll()"
+    },
+    {
+      "tag": "ETL",
+      "method": "PUT",
+      "path": "/etl/fix-mapping/{id}",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Duplicate of mappingProfiles.update({ keyColumns }), which also supports the optimistic lock"
+    },
+    {
+      "tag": "ETL",
+      "method": "GET",
+      "path": "/etl/mapping-profiles",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.mappingProfiles.listAll()",
+      "tier": "R"
+    },
+    {
+      "tag": "ETL",
+      "method": "POST",
+      "path": "/etl/mapping-profiles",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.mappingProfiles.create()",
+      "tier": "W"
+    },
+    {
+      "tag": "ETL",
+      "method": "GET",
+      "path": "/etl/mapping-profiles/{id}",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.mappingProfiles.get()",
+      "tier": "R"
+    },
+    {
+      "tag": "ETL",
+      "method": "PUT",
+      "path": "/etl/mapping-profiles/{id}",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.mappingProfiles.update()",
+      "tier": "W"
+    },
+    {
+      "tag": "ETL",
+      "method": "DELETE",
+      "path": "/etl/mapping-profiles/{id}",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.mappingProfiles.delete()",
+      "tier": "W"
+    },
+    {
+      "tag": "ETL",
+      "method": "GET",
+      "path": "/etl/mappings",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.mappingProfiles.list()",
+      "tier": "R"
+    },
+    {
+      "tag": "ETL",
+      "method": "POST",
+      "path": "/etl/mappings",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy alias of POST /etl/mapping-profiles with different status codes"
+    },
+    {
+      "tag": "ETL",
+      "method": "PUT",
+      "path": "/etl/mappings/{id}",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy alias of PUT /etl/mapping-profiles/{id} with a generic 500"
+    },
+    {
+      "tag": "ETL",
+      "method": "DELETE",
+      "path": "/etl/mappings/{id}",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy alias of DELETE /etl/mapping-profiles/{id} with a generic 500"
+    },
+    {
+      "tag": "ETL",
+      "method": "POST",
+      "path": "/etl/parse-excel-headers",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.parseHeaders()",
+      "tier": "R"
+    },
+    {
+      "tag": "ETL",
+      "method": "POST",
+      "path": "/etl/upload",
+      "phase": "P7",
+      "decision": "wrap",
+      "sdkMethod": "client.etl.upload()",
+      "tier": "S"
+    },
+    {
+      "tag": "Health",
+      "method": "GET",
+      "path": "/health",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.health()",
+      "tier": "R"
+    },
+    {
+      "tag": "Health",
+      "method": "GET",
+      "path": "/status/{component}",
+      "phase": "P5",
+      "decision": "exclude",
+      "reason": "Infrastructure diagnostics; client.health() covers the client need."
+    },
+    {
+      "tag": "Internal Service Auth",
+      "method": "GET",
+      "path": "/admin/{namespace}/services",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "tag": "Internal Service Auth",
+      "method": "GET",
+      "path": "/admin/{namespace}/services/{service}/config",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "tag": "Internal Service Auth",
+      "method": "PUT",
+      "path": "/admin/{namespace}/services/{service}/config",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "tag": "Internal Service Auth",
+      "method": "POST",
+      "path": "/admin/{namespace}/services/{service}/secret",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "tag": "Internal Service Auth",
+      "method": "GET",
+      "path": "/internal/{service}/{namespace}/config",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "tag": "Internal Service Auth",
+      "method": "POST",
+      "path": "/internal/{service}/{namespace}/register",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "tag": "Navigation",
+      "method": "POST",
+      "path": "/spatial/navigate/{namespace}/accessible-path",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.navigation.accessiblePath()",
+      "allowlist": "P4-1"
+    },
+    {
+      "tag": "Navigation",
+      "method": "GET",
+      "path": "/spatial/navigate/{namespace}/evacuation/{nodeId}",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.navigation.evacuationRoute()",
+      "tier": "R"
+    },
+    {
+      "tag": "Navigation",
+      "method": "GET",
+      "path": "/spatial/navigate/{namespace}/graph-analysis",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Map-authoring QA diagnostic, not an integration surface."
+    },
+    {
+      "tag": "Navigation",
+      "method": "GET",
+      "path": "/spatial/navigate/{namespace}/graph-quality",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Map-authoring QA diagnostic, not an integration surface."
+    },
+    {
+      "tag": "Navigation",
+      "method": "POST",
+      "path": "/spatial/navigate/{namespace}/multi-stop",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.navigation.multiStop()",
+      "tier": "R"
+    },
+    {
+      "tag": "Navigation",
+      "method": "GET",
+      "path": "/spatial/navigate/{namespace}/nearest-poi/{nodeId}",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.navigation.nearestPoi()",
+      "tier": "R"
+    },
+    {
+      "tag": "Navigation",
+      "method": "POST",
+      "path": "/spatial/navigate/{namespace}/shortest-path",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.navigation.shortestPath()",
+      "tier": "R"
+    },
+    {
+      "tag": "Navigation",
+      "method": "GET",
+      "path": "/spatial/navigate/{namespace}/statistics",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Server cache internals."
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.list(), client.notifications.listPage(), client.notifications.iterate(), client.notifications.listGroups()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/bulk",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.bulk()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/bulk/undo",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.undo()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/cleanup-policy",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.cleanupPolicy.get()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "PUT",
+      "path": "/notifications/{namespace}/cleanup-policy",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.cleanupPolicy.replace()",
+      "tier": "C",
+      "allowlist": "P6-1"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/connections",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.connections.list()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/connections",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.connections.upsert()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/connections/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.connections.get()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "DELETE",
+      "path": "/notifications/{namespace}/connections/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.connections.delete()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/connections/{id}/test",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.connections.test()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/export",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.export()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/facets",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.facets()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/recipient-mappings",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.recipientMappings.list()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/recipient-mappings",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.recipientMappings.create()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/recipient-mappings/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.recipientMappings.get()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "PATCH",
+      "path": "/notifications/{namespace}/recipient-mappings/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.recipientMappings.update()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "DELETE",
+      "path": "/notifications/{namespace}/recipient-mappings/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.recipientMappings.delete()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/rules",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.rules.list()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/rules",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.rules.create()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/rules/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.rules.get()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "PATCH",
+      "path": "/notifications/{namespace}/rules/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.rules.update()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "DELETE",
+      "path": "/notifications/{namespace}/rules/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.rules.delete()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/saved-views",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.savedViews.list()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/saved-views",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.savedViews.create()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/saved-views/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.savedViews.get()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "DELETE",
+      "path": "/notifications/{namespace}/saved-views/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.savedViews.delete()",
+      "tier": "W"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/send",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.send(), client.notifications.sendToSelf()",
+      "tier": "S",
+      "allowlist": "P6-6"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/stream",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.stream()",
+      "tier": "S",
+      "allowlist": "P6-4"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/tenant-config",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.tenantConfig.get()",
+      "tier": "C"
+    },
+    {
+      "tag": "Notifications",
+      "method": "PUT",
+      "path": "/notifications/{namespace}/tenant-config",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.admin.tenantConfig.update()",
+      "tier": "C",
+      "allowlist": "P6-2"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/unread_count",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.unreadCount()",
+      "tier": "R"
+    },
+    {
+      "tag": "Notifications",
+      "method": "GET",
+      "path": "/notifications/{namespace}/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.get()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "PATCH",
+      "path": "/notifications/{namespace}/{id}",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.updateMission()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/{id}/acknowledge",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.acknowledge()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/{id}/archive",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.archive()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/{id}/mute",
+      "phase": "P6",
+      "decision": "exclude",
+      "reason": "Only extra effect over bulk mute is a registry row the server never reads and cannot delete; bulk covers the need."
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/{id}/pin",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.pin(), client.notifications.unpin()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/{id}/read",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.markRead()",
+      "tier": "S"
+    },
+    {
+      "tag": "Notifications",
+      "method": "POST",
+      "path": "/notifications/{namespace}/{id}/snooze",
+      "phase": "P6",
+      "decision": "wrap",
+      "sdkMethod": "client.notifications.snooze()",
+      "tier": "S"
+    },
+    {
+      "tag": "Settings",
+      "method": "GET",
+      "path": "/settings/{app_namespace}",
+      "phase": "P5",
+      "decision": "wrap",
+      "sdkMethod": "client.settings.get(), client.getSettings()",
+      "tier": "R"
+    },
+    {
+      "tag": "Settings",
+      "method": "POST",
+      "path": "/settings/{app_namespace}",
+      "phase": "P5",
+      "decision": "exclude",
+      "reason": "Full-replace write of the whole namespace configuration whose side effects cannot be confined to a test run; an operator task. settings.get() stays."
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/api/spatial/assets/:namespace/nearest-realtime",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.nearestAssetsRealtime()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/api/spatial/assets/:namespace/nearest-to-point",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.nearestAssets()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "POST",
+      "path": "/spatial/pois/{namespace}/analyze-custom",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.analyzeCustomPois()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/pois/{namespace}/by-tag",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.poisByTag()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/pois/{namespace}/nearest-to-point",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.nearestPois()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/pois/{namespace}/statistics",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.poiStatistics()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/pois/{namespace}/within-radius",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.poisWithinRadius()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "POST",
+      "path": "/spatial/zones/{namespace}/analyze-custom",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.analyzeCustomZones()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "POST",
+      "path": "/spatial/zones/{namespace}/calculate-distances",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.zoneDistances()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/zones/{namespace}/containing-point",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.zonesContainingPoint()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/zones/{namespace}/nearest-to-point",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.nearestZones()",
+      "tier": "R"
+    },
+    {
+      "tag": "Spatial Analysis",
+      "method": "GET",
+      "path": "/spatial/zones/{namespace}/within-radius",
+      "phase": "P3",
+      "decision": "wrap",
+      "sdkMethod": "client.spatial.zonesWithinRadius()",
+      "tier": "R"
+    },
+    {
+      "tag": "Universal Filtering Documentation",
+      "method": "GET",
+      "path": "/universal-filtering/documentation",
+      "phase": "P5",
+      "decision": "exclude",
+      "reason": "Returns a pointer to documentation, no data; filtering is documented statically."
+    },
+    {
+      "tag": "Venues",
+      "method": "DELETE",
+      "path": "/venues/cache/invalidate/{venueId}",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Server cache internals."
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/cache/stats",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Server cache internals."
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.venues.list(), client.venues.iterate()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.venues.get()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/maps",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.venues.listMaps()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/maps/{mapId}",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Served from a bundled sample dataset; 404 for real namespaces."
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/maps/{mapId}/pois",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.venues.listMapPois()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/maps/{mapId}/zones",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.zones.listByMap(), client.zones.listByMapAsArray()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/paths",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.venues.listPaths(), client.venues.listPathNodes(), client.venues.listPathSegments()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/pois",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.venues.listPois(), client.venues.listPoisAsArray()",
+      "tier": "R"
+    },
+    {
+      "tag": "Venues",
+      "method": "GET",
+      "path": "/venues/{namespace}/{venueId}/zones",
+      "phase": "P4",
+      "decision": "wrap",
+      "sdkMethod": "client.zones.list(), client.zones.listAsArray(), client.zones.iterate(), client.zones.getAll()",
+      "tier": "R"
+    }
+  ],
+  "nonHttp": [
+    {
+      "id": "WS-E1",
+      "kind": "ws-endpoint",
+      "decision": "wrap",
+      "sdkMethod": "BaseWebSocketConnection.connect()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-E2",
+      "kind": "ws-endpoint",
+      "decision": "wrap",
+      "sdkMethod": "RtlsWebSocketPublisher.sendPosition()",
+      "tier": "S"
+    },
+    {
+      "id": "WS-E3",
+      "kind": "ws-endpoint",
+      "decision": "exclude",
+      "reason": "Broker diagnostics (connection counters), not an integration surface."
+    },
+    {
+      "id": "WS-E4",
+      "kind": "ws-endpoint",
+      "decision": "exclude",
+      "reason": "Legacy direct broker hosts are not the public gateway."
+    },
+    {
+      "id": "WS-C1",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdkMethod": "RtlsWebSocketSubscriber.subscribe()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-C10",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "On this socket the broker rebuilds the asset from a fixed field set and loses the other fields; positions.publish with patchAssetData (HTTP) preserves them. Rejected inside extra."
+    },
+    {
+      "id": "WS-C11",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Cartesian positions need a per-network transform provisioned by the operator; not a client surface. Rejected inside extra."
+    },
+    {
+      "id": "WS-C12",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Declared locations belong to client.declaredLocations. Rejected inside extra."
+    },
+    {
+      "id": "WS-C13",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "The broker ignores arrays; the SDK sends one frame per position."
+    },
+    {
+      "id": "WS-C2",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdkMethod": "RtlsWebSocketSubscriber.unsubscribe()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-C3",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdkMethod": "RtlsWebSocketSubscriber.setTagFilter()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-C4",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Destructive operator command."
+    },
+    {
+      "id": "WS-C5",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Destructive operator command."
+    },
+    {
+      "id": "WS-C6",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "The broker does not handle it (no-op)."
+    },
+    {
+      "id": "WS-C7",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "tier": "R"
+    },
+    {
+      "id": "WS-C8",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "The broker never answers an application-level ping and logs every such frame; protocol ping covers Node and reconnect covers browsers."
+    },
+    {
+      "id": "WS-C9",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdkMethod": "RtlsWebSocketPublisher.sendPosition(), RtlsWebSocketPublisher.sendBatch()",
+      "tier": "S"
+    },
+    {
+      "id": "WS-M1",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "isPositionMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M10",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "classifyMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M11",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "classifyMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M12",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M13",
+      "kind": "ws-message",
+      "decision": "exclude",
+      "reason": "No producer exists; delivered on the unknown event, no longer misclassified as ALERTS."
+    },
+    {
+      "id": "WS-M14",
+      "kind": "ws-message",
+      "decision": "exclude",
+      "reason": "The broker never forwards it over WebSocket."
+    },
+    {
+      "id": "WS-M2",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "isZoneEntryExitMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M3",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "isZoneStatsMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M4",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "isAlertMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M5",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "classifyMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M6",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "isAssetMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M7",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "classifyMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M8",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "classifyMessage()",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M9",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdkMethod": "classifyMessage()",
+      "tier": "R"
+    }
+  ]
+}

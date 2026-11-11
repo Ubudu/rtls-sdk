@@ -1,0 +1,11 @@
+{
+  "_source": "server-code",
+  "_operation": "DELETE /assets/{namespace}/{mac_address}/documents/{documentId}",
+  "_usi": ["USI-P2-12"],
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.7, not re-recorded live: soft delete; the spec declares 200 without a schema.",
+  "status": 200,
+  "body": {
+    "message": "Document deleted successfully",
+    "documentId": "doc-3a7e9c1d-5b2f-4e8a-9c6d-7f0e1a2b3c4d"
+  }
+}

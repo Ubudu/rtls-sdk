@@ -1,0 +1,10 @@
+{
+  "_source": "server-code",
+  "_note": "E4b envelope {error, details: string}: the spatial asset routes put the underlying message in a string details.",
+  "_operation": "GET /api/spatial/assets/:namespace/nearest-to-point",
+  "status": 500,
+  "body": {
+    "error": "Failed to retrieve nearest assets",
+    "details": "connection reset"
+  }
+}

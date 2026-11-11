@@ -1,0 +1,47 @@
+{
+  "_source": "server-code",
+  "_note": "Zone entry raised by the analysis engine when a tag's position falls inside a zone: the full zone Feature, the tag id as user_udid and the asset's descriptive fields; visit fields are set when visit tracking is on.",
+  "_nonHttp": "WS-M2",
+  "_usi": ["USI-P8-7"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "ENTER_ZONE",
+    "app_namespace": "test_namespace",
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "user_udid": "025d4b000001",
+    "zone": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.352, 48.8564],
+            [2.3526, 48.8564],
+            [2.3526, 48.8568],
+            [2.352, 48.8568],
+            [2.352, 48.8564]
+          ]
+        ]
+      },
+      "properties": {
+        "id": 3,
+        "name": "Loading-Dock",
+        "level": 0,
+        "rgb_color": "#FF8800",
+        "tags": ["dock"],
+        "type": "zone"
+      }
+    },
+    "timestamp": "2026-01-01T12:00:00Z",
+    "user_name": "Asset-001",
+    "external_id": "EXT-001",
+    "tags": ["fleet"],
+    "data": { "department": "logistics" },
+    "path": "Site/Building-A",
+    "model": "GenericTag",
+    "color": "#0088FF",
+    "visit_id": "visit-0001",
+    "start_ts": "2026-01-01T12:00:00Z",
+    "exit_ts": null
+  }
+}

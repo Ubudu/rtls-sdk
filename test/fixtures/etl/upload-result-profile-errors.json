@@ -1,0 +1,60 @@
+{
+  "_source": "server-code",
+  "_note": "Hand-built 201 with per-profile errors and all counters 0: unsupported file type, no key columns, and the CSV parser's blank-line failure. Combined in one body for coverage; a real file-level failure gives every profile of the call the same error. success stays true.",
+  "_operation": "POST /etl/upload",
+  "status": 201,
+  "body": {
+    "_id": "64b000000000000000000023",
+    "filename": "sdk-test-000000-etl-badges.csv",
+    "status": "completed",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "success": true,
+    "debugMode": true,
+    "results": {
+      "totalRows": 0,
+      "debugMode": true,
+      "processedProfiles": [
+        {
+          "profileId": "64b000000000000000000001",
+          "profileName": "sdk-test-000000-etl-profile",
+          "rowsProcessed": 0,
+          "rowsChanged": 0,
+          "rowsSkipped": 0,
+          "unassociated": 0,
+          "errors": [
+            {
+              "message": "Unsupported file type. Please upload Excel or CSV files."
+            }
+          ]
+        },
+        {
+          "profileId": "64b000000000000000000002",
+          "profileName": "sdk-test-000000-etl-nokeys",
+          "rowsProcessed": 0,
+          "rowsChanged": 0,
+          "rowsSkipped": 0,
+          "unassociated": 0,
+          "errors": [
+            {
+              "message": "No key columns defined"
+            }
+          ]
+        },
+        {
+          "profileId": "64b000000000000000000003",
+          "profileName": "sdk-test-000000-etl-blank",
+          "rowsProcessed": 0,
+          "rowsChanged": 0,
+          "rowsSkipped": 0,
+          "unassociated": 0,
+          "errors": [
+            {
+              "message": "Invalid Record Length: columns length is 2, got 1 on line 3"
+            }
+          ]
+        }
+      ]
+    },
+    "created_at": "2026-01-01T00:00:05.000Z"
+  }
+}

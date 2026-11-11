@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "rtls-api 3.3.8 route with an unknown node id: 500 {error} (the spec says 400).",
+  "_operation": "POST /spatial/navigate/{namespace}/shortest-path",
+  "status": 500,
+  "body": {
+    "error": "End node x not found"
+  }
+}

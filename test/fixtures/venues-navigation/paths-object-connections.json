@@ -1,0 +1,70 @@
+{
+  "_source": "server-code",
+  "_note": "Path graph features with the keys the server reads but Demo Factory does not use: a node whose cross_level_connections holds a {target_node_id, connection_type} object and a plain id, with poi_type, is_accessible and is_emergency_exit, and a one-way inactive segment with connection_type. Synthetic ids and coordinates; no metadata key.",
+  "_operation": "GET /venues/{namespace}/{venueId}/paths",
+  "status": 200,
+  "body": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [4.5001, 45.5001]
+        },
+        "properties": {
+          "id": 9001,
+          "external_id": 9001,
+          "type": "path_node",
+          "node_type": "elevator",
+          "name": "Node 9001",
+          "level": 0,
+          "is_active": true,
+          "cross_level_connections": [
+            {
+              "target_node_id": 9101,
+              "connection_type": "elevator"
+            },
+            9102
+          ],
+          "tags": ["lift"],
+          "poi_type": "elevator",
+          "is_accessible": true,
+          "is_emergency_exit": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [4.5001, 45.5001],
+            [4.5002, 45.5001]
+          ]
+        },
+        "properties": {
+          "id": 9201,
+          "external_id": 9201,
+          "type": "path_segment",
+          "source_node_id": 9001,
+          "target_node_id": 9002,
+          "level": 0,
+          "bidirectional": false,
+          "distance": 7.8,
+          "estimated_time": 6.5,
+          "accessibility": {
+            "wheelchair": false,
+            "visual_impaired": true,
+            "hearing_impaired": true
+          },
+          "penalty_factor": 1.5,
+          "is_active": false,
+          "tags": ["ramp"],
+          "connection_type": "stairs"
+        }
+      }
+    ],
+    "total": 2,
+    "hasMore": false
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "_source": "server-code",
+  "_note": "Written by hand from the server's POI-to-GeoJSON transform: Demo Factory has no POI (P4-T1 recorded 0 features with the collection keys type, features, metadata), so no live body exists. Feature id is externalId when set, else the Mongo _id (USI-P4-20); the raw POI fields are spread into properties. Synthetic ids, names and coordinates.",
+  "_operation": "GET /venues/{namespace}/{venueId}/pois",
+  "status": 200,
+  "body": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": { "type": "Point", "coordinates": [4.5002, 45.5001] },
+        "properties": {
+          "id": 501,
+          "_id": "65f0c0ffee0000000000a001",
+          "name": "POI 1",
+          "description": "Description 1",
+          "level": 0,
+          "color": "#3388ff",
+          "tags": ["exit", "ground"],
+          "coordinates": { "lat": 45.5001, "lng": 4.5002 },
+          "externalId": 501,
+          "externalVenueId": 35433,
+          "createdAt": "2026-09-05T13:43:42.225Z",
+          "updatedAt": "2026-09-06T11:10:43.945Z"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": { "type": "Point", "coordinates": [4.5005, 45.5003] },
+        "properties": {
+          "id": "65f0c0ffee0000000000a002",
+          "_id": "65f0c0ffee0000000000a002",
+          "name": "POI 2",
+          "level": 0
+        }
+      }
+    ],
+    "metadata": { "type": "pois", "count": 2, "timestamp": "2026-09-06T11:10:43.945Z" }
+  }
+}

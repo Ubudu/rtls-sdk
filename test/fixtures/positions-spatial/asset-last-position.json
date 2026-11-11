@@ -1,0 +1,33 @@
+{
+  "_source": "spec",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-POS-5.",
+  "_operation": "GET /asset_last_position/{app_namespace}/{mac_address}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "app_namespace": "ns-fixture",
+    "color": "#247BA0",
+    "createdBy": "<redacted>",
+    "data": { "k": 1 },
+    "dateChanged": 1794402089277,
+    "dateCreated": 1788626381866,
+    "external_id": "ext-1",
+    "lat": 48.8,
+    "lon": 2.3,
+    "map_uuid": "map-fixture",
+    "model": "default",
+    "path": "/site/area",
+    "tags": ["tag-1"],
+    "timestamp": "2026-11-11T13:32:07Z",
+    "user_motion": "still",
+    "user_name": "Asset 1",
+    "user_type": "ptl_ubudu",
+    "user_udid": "025d4b000001",
+    "user_uuid": "025d4b000001",
+    "origin": 0,
+    "prev_pos_time_diff_seconds": 10,
+    "prev_pos_distance": 0.27390002318511275,
+    "speed": 0.027390002318511276,
+    "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#77bb41" }
+  }
+}

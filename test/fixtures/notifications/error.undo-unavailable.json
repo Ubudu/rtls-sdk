@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "undo with an unknown, used or expired token.",
+  "status": 404,
+  "body": {
+    "error": "undo_unavailable"
+  }
+}

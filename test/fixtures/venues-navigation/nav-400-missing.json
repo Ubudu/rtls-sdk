@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "rtls-api 3.3.8 route body without start or end: 400 {error}. The SDK never sends an incomplete body, so this is only reachable through a raw call.",
+  "_operation": "POST /spatial/navigate/{namespace}/shortest-path",
+  "status": 400,
+  "body": {
+    "error": "Missing required parameters: start, end"
+  }
+}

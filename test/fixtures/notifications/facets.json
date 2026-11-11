@@ -1,0 +1,27 @@
+{
+  "_source": "spec",
+  "_note": "Facet counts of the active inbox (no state filter: archived is 0). zone counts only items with a zone; channel counts deliveries.",
+  "_operation": "GET /notifications/{namespace}/facets",
+  "status": 200,
+  "body": {
+    "kind": {
+      "direct_message": 1,
+      "mission": 1
+    },
+    "severity": {
+      "info": 1,
+      "warning": 1
+    },
+    "zone": {},
+    "channel": {},
+    "state": {
+      "unread": 2,
+      "read": 0,
+      "needs_action": 1,
+      "archived": 0,
+      "muted": 0,
+      "snoozed": 0,
+      "pinned": 0
+    }
+  }
+}

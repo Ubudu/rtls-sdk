@@ -1,0 +1,109 @@
+{
+  "phase": "P7",
+  "domain": "etl",
+  "status": "complete",
+  "operations": [
+    {
+      "op": "POST /etl/upload",
+      "decision": "wrap",
+      "sdk": "etl.upload",
+      "unit": "test/resources/etl/files.test.ts",
+      "live": "test/integration/etl/lifecycle.int.test.ts",
+      "tier": "S"
+    },
+    {
+      "op": "POST /etl/parse-excel-headers",
+      "decision": "wrap",
+      "sdk": "etl.parseHeaders",
+      "unit": "test/resources/etl/files.test.ts",
+      "live": "test/integration/etl/read.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "GET /etl/check-mappings",
+      "decision": "exclude",
+      "reason": "Legacy diagnostic paired with fix-mapping; its only meaningful field is keyColumns.length > 0 on list()/listAll()"
+    },
+    {
+      "op": "PUT /etl/fix-mapping/{id}",
+      "decision": "exclude",
+      "reason": "Duplicate of mappingProfiles.update({ keyColumns }), which also supports the optimistic lock"
+    },
+    {
+      "op": "GET /etl/activities",
+      "decision": "wrap",
+      "sdk": ["etl.activities.listPage", "etl.activities.iterate"],
+      "unit": "test/resources/etl/activities.test.ts",
+      "live": [
+        "test/integration/etl/read.int.test.ts",
+        "test/integration/etl/lifecycle.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "op": "GET /etl/mapping-profiles",
+      "decision": "wrap",
+      "sdk": "etl.mappingProfiles.listAll",
+      "unit": "test/resources/etl/mapping-profiles.test.ts",
+      "live": "test/integration/etl/read.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "POST /etl/mapping-profiles",
+      "decision": "wrap",
+      "sdk": "etl.mappingProfiles.create",
+      "unit": "test/resources/etl/mapping-profiles.test.ts",
+      "live": "test/integration/etl/lifecycle.int.test.ts",
+      "tier": "W"
+    },
+    {
+      "op": "GET /etl/mapping-profiles/{id}",
+      "decision": "wrap",
+      "sdk": "etl.mappingProfiles.get",
+      "unit": "test/resources/etl/mapping-profiles.test.ts",
+      "live": "test/integration/etl/read.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "PUT /etl/mapping-profiles/{id}",
+      "decision": "wrap",
+      "sdk": "etl.mappingProfiles.update",
+      "unit": "test/resources/etl/mapping-profiles.test.ts",
+      "live": "test/integration/etl/lifecycle.int.test.ts",
+      "tier": "W"
+    },
+    {
+      "op": "DELETE /etl/mapping-profiles/{id}",
+      "decision": "wrap",
+      "sdk": "etl.mappingProfiles.delete",
+      "unit": "test/resources/etl/mapping-profiles.test.ts",
+      "live": "test/integration/etl/lifecycle.int.test.ts",
+      "tier": "W"
+    },
+    {
+      "op": "GET /etl/mappings",
+      "decision": "wrap",
+      "sdk": "etl.mappingProfiles.list",
+      "unit": "test/resources/etl/mapping-profiles.test.ts",
+      "live": "test/integration/etl/read.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "POST /etl/mappings",
+      "decision": "exclude",
+      "reason": "Legacy alias of POST /etl/mapping-profiles with different status codes"
+    },
+    {
+      "op": "PUT /etl/mappings/{id}",
+      "decision": "exclude",
+      "reason": "Legacy alias of PUT /etl/mapping-profiles/{id} with a generic 500"
+    },
+    {
+      "op": "DELETE /etl/mappings/{id}",
+      "decision": "exclude",
+      "reason": "Legacy alias of DELETE /etl/mapping-profiles/{id} with a generic 500"
+    }
+  ],
+  "nonHttp": [],
+  "sdkMethods": []
+}

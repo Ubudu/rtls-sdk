@@ -1,0 +1,18 @@
+{
+  "_source": "spec",
+  "_note": "Live capture (P4-T2, tier R), 1 venue item(s) (the namespace has 1); names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /venues/{namespace}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": [
+    {
+      "id": 35433,
+      "name": "Venue A",
+      "address": "Address A",
+      "coordinates": { "lat": 45.5, "lng": 4.5 },
+      "hasMetadata": true,
+      "lastUpdated": "2026-09-06T11:10:43.945Z",
+      "statistics": { "zones": 10, "pois": 0, "pathNodes": 101, "pathSegments": 133, "floors": [0] }
+    }
+  ]
+}

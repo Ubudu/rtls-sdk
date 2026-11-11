@@ -1,0 +1,93 @@
+{
+  "_source": "spec",
+  "_operation": "GET /assets/{app_namespace}",
+  "_note": "5 assets with distinct user_name, model and tags, written by hand in the Demo Factory shape (speed mode); the server answers the whole namespace as a bare array. Scrubbed: createdBy and targetApplications are test-namespace, MACs in the 025d4b range.",
+  "status": 200,
+  "body": [
+    {
+      "user_udid": "025d4b000001",
+      "user_name": "Forklift 01",
+      "user_type": "forklift",
+      "user_motion": "default",
+      "model": "UWB-TAG-A",
+      "color": "#cde201",
+      "path": "/Root/Lv 1/",
+      "tags": ["fleet", "north"],
+      "data": {
+        "zone": "A",
+        "battery": 80
+      },
+      "createdBy": "test-namespace",
+      "dateCreated": 1744620101741,
+      "targetApplications": ["test-namespace"]
+    },
+    {
+      "user_udid": "025d4b000002",
+      "user_name": "Pallet 07",
+      "user_type": "pallet",
+      "user_motion": "static",
+      "model": "BLE-TAG-B",
+      "color": "#00aaff",
+      "path": "/Root/Lv 1/",
+      "tags": ["south"],
+      "data": {
+        "zone": "B",
+        "battery": 45
+      },
+      "createdBy": "test-namespace",
+      "dateCreated": 1744620101742,
+      "targetApplications": ["test-namespace"]
+    },
+    {
+      "user_udid": "025d4b000003",
+      "user_name": "Forklift 02",
+      "user_type": "forklift",
+      "user_motion": "default",
+      "model": "UWB-TAG-A",
+      "color": "#ff0000",
+      "path": "/Root/Lv 2/",
+      "tags": ["fleet"],
+      "data": {
+        "zone": "A",
+        "battery": 15
+      },
+      "createdBy": "test-namespace",
+      "dateCreated": 1744620101743,
+      "targetApplications": ["test-namespace"]
+    },
+    {
+      "user_udid": "025d4b000004",
+      "user_name": "Cart 11",
+      "user_type": "cart",
+      "user_motion": "default",
+      "model": "BLE-TAG-C",
+      "color": "#00ff00",
+      "path": "/Root/",
+      "tags": [],
+      "data": {
+        "zone": "C",
+        "battery": 99
+      },
+      "createdBy": "test-namespace",
+      "dateCreated": 1744620101744,
+      "targetApplications": ["test-namespace"]
+    },
+    {
+      "user_udid": "025d4b000005",
+      "user_name": "Badge 03",
+      "user_type": "person",
+      "user_motion": "walking",
+      "model": "BADGE-D",
+      "color": "#123456",
+      "path": "/Root/Lv 2/",
+      "tags": ["visitor", "north"],
+      "data": {
+        "zone": "B",
+        "battery": 60
+      },
+      "createdBy": "test-namespace",
+      "dateCreated": 1744620101745,
+      "targetApplications": ["test-namespace"]
+    }
+  ]
+}

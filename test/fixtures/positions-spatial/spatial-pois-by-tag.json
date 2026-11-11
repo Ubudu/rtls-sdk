@@ -1,0 +1,8 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-12.",
+  "_operation": "GET /spatial/pois/{namespace}/by-tag",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": { "tag": "sdk-test-tag", "level": null, "total_pois": 0, "pois": [] }
+}

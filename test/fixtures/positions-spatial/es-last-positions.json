@@ -1,0 +1,57 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-POS-7.",
+  "_operation": "GET /es/last_positions/{appNamespace}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": [
+    {
+      "timestamp": 1794403929887,
+      "map_uuid": "map-fixture",
+      "origin": 0,
+      "location": { "lat": 48.8, "lon": 2.3 },
+      "user": "<redacted>",
+      "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#77bb41" },
+      "dateCreated": 1788626385468,
+      "dateChanged": 1794401629550,
+      "model": "default",
+      "color": "#247BA0",
+      "path": "/site/area",
+      "origin_detail": null,
+      "declared_location": null,
+      "is_virtual": false
+    },
+    {
+      "timestamp": 1794403929885,
+      "map_uuid": "map-fixture",
+      "origin": 0,
+      "location": { "lat": 48.8003261, "lon": 2.3001658 },
+      "user": "<redacted>",
+      "zone": { "id": 2, "name": "Zone 2", "tags": [], "color": null },
+      "dateCreated": 1788626397924,
+      "dateChanged": 1794403559714,
+      "model": "default",
+      "color": "#247BA0",
+      "path": "/site/area",
+      "origin_detail": null,
+      "declared_location": null,
+      "is_virtual": false
+    },
+    {
+      "timestamp": 1794403929883,
+      "map_uuid": "map-fixture",
+      "origin": 0,
+      "location": { "lat": 48.799871, "lon": 2.2999754 },
+      "user": "<redacted>",
+      "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#77bb41" },
+      "dateCreated": 1788626397732,
+      "dateChanged": 1794403587796,
+      "model": "default",
+      "color": "#247BA0",
+      "path": "/site/area",
+      "origin_detail": null,
+      "declared_location": null,
+      "is_virtual": false
+    }
+  ]
+}

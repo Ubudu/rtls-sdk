@@ -1,0 +1,71 @@
+{
+  "_source": "spec",
+  "_operation": "GET /asset_history/{app_namespace}/{mac_address}",
+  "_note": "Audit trail of one asset record, newest first; timestamp is unix seconds as a string (USI-P2-7). Written by hand around now = 1750000000000 ms used by the unit tests: entries at -1000 s and -50000 s are inside the default 24 h window, -100000 s and the hand-added timestamp '0' entry (no user) are outside. The delete entry has no data. Scrubbed: app_namespace test-namespace, user test-user.",
+  "status": 200,
+  "body": [
+    {
+      "id": "hist-0004",
+      "action": "delete",
+      "timestamp": "1749999000",
+      "app_namespace": "test-namespace",
+      "user": "test-user"
+    },
+    {
+      "id": "hist-0003",
+      "action": "update",
+      "timestamp": "1749950000",
+      "app_namespace": "test-namespace",
+      "user": "test-user",
+      "data": {
+        "user_udid": "025d4b000001",
+        "user_name": "Forklift 01",
+        "user_motion": "default",
+        "path": "/Root/Lv 1/",
+        "data": {
+          "zone": "A"
+        },
+        "createdBy": "test-namespace",
+        "dateCreated": 1749900000000,
+        "dateChanged": 1749950000000
+      }
+    },
+    {
+      "id": "hist-0002",
+      "action": "create",
+      "timestamp": "1749900000",
+      "app_namespace": "test-namespace",
+      "user": "test-user",
+      "data": {
+        "user_udid": "025d4b000001",
+        "user_name": "Forklift 01",
+        "user_motion": "default",
+        "path": "/Root/Lv 1/",
+        "data": {
+          "zone": "A"
+        },
+        "createdBy": "test-namespace",
+        "dateCreated": 1749900000000,
+        "dateChanged": 1749900000000
+      }
+    },
+    {
+      "id": "hist-0001",
+      "action": "update",
+      "timestamp": "0",
+      "app_namespace": "test-namespace",
+      "data": {
+        "user_udid": "025d4b000001",
+        "user_name": "Forklift 01",
+        "user_motion": "default",
+        "path": "/Root/Lv 1/",
+        "data": {
+          "zone": "A"
+        },
+        "createdBy": "test-namespace",
+        "dateCreated": 1749900000000,
+        "dateChanged": 1749950000000
+      }
+    }
+  ]
+}

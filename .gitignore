@@ -7,13 +7,19 @@ dist/
 # Generated files
 src/generated/schema.ts
 
-# Test coverage
-coverage/
+# Test coverage (unit) and live coverage per run (coverage-live/<runId>/, junit.xml, report.md)
+/coverage/
+/coverage-live/
 
-# IDE and tools
+# Live-test run state (locks, run registry, ledger, per-run state) and the merged live-coverage allowlist
+/test/integration/.state/
+/test/integration/coverage-allowlist.json
+
+# IDE and tools (and the local tooling link)
 .idea/
 .vscode/
 .claude/
+/.claude-config
 *.swp
 *.swo
 
@@ -34,3 +40,7 @@ yarn-error.log*
 
 # Package artifacts
 *.tgz
+
+# Tooling caches (spec:check regenerates into .cache/) and the CI npm cache
+.cache/
+/.npm/

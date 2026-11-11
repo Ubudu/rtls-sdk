@@ -1,0 +1,58 @@
+{
+  "_source": "spec",
+  "_note": "Live capture (P4-T2, tier R), raw GET with properties.level_eq=<level>: the filtered body adds total (features trimmed to 2 of the 10 served, total set to the trimmed count, since a filtered body always has total equal to its feature count); names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /venues/{namespace}/{venueId}/zones",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              [4.500296, 45.5003918],
+              [4.5006541, 45.5003724],
+              [4.5006213, 45.5001501],
+              [4.5002712, 45.500173]
+            ]
+          ],
+          "type": "Polygon"
+        },
+        "properties": {
+          "id": 1287000038,
+          "level": 0,
+          "name": "Zone 1",
+          "rgb_color": "#2E79FF",
+          "tags": ["warehouse", "logistics"],
+          "type": "map_zone"
+        },
+        "type": "Feature"
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              [4.500117, 45.5004037],
+              [4.5002887, 45.5003958],
+              [4.5002625, 45.5001721],
+              [4.5000894, 45.5001822]
+            ]
+          ],
+          "type": "Polygon"
+        },
+        "properties": {
+          "id": 713709928,
+          "level": 0,
+          "name": "Zone 2",
+          "rgb_color": "#f5ec00",
+          "tags": ["kiiting", "buffer"],
+          "type": "map_zone"
+        },
+        "type": "Feature"
+      }
+    ],
+    "metadata": { "type": "zones", "count": 10, "timestamp": "2026-11-11T13:30:58.692Z" },
+    "total": 2
+  }
+}

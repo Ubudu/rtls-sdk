@@ -1,0 +1,35 @@
+{
+  "_source": "server-code",
+  "_note": "Creator view of a dashboard (stored document plus the computed selected and can_edit): data is the product UI's widget array, not the spec's object; dynamicVariables items, the share-entry _id and __v are undocumented (USI-P5-6). Keys as observed live; every value is synthetic.",
+  "_operation": "GET /dashboards/{id}",
+  "_usi": ["USI-P5-6"],
+  "status": 200,
+  "body": {
+    "_id": "65a1b2c3d4e5f60718293a4b",
+    "name": "Example A",
+    "description": "Example dashboard",
+    "application_namespace": "test-ns",
+    "data": [],
+    "created_at": "2026-01-10T08:00:00.000Z",
+    "updated_at": "2026-01-10T08:00:00.000Z",
+    "created_by": "example-user",
+    "shared_with": [
+      {
+        "_id": "65a1b2c3d4e5f60718293a4c",
+        "username": "example-viewer",
+        "permissions": ["edit"]
+      }
+    ],
+    "selected_by": ["example-user"],
+    "selected": true,
+    "can_edit": true,
+    "__v": 0,
+    "dynamicVariables": [
+      {
+        "id": "var_example",
+        "name": "example_variable",
+        "version": 1
+      }
+    ]
+  }
+}

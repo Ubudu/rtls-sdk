@@ -1,0 +1,11 @@
+{
+  "_source": "server-code",
+  "_note": "rtls-api 3.3.8 evacuation failure body: 404 with success false and critical true (exits are looked up in the POI-type index, so this is the usual answer). The spec declares a different 404 body.",
+  "_operation": "GET /spatial/navigate/{namespace}/evacuation/{nodeId}",
+  "status": 404,
+  "body": {
+    "success": false,
+    "message": "Cannot find evacuation route",
+    "critical": true
+  }
+}

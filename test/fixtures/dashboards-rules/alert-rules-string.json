@@ -1,0 +1,6 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N6: a stored JSON string; the engine evaluates nothing.",
+  "status": 200,
+  "body": "x"
+}

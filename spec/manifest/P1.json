@@ -1,0 +1,415 @@
+{
+  "phase": "P1",
+  "domain": "core",
+  "status": "complete",
+  "operations": [],
+  "nonHttp": [],
+  "aliases": [
+    {
+      "sdk": "client.health",
+      "op": "GET /health",
+      "unit": "test/unit/core/client.test.ts",
+      "live": "test/integration/core/health.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "sdk": "client.getSettings",
+      "delegatesTo": "settings.get",
+      "op": "GET /settings/{app_namespace}",
+      "deprecated": true,
+      "unit": "test/unit/core/client.test.ts",
+      "live": "test/integration/core/delegates.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "sdk": "client.esQuery",
+      "delegatesTo": "positions.query",
+      "op": "POST /es/query/{appNamespace}/{dataType}",
+      "deprecated": true,
+      "unit": "test/unit/core/client.test.ts",
+      "live": "test/integration/core/delegates.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "sdk": "client.sendTagActions",
+      "delegatesTo": "tagActions.send",
+      "op": "POST /tag-actions/{appNamespace}",
+      "deprecated": true,
+      "unit": "test/unit/core/client.test.ts",
+      "live": "test/integration/assets/tag-actions.int.test.ts",
+      "tier": "S"
+    }
+  ],
+  "sdkMethods": [
+    {
+      "name": "createError",
+      "unit": "test/unit/core/errors.test.ts",
+      "live": [
+        "test/integration/core/errors.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "RtlsError.is",
+      "unit": "test/unit/core/errors.test.ts",
+      "live": "test/integration/core/errors.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsError.isStatus",
+      "unit": "test/unit/core/errors.test.ts",
+      "live": "test/integration/core/errors.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsError.isClientError",
+      "unit": "test/unit/core/errors.test.ts",
+      "live": "test/integration/core/errors.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsError.isServerError",
+      "unit": "test/unit/core/errors.test.ts",
+      "live": "test/integration/core/errors.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "resolveContext",
+      "unit": "test/unit/core/context.test.ts",
+      "live": "test/integration/core/context.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "requireNamespace",
+      "unit": "test/unit/core/context.test.ts",
+      "live": "test/integration/core/context.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "requireVenueId",
+      "unit": "test/unit/core/context.test.ts",
+      "live": [
+        "test/integration/core/context.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "requireMapId",
+      "unit": "test/unit/core/context.test.ts",
+      "live": [
+        "test/integration/core/context.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "paginate",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": "test/integration/core/pagination-filtering.int.test.ts",
+      "tier": "R",
+      "deprecated": true
+    },
+    {
+      "name": "collectAll",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": [
+        "test/integration/core/pagination-filtering.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "paginatePages",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": "test/integration/core/pagination-filtering.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "paginateOffset",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": [
+        "test/integration/core/pagination-filtering.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "normalizePage",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": "test/integration/core/pagination-filtering.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "buildQueryParams",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": [
+        "test/integration/core/transport.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "normalizeListResponse",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": "test/integration/core/pagination-filtering.int.test.ts",
+      "tier": "R",
+      "deprecated": true
+    },
+    {
+      "name": "isArrayResponse",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": "test/integration/core/pagination-filtering.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "extractDataArray",
+      "unit": "test/unit/core/utils/pagination.test.ts",
+      "live": "test/integration/core/pagination-filtering.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filter",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": [
+        "test/integration/core/pagination-filtering.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "combineFilters",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": [
+        "test/integration/core/pagination-filtering.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "serializeFilters",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": [
+        "test/integration/core/pagination-filtering.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "applyFilters",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": [
+        "test/integration/core/pagination-filtering.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "filters.equals",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.notEquals",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.greaterThan",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.greaterThanOrEqual",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.lessThan",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.lessThanOrEqual",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.contains",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.startsWith",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.endsWith",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.matches",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.in",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.notIn",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.exists",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.between",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.size",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.all",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "filters.elemMatch",
+      "unit": [
+        "test/unit/core/utils/filtering.test.ts",
+        "test/unit/core/utils/apply-filters.test.ts"
+      ],
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "normalizeMac",
+      "unit": "test/unit/core/utils/mac.test.ts",
+      "live": [
+        "test/integration/core/transport.int.test.ts",
+        "test/integration/core/utils.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "name": "formatMac",
+      "unit": "test/unit/core/utils/mac.test.ts",
+      "live": "test/integration/core/transport.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isValidMac",
+      "unit": "test/unit/core/utils/mac.test.ts",
+      "live": "test/integration/core/transport.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "toEpochMs",
+      "unit": "test/unit/core/utils/time.test.ts",
+      "live": "test/integration/core/utils.int.test.ts",
+      "tier": "R"
+    }
+  ],
+  "localMethods": [
+    "createRtlsClient",
+    "client.createWebSocket",
+    "client.forNamespace",
+    "client.forVenue",
+    "client.forMap",
+    "client.withContext",
+    "client.setNamespace",
+    "client.setVenue",
+    "client.setMap",
+    "client.setLevel",
+    "client.setContext",
+    "client.clearContext"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "_source": "spec",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-Q-1.",
+  "_operation": "POST /es/query/{appNamespace}/{dataType}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "took": 10,
+    "timed_out": false,
+    "terminated_early": false,
+    "_shards": { "total": 6, "successful": 6, "skipped": 5, "failed": 0 },
+    "hits": {
+      "max_score": null,
+      "hits": [
+        {
+          "_index": "rt_ns-fixture_positions-000001",
+          "_id": "doc-1",
+          "_score": null,
+          "_source": {
+            "timestamp": 1794403931369,
+            "map_uuid": "map-fixture",
+            "origin": 0,
+            "location": { "lat": 48.8, "lon": 2.3 },
+            "user": "<redacted>",
+            "span": { "dist": 0.027033515601850147, "speed": 0.013516757800925074, "time_diff": 2 },
+            "zone": { "id": 1, "name": "Zone 1", "tags": ["tag-1"], "color": "#63a9b2" },
+            "dateCreated": 1788626391426,
+            "dateChanged": 1794403769515,
+            "model": "default",
+            "color": "#247BA0",
+            "path": "/site/area",
+            "origin_detail": null,
+            "declared_location": null,
+            "is_virtual": false
+          },
+          "sort": [1794403931369]
+        }
+      ]
+    }
+  }
+}

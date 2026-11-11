@@ -1,0 +1,6 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N1: the store answers {} when nothing was ever saved for the namespace.",
+  "status": 200,
+  "body": {}
+}

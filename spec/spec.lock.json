@@ -1,0 +1,10 @@
+{
+  "version": "3.4.0-15bab236",
+  "sha256": "8d97fc564b771c06f89941a64ee0da458682797d2edb3325489e19978d1d20b5",
+  "operations": 176,
+  "paths": 138,
+  "source": {
+    "url": "https://rtls.ubudu.com/api/docs/swagger.json",
+    "rawSha256": "7a7df5a4f48ba5d0b894846ece5edec448b2b1916e7b85743c23b29a63bae347"
+  }
+}

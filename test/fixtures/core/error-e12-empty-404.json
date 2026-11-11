@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "E12: 404 with an empty body and no Content-Type, the answer to an unknown asset MAC (also seen by the P0 harness smoke test). Written by hand: L-E4 observes the same status, the empty body and the fallback message live each run but does not re-record this file, so _source stays server-code.",
+  "_operation": "GET /assets/{app_namespace}/{mac_address}",
+  "status": 404,
+  "body": null
+}

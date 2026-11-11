@@ -1,0 +1,30 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N4: a bare array of rules, as SDK 0.2.0 saveRules stored it; the engine evaluates nothing.",
+  "status": 200,
+  "body": [
+    {
+      "id": "example-rule-1",
+      "conditions": {
+        "all": [
+          {
+            "fact": "zone_name",
+            "operator": "equal",
+            "value": "Example Zone"
+          }
+        ]
+      },
+      "event": {
+        "type": "message",
+        "params": {
+          "title": "Example",
+          "text": "{{user_name}} entered",
+          "style": "info",
+          "duration": 2000,
+          "coalescence": 60,
+          "coalescence_group": "example_{{user_udid}}"
+        }
+      }
+    }
+  ]
+}

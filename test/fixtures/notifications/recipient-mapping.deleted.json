@@ -1,0 +1,6 @@
+{
+  "_source": "spec",
+  "_operation": "DELETE /notifications/{namespace}/recipient-mappings/{id}",
+  "status": 204,
+  "body": null
+}

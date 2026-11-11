@@ -1,0 +1,2861 @@
+{
+  "_source": "server-code",
+  "_note": "outputs computed with the server's universal filter function, API 3.3.8-479b708",
+  "vectors": [
+    {
+      "name": "eq: string comparison is case-sensitive",
+      "items": [
+        {
+          "name": "Alice"
+        },
+        {
+          "name": "alice"
+        },
+        {
+          "name": "ALICE"
+        }
+      ],
+      "query": {
+        "name:eq": "Alice"
+      },
+      "expected": [
+        {
+          "name": "Alice"
+        }
+      ]
+    },
+    {
+      "name": "eq: number field equals the string 5 loosely",
+      "items": [
+        {
+          "n": 5
+        },
+        {
+          "n": "5"
+        },
+        {
+          "n": 50
+        },
+        {
+          "n": "5.0"
+        },
+        {
+          "n": 5.5
+        }
+      ],
+      "query": {
+        "n:eq": "5"
+      },
+      "expected": [
+        {
+          "n": 5
+        },
+        {
+          "n": "5"
+        }
+      ]
+    },
+    {
+      "name": "eq: boolean field against 'false'",
+      "items": [
+        {
+          "b": true
+        },
+        {
+          "b": false
+        },
+        {
+          "b": "false"
+        },
+        {
+          "b": 0
+        }
+      ],
+      "query": {
+        "b:eq": "false"
+      },
+      "expected": [
+        {
+          "b": false
+        },
+        {
+          "b": "false"
+        }
+      ]
+    },
+    {
+      "name": "eq: boolean field against 'FALSE ' (trimmed, lower-cased)",
+      "items": [
+        {
+          "b": true
+        },
+        {
+          "b": false
+        },
+        {
+          "b": "false"
+        },
+        {
+          "b": "FALSE "
+        }
+      ],
+      "query": {
+        "b:eq": "FALSE "
+      },
+      "expected": [
+        {
+          "b": false
+        },
+        {
+          "b": "FALSE "
+        }
+      ]
+    },
+    {
+      "name": "eq: boolean field against 'true'",
+      "items": [
+        {
+          "b": true
+        },
+        {
+          "b": false
+        },
+        {
+          "b": "true"
+        },
+        {
+          "b": 1
+        }
+      ],
+      "query": {
+        "b:eq": "true"
+      },
+      "expected": [
+        {
+          "b": true
+        },
+        {
+          "b": "true"
+        }
+      ]
+    },
+    {
+      "name": "eq: null and missing fields never equal 'null'",
+      "items": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2
+        },
+        {
+          "id": 3,
+          "v": "null"
+        },
+        {
+          "id": 4,
+          "v": ""
+        }
+      ],
+      "query": {
+        "v:eq": "null"
+      },
+      "expected": [
+        {
+          "id": 3,
+          "v": "null"
+        }
+      ]
+    },
+    {
+      "name": "eq: empty value matches only an empty string",
+      "items": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2
+        },
+        {
+          "id": 3,
+          "v": "null"
+        },
+        {
+          "id": 4,
+          "v": ""
+        },
+        {
+          "id": 5,
+          "v": 0
+        }
+      ],
+      "query": {
+        "v:eq": ""
+      },
+      "expected": [
+        {
+          "id": 4,
+          "v": ""
+        },
+        {
+          "id": 5,
+          "v": 0
+        }
+      ]
+    },
+    {
+      "name": "eq: one-element array field equals 'a'",
+      "items": [
+        {
+          "t": ["a"]
+        },
+        {
+          "t": ["a", "b"]
+        },
+        {
+          "t": "a"
+        },
+        {
+          "t": []
+        }
+      ],
+      "query": {
+        "t:eq": "a"
+      },
+      "expected": [
+        {
+          "t": ["a"]
+        },
+        {
+          "t": "a"
+        }
+      ]
+    },
+    {
+      "name": "eq: nested dot path data.x",
+      "items": [
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        },
+        {
+          "id": 2,
+          "data": {
+            "x": "1"
+          }
+        },
+        {
+          "id": 3,
+          "data": {
+            "x": 2
+          }
+        },
+        {
+          "id": 4,
+          "data": null
+        },
+        {
+          "id": 5
+        }
+      ],
+      "query": {
+        "data.x:eq": "1"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        },
+        {
+          "id": 2,
+          "data": {
+            "x": "1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ne: missing field matches",
+      "items": [
+        {
+          "id": 1,
+          "s": "on"
+        },
+        {
+          "id": 2,
+          "s": "off"
+        },
+        {
+          "id": 3
+        }
+      ],
+      "query": {
+        "s:ne": "on"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "s": "off"
+        },
+        {
+          "id": 3
+        }
+      ]
+    },
+    {
+      "name": "ne: null field matches",
+      "items": [
+        {
+          "id": 1,
+          "s": null
+        },
+        {
+          "id": 2,
+          "s": "x"
+        },
+        {
+          "id": 3,
+          "s": "X"
+        }
+      ],
+      "query": {
+        "s:ne": "x"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "s": null
+        },
+        {
+          "id": 3,
+          "s": "X"
+        }
+      ]
+    },
+    {
+      "name": "gt: numeric string field compares as a number",
+      "items": [
+        {
+          "v": "10"
+        },
+        {
+          "v": "9"
+        },
+        {
+          "v": 10
+        },
+        {
+          "v": "abc"
+        },
+        {
+          "v": 9.5
+        }
+      ],
+      "query": {
+        "v:gt": "9"
+      },
+      "expected": [
+        {
+          "v": "10"
+        },
+        {
+          "v": 10
+        },
+        {
+          "v": 9.5
+        }
+      ]
+    },
+    {
+      "name": "gt: the value is read with parseFloat",
+      "items": [
+        {
+          "v": 4
+        },
+        {
+          "v": 6
+        }
+      ],
+      "query": {
+        "v:gt": "5px"
+      },
+      "expected": [
+        {
+          "v": 6
+        }
+      ]
+    },
+    {
+      "name": "gt: an 'abc' value never matches",
+      "items": [
+        {
+          "v": 1
+        },
+        {
+          "v": -1
+        },
+        {
+          "v": "1"
+        }
+      ],
+      "query": {
+        "v:gt": "abc"
+      },
+      "expected": []
+    },
+    {
+      "name": "gte: null >= 0 is true",
+      "items": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2,
+          "v": -1
+        },
+        {
+          "id": 3,
+          "v": 0
+        },
+        {
+          "id": 4
+        }
+      ],
+      "query": {
+        "v:gte": "0"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 3,
+          "v": 0
+        }
+      ]
+    },
+    {
+      "name": "lt: missing field never matches",
+      "items": [
+        {
+          "id": 1,
+          "v": 1
+        },
+        {
+          "id": 2
+        },
+        {
+          "id": 3,
+          "v": 9
+        }
+      ],
+      "query": {
+        "v:lt": "5"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "v": 1
+        }
+      ]
+    },
+    {
+      "name": "lte: number and numeric string fields",
+      "items": [
+        {
+          "v": 3
+        },
+        {
+          "v": "4"
+        },
+        {
+          "v": 5
+        },
+        {
+          "v": true
+        }
+      ],
+      "query": {
+        "v:lte": "4"
+      },
+      "expected": [
+        {
+          "v": 3
+        },
+        {
+          "v": "4"
+        },
+        {
+          "v": true
+        }
+      ]
+    },
+    {
+      "name": "lte: ISO date string field never matches",
+      "items": [
+        {
+          "d": "2024-01-01T00:00:00Z"
+        },
+        {
+          "d": 5
+        }
+      ],
+      "query": {
+        "d:lte": "10"
+      },
+      "expected": [
+        {
+          "d": 5
+        }
+      ]
+    },
+    {
+      "name": "gt: ISO date value is read as its leading number",
+      "items": [
+        {
+          "d": "2024-05-01T00:00:00Z"
+        },
+        {
+          "d": 2025
+        },
+        {
+          "d": 2023
+        }
+      ],
+      "query": {
+        "d:gt": "2024-01-01"
+      },
+      "expected": [
+        {
+          "d": 2025
+        }
+      ]
+    },
+    {
+      "name": "contains: case-insensitive",
+      "items": [
+        {
+          "s": "Hello World"
+        },
+        {
+          "s": "hello"
+        },
+        {
+          "s": "bye"
+        }
+      ],
+      "query": {
+        "s:contains": "WORLD"
+      },
+      "expected": [
+        {
+          "s": "Hello World"
+        }
+      ]
+    },
+    {
+      "name": "contains: fields 0, false and '' never match",
+      "items": [
+        {
+          "id": 1,
+          "v": 0
+        },
+        {
+          "id": 2,
+          "v": false
+        },
+        {
+          "id": 3,
+          "v": ""
+        },
+        {
+          "id": 4,
+          "v": "0"
+        },
+        {
+          "id": 5,
+          "v": "false"
+        },
+        {
+          "id": 6,
+          "v": 10
+        }
+      ],
+      "query": {
+        "v:contains": "0"
+      },
+      "expected": [
+        {
+          "id": 4,
+          "v": "0"
+        },
+        {
+          "id": 6,
+          "v": 10
+        }
+      ]
+    },
+    {
+      "name": "contains: a false field never matches 'false'",
+      "items": [
+        {
+          "id": 1,
+          "v": false
+        },
+        {
+          "id": 2,
+          "v": "false"
+        },
+        {
+          "id": 3,
+          "v": true
+        }
+      ],
+      "query": {
+        "v:contains": "false"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "v": "false"
+        }
+      ]
+    },
+    {
+      "name": "contains: array field matches on its comma-joined text",
+      "items": [
+        {
+          "t": ["ab", "cd"]
+        },
+        {
+          "t": ["x"]
+        },
+        {
+          "t": "abcd"
+        }
+      ],
+      "query": {
+        "t:contains": "b,c"
+      },
+      "expected": [
+        {
+          "t": ["ab", "cd"]
+        }
+      ]
+    },
+    {
+      "name": "starts: case-insensitive",
+      "items": [
+        {
+          "s": "Alpha"
+        },
+        {
+          "s": "alps"
+        },
+        {
+          "s": "beta"
+        }
+      ],
+      "query": {
+        "s:starts": "AL"
+      },
+      "expected": [
+        {
+          "s": "Alpha"
+        },
+        {
+          "s": "alps"
+        }
+      ]
+    },
+    {
+      "name": "starts: an empty value matches every truthy field",
+      "items": [
+        {
+          "id": 1,
+          "v": 0
+        },
+        {
+          "id": 2,
+          "v": "x"
+        },
+        {
+          "id": 3,
+          "v": ""
+        },
+        {
+          "id": 4,
+          "v": 7
+        }
+      ],
+      "query": {
+        "v:starts": ""
+      },
+      "expected": [
+        {
+          "id": 2,
+          "v": "x"
+        },
+        {
+          "id": 4,
+          "v": 7
+        }
+      ]
+    },
+    {
+      "name": "ends: case-insensitive",
+      "items": [
+        {
+          "s": "file.PDF"
+        },
+        {
+          "s": "x.pdf.txt"
+        },
+        {
+          "s": "y.pdf"
+        }
+      ],
+      "query": {
+        "s:ends": ".pdf"
+      },
+      "expected": [
+        {
+          "s": "file.PDF"
+        },
+        {
+          "s": "y.pdf"
+        }
+      ]
+    },
+    {
+      "name": "ends: number field matches on its text",
+      "items": [
+        {
+          "s": 12345
+        },
+        {
+          "s": 1234
+        },
+        {
+          "s": "45"
+        }
+      ],
+      "query": {
+        "s:ends": "45"
+      },
+      "expected": [
+        {
+          "s": 12345
+        },
+        {
+          "s": "45"
+        }
+      ]
+    },
+    {
+      "name": "regex: case-insensitive",
+      "items": [
+        {
+          "s": "ABC-123"
+        },
+        {
+          "s": "abc-999"
+        },
+        {
+          "s": "xyz"
+        },
+        {
+          "s": "abc-"
+        }
+      ],
+      "query": {
+        "s:regex": "^abc-\\d+$"
+      },
+      "expected": [
+        {
+          "s": "ABC-123"
+        },
+        {
+          "s": "abc-999"
+        }
+      ]
+    },
+    {
+      "name": "regex: an invalid pattern never matches",
+      "items": [
+        {
+          "s": "("
+        },
+        {
+          "s": "a"
+        }
+      ],
+      "query": {
+        "s:regex": "("
+      },
+      "expected": []
+    },
+    {
+      "name": "regex: a field 0 never matches",
+      "items": [
+        {
+          "v": 0
+        },
+        {
+          "v": 10
+        },
+        {
+          "v": "0"
+        }
+      ],
+      "query": {
+        "v:regex": "0"
+      },
+      "expected": [
+        {
+          "v": 10
+        },
+        {
+          "v": "0"
+        }
+      ]
+    },
+    {
+      "name": "in: scalar strings",
+      "items": [
+        {
+          "c": "red"
+        },
+        {
+          "c": "green"
+        },
+        {
+          "c": "blue"
+        }
+      ],
+      "query": {
+        "c:in": "red,blue"
+      },
+      "expected": [
+        {
+          "c": "red"
+        },
+        {
+          "c": "blue"
+        }
+      ]
+    },
+    {
+      "name": "in: number field compares as text",
+      "items": [
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        },
+        {
+          "n": 3
+        },
+        {
+          "n": "3"
+        }
+      ],
+      "query": {
+        "n:in": "1,3"
+      },
+      "expected": [
+        {
+          "n": 1
+        },
+        {
+          "n": 3
+        },
+        {
+          "n": "3"
+        }
+      ]
+    },
+    {
+      "name": "in: values are trimmed",
+      "items": [
+        {
+          "c": "red"
+        },
+        {
+          "c": "blue"
+        },
+        {
+          "c": " blue"
+        }
+      ],
+      "query": {
+        "c:in": " red , blue "
+      },
+      "expected": [
+        {
+          "c": "red"
+        },
+        {
+          "c": "blue"
+        }
+      ]
+    },
+    {
+      "name": "in: one-element array field",
+      "items": [
+        {
+          "t": ["a"]
+        },
+        {
+          "t": ["b"]
+        },
+        {
+          "t": ["c"]
+        }
+      ],
+      "query": {
+        "t:in": "a,b"
+      },
+      "expected": [
+        {
+          "t": ["a"]
+        },
+        {
+          "t": ["b"]
+        }
+      ]
+    },
+    {
+      "name": "in: two-element array field compares \"a,b\"",
+      "items": [
+        {
+          "t": ["a", "b"]
+        },
+        {
+          "t": ["a"]
+        }
+      ],
+      "query": {
+        "t:in": "a,b"
+      },
+      "expected": [
+        {
+          "t": ["a"]
+        }
+      ]
+    },
+    {
+      "name": "in: a missing field compares 'undefined'",
+      "items": [
+        {
+          "id": 1
+        },
+        {
+          "id": 2,
+          "c": "x"
+        },
+        {
+          "id": 3,
+          "c": null
+        }
+      ],
+      "query": {
+        "c:in": "undefined,y"
+      },
+      "expected": [
+        {
+          "id": 1
+        }
+      ]
+    },
+    {
+      "name": "nin: scalar strings and a missing field",
+      "items": [
+        {
+          "c": "red"
+        },
+        {
+          "c": "green"
+        },
+        {}
+      ],
+      "query": {
+        "c:nin": "red"
+      },
+      "expected": [
+        {
+          "c": "green"
+        },
+        {}
+      ]
+    },
+    {
+      "name": "nin: number field and trimmed values",
+      "items": [
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        },
+        {
+          "n": 3
+        }
+      ],
+      "query": {
+        "n:nin": " 1 , 3"
+      },
+      "expected": [
+        {
+          "n": 2
+        }
+      ]
+    },
+    {
+      "name": "nin: two-element array field",
+      "items": [
+        {
+          "t": ["a", "b"]
+        },
+        {
+          "t": ["a"]
+        }
+      ],
+      "query": {
+        "t:nin": "a,b"
+      },
+      "expected": [
+        {
+          "t": ["a", "b"]
+        }
+      ]
+    },
+    {
+      "name": "exists: 'true' keeps null and 0",
+      "items": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2,
+          "v": 0
+        },
+        {
+          "id": 3
+        }
+      ],
+      "query": {
+        "v:exists": "true"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2,
+          "v": 0
+        }
+      ]
+    },
+    {
+      "name": "exists: 'false' keeps only missing fields",
+      "items": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2,
+          "v": 0
+        },
+        {
+          "id": 3
+        }
+      ],
+      "query": {
+        "v:exists": "false"
+      },
+      "expected": [
+        {
+          "id": 3
+        }
+      ]
+    },
+    {
+      "name": "exists: 'TRUE' counts as false",
+      "items": [
+        {
+          "id": 1,
+          "v": null
+        },
+        {
+          "id": 2,
+          "v": 0
+        },
+        {
+          "id": 3
+        }
+      ],
+      "query": {
+        "v:exists": "TRUE"
+      },
+      "expected": [
+        {
+          "id": 3
+        }
+      ]
+    },
+    {
+      "name": "exists: nested path",
+      "items": [
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        },
+        {
+          "id": 2,
+          "data": {}
+        },
+        {
+          "id": 3
+        }
+      ],
+      "query": {
+        "data.x:exists": "true"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "between: inclusive bounds",
+      "items": [
+        {
+          "v": 1
+        },
+        {
+          "v": 2
+        },
+        {
+          "v": 3
+        },
+        {
+          "v": 4
+        }
+      ],
+      "query": {
+        "v:between": "2,3"
+      },
+      "expected": [
+        {
+          "v": 2
+        },
+        {
+          "v": 3
+        }
+      ]
+    },
+    {
+      "name": "between: numeric string fields",
+      "items": [
+        {
+          "v": "2"
+        },
+        {
+          "v": "10"
+        },
+        {
+          "v": "x"
+        },
+        {
+          "v": null
+        }
+      ],
+      "query": {
+        "v:between": "0,5"
+      },
+      "expected": [
+        {
+          "v": "2"
+        },
+        {
+          "v": null
+        }
+      ]
+    },
+    {
+      "name": "between: ISO date string fields never match",
+      "items": [
+        {
+          "d": "2024-05-01T00:00:00Z"
+        },
+        {
+          "d": 1714521600000
+        }
+      ],
+      "query": {
+        "d:between": "1700000000000,1800000000000"
+      },
+      "expected": [
+        {
+          "d": 1714521600000
+        }
+      ]
+    },
+    {
+      "name": "size: array field",
+      "items": [
+        {
+          "t": ["a", "b"]
+        },
+        {
+          "t": ["a"]
+        },
+        {
+          "t": []
+        }
+      ],
+      "query": {
+        "t:size": "2"
+      },
+      "expected": [
+        {
+          "t": ["a", "b"]
+        }
+      ]
+    },
+    {
+      "name": "size: string field",
+      "items": [
+        {
+          "s": "abc"
+        },
+        {
+          "s": "ab"
+        }
+      ],
+      "query": {
+        "s:size": "3"
+      },
+      "expected": [
+        {
+          "s": "abc"
+        }
+      ]
+    },
+    {
+      "name": "size: number field never matches",
+      "items": [
+        {
+          "n": 333
+        },
+        {
+          "n": "333"
+        }
+      ],
+      "query": {
+        "n:size": "3"
+      },
+      "expected": [
+        {
+          "n": "333"
+        }
+      ]
+    },
+    {
+      "name": "size: zero",
+      "items": [
+        {
+          "t": []
+        },
+        {
+          "t": [""]
+        },
+        {
+          "t": ""
+        },
+        {}
+      ],
+      "query": {
+        "t:size": "0"
+      },
+      "expected": [
+        {
+          "t": []
+        },
+        {
+          "t": ""
+        }
+      ]
+    },
+    {
+      "name": "all: string arrays",
+      "items": [
+        {
+          "t": ["a", "b", "c"]
+        },
+        {
+          "t": ["a", "c"]
+        },
+        {
+          "t": "abc"
+        }
+      ],
+      "query": {
+        "t:all": "a,b"
+      },
+      "expected": [
+        {
+          "t": ["a", "b", "c"]
+        }
+      ]
+    },
+    {
+      "name": "all: numeric arrays never include the string values",
+      "items": [
+        {
+          "n": [1, 2]
+        },
+        {
+          "n": ["1", "2", "3"]
+        }
+      ],
+      "query": {
+        "n:all": "1,2"
+      },
+      "expected": [
+        {
+          "n": ["1", "2", "3"]
+        }
+      ]
+    },
+    {
+      "name": "elem: string arrays",
+      "items": [
+        {
+          "t": ["a", "x"]
+        },
+        {
+          "t": ["y"]
+        },
+        {
+          "t": ["b"]
+        },
+        {
+          "t": "a"
+        }
+      ],
+      "query": {
+        "t:elem": "a,b"
+      },
+      "expected": [
+        {
+          "t": ["a", "x"]
+        },
+        {
+          "t": ["b"]
+        }
+      ]
+    },
+    {
+      "name": "elem: numeric arrays never include the string values",
+      "items": [
+        {
+          "n": [1, 2]
+        },
+        {
+          "n": ["2"]
+        }
+      ],
+      "query": {
+        "n:elem": "2,3"
+      },
+      "expected": [
+        {
+          "n": ["2"]
+        }
+      ]
+    },
+    {
+      "name": "in-key value form f:eq:x",
+      "items": [
+        {
+          "s": "x"
+        },
+        {
+          "s": "y"
+        }
+      ],
+      "query": {
+        "s:eq:x": ""
+      },
+      "expected": [
+        {
+          "s": "x"
+        }
+      ]
+    },
+    {
+      "name": "in-key value wins over the query value",
+      "items": [
+        {
+          "s": "x"
+        },
+        {
+          "s": "y"
+        }
+      ],
+      "query": {
+        "s:eq:x": "y"
+      },
+      "expected": [
+        {
+          "s": "x"
+        }
+      ]
+    },
+    {
+      "name": "query value form f:eq=y",
+      "items": [
+        {
+          "s": "x"
+        },
+        {
+          "s": "y"
+        }
+      ],
+      "query": {
+        "s:eq": "y"
+      },
+      "expected": [
+        {
+          "s": "y"
+        }
+      ]
+    },
+    {
+      "name": "in-key value keeps its colons",
+      "items": [
+        {
+          "t": "10:30"
+        },
+        {
+          "t": "10"
+        }
+      ],
+      "query": {
+        "t:eq:10:30": ""
+      },
+      "expected": [
+        {
+          "t": "10:30"
+        }
+      ]
+    },
+    {
+      "name": "in-key between value",
+      "items": [
+        {
+          "v": 1
+        },
+        {
+          "v": 2
+        },
+        {
+          "v": 5
+        }
+      ],
+      "query": {
+        "v:between:1,3": ""
+      },
+      "expected": [
+        {
+          "v": 1
+        },
+        {
+          "v": 2
+        }
+      ]
+    },
+    {
+      "name": "AND of two filters",
+      "items": [
+        {
+          "a": 1,
+          "b": "x"
+        },
+        {
+          "a": 1,
+          "b": "y"
+        },
+        {
+          "a": 2,
+          "b": "x"
+        }
+      ],
+      "query": {
+        "a:eq": "1",
+        "b:eq": "x"
+      },
+      "expected": [
+        {
+          "a": 1,
+          "b": "x"
+        }
+      ]
+    },
+    {
+      "name": "unknown keys and operators are ignored",
+      "items": [
+        {
+          "a": 1
+        },
+        {
+          "a": 2
+        }
+      ],
+      "query": {
+        "a:like": "1",
+        "foo": "bar",
+        "a": "1"
+      },
+      "expected": [
+        {
+          "a": 1
+        },
+        {
+          "a": 2
+        }
+      ]
+    },
+    {
+      "name": "no query keeps the items",
+      "items": [
+        {
+          "a": 2
+        },
+        {
+          "a": 1
+        }
+      ],
+      "query": {},
+      "expected": [
+        {
+          "a": 2
+        },
+        {
+          "a": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: one key asc",
+      "items": [
+        {
+          "n": 3
+        },
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        }
+      ],
+      "query": {
+        "sort": "n:asc"
+      },
+      "expected": [
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        },
+        {
+          "n": 3
+        }
+      ]
+    },
+    {
+      "name": "sort: one key desc",
+      "items": [
+        {
+          "n": 3
+        },
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        }
+      ],
+      "query": {
+        "sort": "n:desc"
+      },
+      "expected": [
+        {
+          "n": 3
+        },
+        {
+          "n": 2
+        },
+        {
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: missing direction means asc",
+      "items": [
+        {
+          "n": 3
+        },
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        }
+      ],
+      "query": {
+        "sort": "n"
+      },
+      "expected": [
+        {
+          "n": 1
+        },
+        {
+          "n": 2
+        },
+        {
+          "n": 3
+        }
+      ]
+    },
+    {
+      "name": "sort: unknown direction means asc, DESC is desc",
+      "items": [
+        {
+          "a": 1,
+          "n": 1
+        },
+        {
+          "a": 3,
+          "n": 2
+        },
+        {
+          "a": 2,
+          "n": 1
+        }
+      ],
+      "query": {
+        "sort": "n:up,a:DESC"
+      },
+      "expected": [
+        {
+          "a": 2,
+          "n": 1
+        },
+        {
+          "a": 1,
+          "n": 1
+        },
+        {
+          "a": 3,
+          "n": 2
+        }
+      ]
+    },
+    {
+      "name": "sort: two keys",
+      "items": [
+        {
+          "id": 1,
+          "a": 1,
+          "b": 2
+        },
+        {
+          "id": 2,
+          "a": 0,
+          "b": 5
+        },
+        {
+          "id": 3,
+          "a": 1,
+          "b": 1
+        },
+        {
+          "id": 4,
+          "a": 1,
+          "b": 3
+        }
+      ],
+      "query": {
+        "sort": "a:asc,b:desc"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "a": 0,
+          "b": 5
+        },
+        {
+          "id": 4,
+          "a": 1,
+          "b": 3
+        },
+        {
+          "id": 1,
+          "a": 1,
+          "b": 2
+        },
+        {
+          "id": 3,
+          "a": 1,
+          "b": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: nulls last on asc",
+      "items": [
+        {
+          "id": 1,
+          "n": 2
+        },
+        {
+          "id": 2,
+          "n": null
+        },
+        {
+          "id": 3,
+          "n": 1
+        },
+        {
+          "id": 4,
+          "n": null
+        }
+      ],
+      "query": {
+        "sort": "n:asc"
+      },
+      "expected": [
+        {
+          "id": 3,
+          "n": 1
+        },
+        {
+          "id": 1,
+          "n": 2
+        },
+        {
+          "id": 2,
+          "n": null
+        },
+        {
+          "id": 4,
+          "n": null
+        }
+      ]
+    },
+    {
+      "name": "sort: nulls first on desc",
+      "items": [
+        {
+          "id": 1,
+          "n": 2
+        },
+        {
+          "id": 2,
+          "n": null
+        },
+        {
+          "id": 3,
+          "n": 1
+        },
+        {
+          "id": 4,
+          "n": null
+        }
+      ],
+      "query": {
+        "sort": "n:desc"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "n": null
+        },
+        {
+          "id": 4,
+          "n": null
+        },
+        {
+          "id": 1,
+          "n": 2
+        },
+        {
+          "id": 3,
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: missing fields last on asc",
+      "items": [
+        {
+          "id": 1,
+          "n": 2
+        },
+        {
+          "id": 2
+        },
+        {
+          "id": 3,
+          "n": 1
+        }
+      ],
+      "query": {
+        "sort": "n:asc"
+      },
+      "expected": [
+        {
+          "id": 3,
+          "n": 1
+        },
+        {
+          "id": 1,
+          "n": 2
+        },
+        {
+          "id": 2
+        }
+      ]
+    },
+    {
+      "name": "sort: a leading null comes first on desc",
+      "items": [
+        {
+          "id": 1,
+          "n": null
+        },
+        {
+          "id": 2,
+          "n": 1
+        },
+        {
+          "id": 3,
+          "n": 2
+        }
+      ],
+      "query": {
+        "sort": "n:desc"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "n": null
+        },
+        {
+          "id": 3,
+          "n": 2
+        },
+        {
+          "id": 2,
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: a leading missing value comes first on desc",
+      "items": [
+        {
+          "id": 1
+        },
+        {
+          "id": 2,
+          "n": 1
+        },
+        {
+          "id": 3,
+          "n": 2
+        }
+      ],
+      "query": {
+        "sort": "n:desc"
+      },
+      "expected": [
+        {
+          "id": 1
+        },
+        {
+          "id": 3,
+          "n": 2
+        },
+        {
+          "id": 2,
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: two strings use localeCompare",
+      "items": [
+        {
+          "s": "banana"
+        },
+        {
+          "s": "Apple"
+        },
+        {
+          "s": "cherry"
+        },
+        {
+          "s": "apple"
+        }
+      ],
+      "query": {
+        "sort": "s:asc"
+      },
+      "expected": [
+        {
+          "s": "apple"
+        },
+        {
+          "s": "Apple"
+        },
+        {
+          "s": "banana"
+        },
+        {
+          "s": "cherry"
+        }
+      ]
+    },
+    {
+      "name": "sort: mixed types compare with <",
+      "items": [
+        {
+          "v": 10
+        },
+        {
+          "v": "9"
+        },
+        {
+          "v": true
+        },
+        {
+          "v": 2.5
+        }
+      ],
+      "query": {
+        "sort": "v:asc"
+      },
+      "expected": [
+        {
+          "v": true
+        },
+        {
+          "v": 2.5
+        },
+        {
+          "v": "9"
+        },
+        {
+          "v": 10
+        }
+      ]
+    },
+    {
+      "name": "sort: nested field desc",
+      "items": [
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        },
+        {
+          "id": 2,
+          "data": {
+            "x": 3
+          }
+        },
+        {
+          "id": 3,
+          "data": {
+            "x": 2
+          }
+        }
+      ],
+      "query": {
+        "sort": "data.x:desc"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "data": {
+            "x": 3
+          }
+        },
+        {
+          "id": 3,
+          "data": {
+            "x": 2
+          }
+        },
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "sort: equal keys keep the input order",
+      "items": [
+        {
+          "id": 1,
+          "n": 1
+        },
+        {
+          "id": 2,
+          "n": 0
+        },
+        {
+          "id": 3,
+          "n": 1
+        },
+        {
+          "id": 4,
+          "n": 0
+        }
+      ],
+      "query": {
+        "sort": "n:asc"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "n": 0
+        },
+        {
+          "id": 4,
+          "n": 0
+        },
+        {
+          "id": 1,
+          "n": 1
+        },
+        {
+          "id": 3,
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "fields: nested projection",
+      "items": [
+        {
+          "id": 1,
+          "name": "a",
+          "data": {
+            "x": 1,
+            "y": 2
+          },
+          "z": 3
+        },
+        {
+          "id": 2,
+          "data": {
+            "y": 5
+          }
+        }
+      ],
+      "query": {
+        "fields": "id,data.x"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "data": {
+            "x": 1
+          }
+        },
+        {
+          "id": 2
+        }
+      ]
+    },
+    {
+      "name": "fields: a missing field is omitted, null is kept",
+      "items": [
+        {
+          "id": 1,
+          "name": "a",
+          "v": null
+        },
+        {
+          "id": 2
+        }
+      ],
+      "query": {
+        "fields": "id,name,v"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "name": "a",
+          "v": null
+        },
+        {
+          "id": 2
+        }
+      ]
+    },
+    {
+      "name": "fields: names are trimmed",
+      "items": [
+        {
+          "id": 1,
+          "name": "a",
+          "z": 0
+        }
+      ],
+      "query": {
+        "fields": " id , name "
+      },
+      "expected": [
+        {
+          "id": 1,
+          "name": "a"
+        }
+      ]
+    },
+    {
+      "name": "fields: projection runs before pagination",
+      "items": [
+        {
+          "id": 1,
+          "n": 1
+        },
+        {
+          "id": 2,
+          "n": 2
+        },
+        {
+          "id": 3,
+          "n": 3
+        }
+      ],
+      "query": {
+        "fields": "id",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 2,
+          "total": 3,
+          "totalPages": 2,
+          "hasNext": true,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "filters, then sort, then fields, then pagination",
+      "items": [
+        {
+          "id": 1,
+          "n": 1
+        },
+        {
+          "id": 2,
+          "n": 4
+        },
+        {
+          "id": 3,
+          "n": 3
+        },
+        {
+          "id": 4,
+          "n": 2
+        },
+        {
+          "id": 5,
+          "n": 5
+        }
+      ],
+      "query": {
+        "n:gte": "2",
+        "sort": "n:desc",
+        "fields": "id",
+        "page": "1",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [
+          {
+            "id": 5
+          },
+          {
+            "id": 2
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 2,
+          "total": 4,
+          "totalPages": 2,
+          "hasNext": true,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "pagination: page plus limit",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        },
+        {
+          "i": 4
+        },
+        {
+          "i": 5
+        }
+      ],
+      "query": {
+        "page": "2",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 3
+          },
+          {
+            "i": 4
+          }
+        ],
+        "pagination": {
+          "page": 2,
+          "limit": 2,
+          "total": 5,
+          "totalPages": 3,
+          "hasNext": true,
+          "hasPrev": true
+        }
+      }
+    },
+    {
+      "name": "pagination: limit only starts at page 1",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        },
+        {
+          "i": 4
+        },
+        {
+          "i": 5
+        }
+      ],
+      "query": {
+        "limit": "3"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 1
+          },
+          {
+            "i": 2
+          },
+          {
+            "i": 3
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 3,
+          "total": 5,
+          "totalPages": 2,
+          "hasNext": true,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "pagination: page only uses limit 50",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        }
+      ],
+      "query": {
+        "page": "1"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 1
+          },
+          {
+            "i": 2
+          },
+          {
+            "i": 3
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 50,
+          "total": 3,
+          "totalPages": 1,
+          "hasNext": false,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "pagination: page=0 becomes page 1",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        }
+      ],
+      "query": {
+        "page": "0",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 1
+          },
+          {
+            "i": 2
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 2,
+          "total": 3,
+          "totalPages": 2,
+          "hasNext": true,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "pagination: limit=0 becomes 50",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        }
+      ],
+      "query": {
+        "limit": "0"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 1
+          },
+          {
+            "i": 2
+          },
+          {
+            "i": 3
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 50,
+          "total": 3,
+          "totalPages": 1,
+          "hasNext": false,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "pagination: page out of range",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        },
+        {
+          "i": 4
+        },
+        {
+          "i": 5
+        }
+      ],
+      "query": {
+        "page": "9",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [],
+        "pagination": {
+          "page": 9,
+          "limit": 2,
+          "total": 5,
+          "totalPages": 3,
+          "hasNext": false,
+          "hasPrev": true
+        }
+      }
+    },
+    {
+      "name": "pagination: last page flags",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        },
+        {
+          "i": 4
+        },
+        {
+          "i": 5
+        }
+      ],
+      "query": {
+        "page": "3",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 5
+          }
+        ],
+        "pagination": {
+          "page": 3,
+          "limit": 2,
+          "total": 5,
+          "totalPages": 3,
+          "hasNext": false,
+          "hasPrev": true
+        }
+      }
+    },
+    {
+      "name": "pagination: totals count the filtered items",
+      "items": [
+        {
+          "i": 1
+        },
+        {
+          "i": 2
+        },
+        {
+          "i": 3
+        },
+        {
+          "i": 4
+        },
+        {
+          "i": 5
+        }
+      ],
+      "query": {
+        "i:gt": "2",
+        "page": "1",
+        "limit": "2"
+      },
+      "expected": {
+        "data": [
+          {
+            "i": 3
+          },
+          {
+            "i": 4
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 2,
+          "total": 3,
+          "totalPages": 2,
+          "hasNext": true,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "pagination: empty list",
+      "items": [],
+      "query": {
+        "page": "1",
+        "limit": "10"
+      },
+      "expected": {
+        "data": [],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 0,
+          "totalPages": 0,
+          "hasNext": false,
+          "hasPrev": false
+        }
+      }
+    },
+    {
+      "name": "between: one bound only never matches",
+      "items": [
+        {
+          "v": 1
+        },
+        {
+          "v": 2
+        }
+      ],
+      "query": {
+        "v:between": "1"
+      },
+      "expected": []
+    },
+    {
+      "name": "between: reversed bounds never match",
+      "items": [
+        {
+          "v": 1
+        },
+        {
+          "v": 2
+        },
+        {
+          "v": 3
+        }
+      ],
+      "query": {
+        "v:between": "3,1"
+      },
+      "expected": []
+    },
+    {
+      "name": "size: a non-numeric value never matches",
+      "items": [
+        {
+          "t": []
+        },
+        {
+          "t": ["a"]
+        }
+      ],
+      "query": {
+        "t:size": "x"
+      },
+      "expected": []
+    },
+    {
+      "name": "eq: index syntax reads an array element",
+      "items": [
+        {
+          "t": ["a", "b"]
+        },
+        {
+          "t": ["b", "a"]
+        },
+        {
+          "t": "ab"
+        }
+      ],
+      "query": {
+        "t[0]:eq": "a"
+      },
+      "expected": [
+        {
+          "t": ["a", "b"]
+        }
+      ]
+    },
+    {
+      "name": "a null item has no fields",
+      "items": [
+        null,
+        {
+          "v": 1
+        },
+        {
+          "w": 2
+        }
+      ],
+      "query": {
+        "v:exists": "false"
+      },
+      "expected": [
+        null,
+        {
+          "w": 2
+        }
+      ]
+    },
+    {
+      "name": "falsy primitive items have no fields",
+      "items": ["", "ab", 0, 5],
+      "query": {
+        "length:eq": "0"
+      },
+      "expected": []
+    },
+    {
+      "name": "sort: an empty field is ignored",
+      "items": [
+        {
+          "n": 2
+        },
+        {
+          "n": 1
+        }
+      ],
+      "query": {
+        "sort": ":desc"
+      },
+      "expected": [
+        {
+          "n": 2
+        },
+        {
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "sort: index syntax on an array field",
+      "items": [
+        {
+          "id": 1,
+          "t": ["b"]
+        },
+        {
+          "id": 2,
+          "t": ["a"]
+        },
+        {
+          "id": 3,
+          "t": "c"
+        }
+      ],
+      "query": {
+        "sort": "t[0]:asc"
+      },
+      "expected": [
+        {
+          "id": 2,
+          "t": ["a"]
+        },
+        {
+          "id": 1,
+          "t": ["b"]
+        },
+        {
+          "id": 3,
+          "t": "c"
+        }
+      ]
+    },
+    {
+      "name": "fields: index syntax keeps the literal key",
+      "items": [
+        {
+          "id": 1,
+          "t": ["a", "b"]
+        }
+      ],
+      "query": {
+        "fields": "id,t[1]"
+      },
+      "expected": [
+        {
+          "id": 1,
+          "t[1]": "b"
+        }
+      ]
+    },
+    {
+      "name": "fields: an empty name selects nothing",
+      "items": [
+        {
+          "id": 1,
+          "name": "a"
+        }
+      ],
+      "query": {
+        "fields": "id,,"
+      },
+      "expected": [
+        {
+          "id": 1
+        }
+      ]
+    },
+    {
+      "name": "fields: a parent then its child",
+      "items": [
+        {
+          "data": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ],
+      "query": {
+        "fields": "data,data.x"
+      },
+      "expected": [
+        {
+          "data": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "fields: a child then its parent",
+      "items": [
+        {
+          "data": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ],
+      "query": {
+        "fields": "data.x,data"
+      },
+      "expected": [
+        {
+          "data": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "fields: two children share their parent",
+      "items": [
+        {
+          "data": {
+            "x": 1,
+            "y": 2,
+            "z": 3
+          }
+        }
+      ],
+      "query": {
+        "fields": "data.x,data.y"
+      },
+      "expected": [
+        {
+          "data": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "fields: a deep child under a projected parent",
+      "items": [
+        {
+          "a": {
+            "b": {
+              "c": 1,
+              "d": 2
+            }
+          }
+        }
+      ],
+      "query": {
+        "fields": "a.b,a.b.c"
+      },
+      "expected": [
+        {
+          "a": {
+            "b": {
+              "c": 1,
+              "d": 2
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

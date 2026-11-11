@@ -1,0 +1,14 @@
+{
+  "_source": "server-code",
+  "_note": "The spec declares 200 without a schema. The body is { verified: true, delivery: { channel, status: \"sent\", ts } }; the connection becomes verified.",
+  "_operation": "POST /notifications/{namespace}/connections/{id}/test",
+  "status": 200,
+  "body": {
+    "verified": true,
+    "delivery": {
+      "channel": "inapp",
+      "status": "sent",
+      "ts": 1730000001000
+    }
+  }
+}

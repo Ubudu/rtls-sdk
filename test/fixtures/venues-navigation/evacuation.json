@@ -1,0 +1,57 @@
+{
+  "_source": "server-code",
+  "_note": "Written from the rtls-api 3.3.8 evacuation response shape: emergency is true, estimatedEvacuationTime is distance / 2. Synthetic ids and coordinates; never captured live.",
+  "_operation": "GET /spatial/navigate/{namespace}/evacuation/{nodeId}",
+  "status": 200,
+  "body": {
+    "success": true,
+    "emergency": true,
+    "path": [
+      {
+        "id": 101,
+        "name": "Node 101",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0001, 20.0001],
+        "x": 10.0001,
+        "y": 20.0001
+      },
+      {
+        "id": 102,
+        "name": "Node 102",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0002, 20.0001],
+        "x": 10.0002,
+        "y": 20.0001
+      },
+      {
+        "id": 103,
+        "name": "Corridor",
+        "type": "elevator",
+        "level": 0,
+        "coordinates": [10.0003, 20.0002],
+        "x": 10.0003,
+        "y": 20.0002
+      },
+      {
+        "id": 104,
+        "name": "Node 104",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0004, 20.0002],
+        "x": 10.0004,
+        "y": 20.0002
+      }
+    ],
+    "exit": {
+      "id": "poi_exit1",
+      "name": "Exit 1",
+      "type": "emergency_exit",
+      "level": 0,
+      "coordinates": [10.0004, 20.0002]
+    },
+    "distance": 32.4,
+    "estimatedEvacuationTime": 16.2
+  }
+}

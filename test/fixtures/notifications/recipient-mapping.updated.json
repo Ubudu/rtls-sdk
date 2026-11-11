@@ -1,0 +1,16 @@
+{
+  "_source": "spec",
+  "_operation": "PATCH /notifications/{namespace}/recipient-mappings/{id}",
+  "status": 200,
+  "body": {
+    "id": "map_1_1",
+    "enabled": false,
+    "match": {
+      "event_types": ["e"]
+    },
+    "recipients": {
+      "user_ids": ["u"]
+    },
+    "channels": ["inapp"]
+  }
+}

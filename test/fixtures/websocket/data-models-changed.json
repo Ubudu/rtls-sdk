@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "Refetch hint for the data models (data filter taxonomy); no payload. Delivered only under a subscription without a type filter.",
+  "_nonHttp": "WS-M9",
+  "_usi": ["USI-P8-3"],
+  "body": { "action": "fetchDataFiltersTaxonomyEvent", "app_namespace": "test_namespace" }
+}

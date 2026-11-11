@@ -1,0 +1,10 @@
+{
+  "_source": "server-code",
+  "_note": "{error, violations: unknown[]} envelope of the Elasticsearch query guard (400). Never provoked live (LIVE-TESTING section 5); unit-only.",
+  "_operation": "POST /es/query/{appNamespace}/{dataType}",
+  "status": 400,
+  "body": {
+    "error": "unbounded size (-1) is not permitted",
+    "violations": ["size=-1"]
+  }
+}

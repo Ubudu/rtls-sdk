@@ -1,186 +1,140 @@
+// Write section: tier S; budget positions=1 notifications=0 ble=0 etl=0; read skips none
 /**
- * 10 - WebSocket Unified Client Example
+ * 10 — WebSocket unified client (JavaScript twin of typescript/10-websocket-unified.ts).
  *
- * Demonstrates using the unified RtlsWebSocketClient that provides both
- * subscription and publishing capabilities in a single client.
+ * One `client.createWebSocket({ mapUuid })` drives the subscriber and the publisher: it subscribes to every kind
+ * for `--seconds` (default 15, at most 60), prints a kinds histogram and the forwarded `publisher:*` events.
+ * With `--write` it publishes one position for the test MAC `testMac(77)` at a point outside every zone and waits
+ * up to 10 s for it to come back through the subscriber. Without `--write` it prints the point it would use.
  *
- * Prerequisites:
- * - Set RTLS_API_KEY, APP_NAMESPACE, and MAP_UUID environment variables
+ * Before publishing: the shared rule preflight must allow it (the enabled alert rules cannot match a test MAC at
+ * zone 0), and the point comes from `--map/--lat/--lon` or from `discover()` and `safePublishPoint()`.
  *
- * Run: node examples/javascript/10-websocket-unified.js
+ *   node javascript/10-websocket-unified.js [--seconds 15] [--map <uuid> --lat <lat> --lon <lon>]
+ *
+ * Write section, through the guarded runner only:
+ * `RTLS_IT_WRITES=1 RTLS_IT_SIDE_EFFECTS=1 npm run examples:check -- 10 --write`.
  */
+import {
+  getArg,
+  preflightAllows,
+  preflightRules,
+  reportBudget,
+  runExample,
+  skip,
+  testMac,
+} from '../shared/config.js';
+import { discover, safePublishPoint } from '../shared/discover.js';
+/** @import { PositionMessage } from 'ubudu-rtls-sdk' */
 
-import { config } from 'dotenv';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+const MAX_SECONDS = 60;
+const KINDS = /** @type {const} */ ([
+  'POSITIONS',
+  'ZONES_ENTRIES_EVENTS',
+  'ZONE_STATS_EVENTS',
+  'ALERTS',
+  'ASSETS',
+  'TAG_LOST',
+  'ALERT_RULES_CHANGED',
+  'ASSETS_LIBRARY_CHANGED',
+  'DATA_MODELS_CHANGED',
+  'SETTINGS_CHANGED',
+  'MAP_DATA_CHANGED',
+]);
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, '../../.env') });
-
-import { RtlsWebSocketClient, SubscriptionType } from '@ubudu/rtls-sdk';
-
-// =============================================================================
-// Configuration
-// =============================================================================
-
-const NAMESPACE = process.env.APP_NAMESPACE;
-const API_KEY = process.env.RTLS_API_KEY;
-const MAP_UUID = process.env.MAP_UUID;
-
-if (!NAMESPACE || !API_KEY || !MAP_UUID) {
-  console.error('Error: RTLS_API_KEY, APP_NAMESPACE, and MAP_UUID environment variables are required');
-  console.error('\nUsage:');
-  console.error('  RTLS_API_KEY=key APP_NAMESPACE=ns MAP_UUID=uuid node examples/javascript/10-websocket-unified.js');
-  process.exit(1);
+/**
+ * @param {number} seconds
+ * @param {AbortSignal} signal
+ * @returns {Promise<void>}
+ */
+function waitSeconds(seconds, signal) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, seconds * 1000);
+    signal.addEventListener('abort', () => {
+      clearTimeout(timer);
+      resolve();
+    });
+  });
 }
 
-// =============================================================================
-// Main
-// =============================================================================
+runExample('10-websocket-unified', async ({ client, config, log, signal }) => {
+  // Write-section guard 1: the shared rule preflight, before any other write-section request.
+  const verdicts = config.write ? await preflightRules() : null;
 
-async function main() {
-  // Create unified client (requires mapUuid for publishing capability)
-  const client = new RtlsWebSocketClient({
-    apiKey: API_KEY,
-    namespace: NAMESPACE,
-    mapUuid: MAP_UUID,
-    debug: process.env.DEBUG === 'true',
+  const seconds = Math.min(MAX_SECONDS, Math.max(1, Number(getArg('seconds', '15')) || 15));
+  const mapArg = getArg('map', '');
+  const latArg = getArg('lat', '');
+  const lonArg = getArg('lon', '');
+  const explicit = mapArg !== '' && latArg !== '' && lonArg !== '';
+
+  // Read-only discovery: the first venue map and a point outside every zone, 10 m from every edge.
+  const discovery = await discover();
+  const derived = safePublishPoint(discovery);
+  const mapUuid = explicit ? mapArg : discovery.mapUuid;
+  const point = explicit ? { lat: Number(latArg), lng: Number(lonArg) } : derived;
+  log(
+    `publish point: ${point === null ? 'null (no safe publish point)' : `${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}`}`
+  );
+
+  /** @type {Map<string, number>} */
+  const kinds = new Map();
+  const ws = client.createWebSocket({
+    mapUuid,
+    reconnect: { maxAttempts: 2, initialDelayMs: 1_000 },
   });
-
-  // ─── Event Handlers ─────────────────────────────────────────────────────────
-
-  // Position updates (from subscriber)
-  client.on('POSITIONS', (msg) => {
-    console.log(`[POSITION] ${msg.user_name || msg.user_uuid}: (${msg.lat}, ${msg.lon})`);
-  });
-
-  // Zone events (from subscriber)
-  client.on('ZONES_ENTRIES_EVENTS', (msg) => {
-    const event = msg.event_type?.includes('ENTER') ? 'ENTERED' : 'EXITED';
-    console.log(`[ZONE] Tag ${msg.user_uuid} ${event} zone ${msg.zone_uuid}`);
-  });
-
-  // Alerts (from subscriber)
-  client.on('ALERTS', (msg) => {
-    console.log(`[ALERT] ${msg.alert_type}: ${msg.message || 'No message'}`);
-  });
-
-  // Connection events
-  client.on('connected', ({ timestamp }) => {
-    console.log(`[${timestamp.toISOString()}] Connected to RTLS WebSocket`);
-  });
-
-  client.on('disconnected', ({ code, reason }) => {
-    console.log(`[DISCONNECTED] Code: ${code}, Reason: ${reason || 'No reason'}`);
-  });
-
-  client.on('error', ({ error }) => {
-    console.error('[ERROR]', error.message);
-  });
-
-  // ─── Connect ────────────────────────────────────────────────────────────────
+  for (const kind of KINDS) {
+    ws.on(kind, () => kinds.set(kind, (kinds.get(kind) ?? 0) + 1));
+  }
+  ws.on('publisher:connected', () => log('event publisher:connected'));
+  ws.on('publisher:disconnected', (d) => log(`event publisher:disconnected (code ${d.code})`));
+  ws.on('publisher:error', (e) => log(`event publisher:error (${e.error.name})`));
+  ws.on('reconnected', () => log('reconnected: resync current state through REST'));
 
   try {
-    console.log('Connecting to RTLS WebSocket (unified mode)...');
-    await client.connect();
-
-    // Check connection status
-    const status = client.getConnectionStatus();
-    console.log(`Subscriber: ${status.subscriber.state}`);
-    console.log(`Publisher: ${status.publisher?.state || 'Not configured'}`);
-
-    // ─── Subscribe to Events ──────────────────────────────────────────────────
-
-    console.log('\nSubscribing to position and zone events...');
-    const subscribeResult = await client.subscribe([
-      SubscriptionType.POSITIONS,
-      SubscriptionType.ZONES_ENTRIES_EVENTS,
-      SubscriptionType.ALERTS,
-    ]);
-
-    if (subscribeResult.success) {
-      console.log('Subscribed successfully!');
-      console.log('Active subscriptions:', client.getActiveSubscriptions());
-    } else {
-      console.error('Subscription failed:', subscribeResult.error);
+    await ws.connect();
+    log(
+      `connected: subscriber ${ws.isSubscriberConnected()}, publisher ${ws.isPublisherConnected()}`
+    );
+    const result = await ws.subscribe('ALL');
+    log(`subscribed: ${result.types === 'ALL' ? 'ALL' : result.types.join(',')}`);
+    await waitSeconds(seconds, signal);
+    for (const [kind, n] of [...kinds.entries()].sort((a, b) => b[1] - a[1])) {
+      log(`  ${kind.padEnd(24)} ${String(n).padStart(6)}`);
     }
 
-    // ─── Publish Positions ────────────────────────────────────────────────────
-
-    console.log('\nPublishing test positions...\n');
-
-    // Simulate a moving forklift
-    const forkliftMac = 'aa11bb22cc33';
-    const baseCoords = { lat: 48.8566, lon: 2.3522 };
-
-    for (let i = 0; i < 5; i++) {
-      // Simulate movement
-      const lat = baseCoords.lat + i * 0.0001;
-      const lon = baseCoords.lon + i * 0.00015;
-
-      const result = await client.sendPosition({
-        macAddress: forkliftMac,
-        latitude: lat,
-        longitude: lon,
-        name: 'Forklift-01',
-        color: '#FF5500',
-        data: {
-          battery: 85 - i * 2,
-          speed: 2.5 + Math.random(),
-        },
-      });
-
-      if (result.success) {
-        console.log(`  Published position ${i + 1}: (${lat.toFixed(6)}, ${lon.toFixed(6)})`);
-      } else {
-        console.log(`  Failed to publish: ${result.error}`);
-      }
-
-      // Small delay between publishes
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    if (!config.write || verdicts === null) {
+      log('read-only: no position sent (start with --write to publish one test position)');
+      return;
     }
+    // Write-section guards 2 and 3.
+    if (!preflightAllows(verdicts, 'publish'))
+      skip('preflight', 'an enabled alert rule may match a zone-0 test position');
+    if (point === null) skip('no-fixture', 'no safe publish point');
 
-    // ─── Listen for a While ───────────────────────────────────────────────────
-
-    const listenDuration = parseInt(process.env.LISTEN_DURATION ?? '10000', 10);
-    console.log(`\nListening for events for ${listenDuration / 1000} seconds...`);
-    console.log('(You should see your published positions echoed back)\n');
-
-    await new Promise((resolve) => setTimeout(resolve, listenDuration));
-
-    // ─── Batch Publishing ─────────────────────────────────────────────────────
-
-    console.log('\nSending batch update...');
-
-    const batchResult = await client.sendBatch([
-      { macAddress: 'aa11bb22cc33', latitude: 48.857, longitude: 2.353, name: 'Forklift-01' },
-      { macAddress: 'dd44ee55ff66', latitude: 48.8571, longitude: 2.3531, name: 'Pallet-Jack-01' },
-      { macAddress: '112233445566', latitude: 48.8572, longitude: 2.3532, name: 'Worker-01' },
-    ]);
-
-    console.log(`Batch: ${batchResult.sent} sent, ${batchResult.failed} failed`);
-
-    // ─── Unsubscribe ──────────────────────────────────────────────────────────
-
-    console.log('\nUnsubscribing from alerts...');
-    const unsubResult = await client.unsubscribe([SubscriptionType.ALERTS]);
-    if (unsubResult.success) {
-      console.log('Unsubscribed from alerts');
-      console.log('Remaining subscriptions:', client.getActiveSubscriptions());
+    const mac = testMac(77);
+    await ws.setTagFilter([mac]);
+    /** @type {PositionMessage[]} */
+    const back = [];
+    ws.on('POSITIONS', (p) => {
+      if (p.user_uuid === mac) back.push(p);
+    });
+    const sent = await ws.sendPosition({
+      macAddress: mac,
+      latitude: point.lat,
+      longitude: point.lng,
+      mapUuid,
+    });
+    reportBudget({ positions: 1 });
+    if (!sent.success) throw new Error(`publish failed: ${sent.error ?? 'unknown'}`);
+    const deadline = Date.now() + 10_000;
+    while (back.length === 0 && Date.now() < deadline && !signal.aborted) {
+      await waitSeconds(0.2, signal);
     }
-  } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
+    if (back.length === 0) throw new Error('the published position did not come back within 10 s');
+    log(
+      `position for ${mac} came back: zone ${back[0]?.zone.id}, origin ${back[0]?.origin ?? '-'}`
+    );
   } finally {
-    // ─── Cleanup ──────────────────────────────────────────────────────────────
-
-    console.log('\nDisconnecting...');
-    await client.disconnect();
-
-    const status = client.getConnectionStatus();
-    console.log(`Final status - Subscriber: ${status.subscriber.state}, Publisher: ${status.publisher?.state}`);
-    console.log('Done!');
+    await ws.disconnect();
   }
-}
-
-main().catch(console.error);
+});

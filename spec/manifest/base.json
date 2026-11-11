@@ -1,0 +1,1123 @@
+{
+  "specVersion": "3.4.0-15bab236",
+  "operations": [
+    {
+      "id": "DELETE /ai-agent/{namespace}/artifacts/{filename}",
+      "tag": "AI Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "DELETE /ai-agent/{namespace}/reports/drafts/{draft_id}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "DELETE /ai-agent/{namespace}/reports/{id}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "DELETE /ai-agent/{namespace}/reports/{id}/instances/{iid}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "DELETE /ai-agent/{namespace}/reports/{id}/variants/{vid}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "DELETE /ai-agent/{namespace}/reports/{id}/versions/{v}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "DELETE /assets/{app_namespace}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /assets/{app_namespace}/{mac_address}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /assets/{namespace}/{mac_address}/documents/{documentId}",
+      "tag": "Asset Documents",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /dashboards/{id}",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /etl/mapping-profiles/{id}",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /etl/mappings/{id}",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy alias of the mapping-profiles route with different status codes."
+    },
+    {
+      "id": "DELETE /notifications/{namespace}/connections/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /notifications/{namespace}/recipient-mappings/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /notifications/{namespace}/rules/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /notifications/{namespace}/saved-views/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "DELETE /venues/cache/invalidate/{venueId}",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Server cache internals."
+    },
+    {
+      "id": "GET /admin/{namespace}/services",
+      "tag": "Internal Service Auth",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "id": "GET /admin/{namespace}/services/{service}/config",
+      "tag": "Internal Service Auth",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/artifacts",
+      "tag": "AI Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/artifacts/{sessionId}/{filename}",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/events/errors",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/events/token-usage",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/events/tool-usage",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/drafts",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/{id}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/{id}/instances",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/{id}/instances/{iid}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/{id}/instances/{iid}/view",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/{id}/variants/{vid}/view",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/reports/{id}/view",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai-agent/{namespace}/status",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai/{namespace}/config",
+      "tag": "AI - Rule Generation",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai/{namespace}/jobs",
+      "tag": "AI - Rule Generation",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /ai/{namespace}/jobs/{jobId}",
+      "tag": "AI - Rule Generation",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "GET /alert_rules/{app_namespace}",
+      "tag": "Alert Rules",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /api/spatial/assets/:namespace/nearest-realtime",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /api/spatial/assets/:namespace/nearest-to-point",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /asset_history/{app_namespace}/{mac_address}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /asset_last_position/{app_namespace}/{mac_address}",
+      "tag": "Asset Positions",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /asset_stats/{app_namespace}/{start_time}/{end_time}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "exclude",
+      "reason": "Namespace-wide audit counters of asset-record changes; an operator report, not an integration need."
+    },
+    {
+      "id": "GET /assets/{app_namespace}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /assets/{app_namespace}/{mac_address}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /assets/{namespace}/documents/jobs/{jobId}",
+      "tag": "Asset Documents",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /assets/{namespace}/{mac_address}/documents",
+      "tag": "Asset Documents",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /assets/{namespace}/{mac_address}/documents/{documentId}",
+      "tag": "Asset Documents",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /assets/{namespace}/{mac_address}/documents/{documentId}/download",
+      "tag": "Asset Documents",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /assets_library/{app_namespace}",
+      "tag": "Asset Tree",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /cache/{app_namespace}/positions",
+      "tag": "Asset Positions",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /cache/{app_namespace}/positions/{mac_address}",
+      "tag": "Asset Positions",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /dashboards",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /dashboards/created",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /dashboards/selected",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /dashboards/shared",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /dashboards/{id}",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /data_filters_taxonomy/{app_namespace}",
+      "tag": "Data Models",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /es/alerts/{appNamespace}",
+      "tag": "Elasticsearch",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /es/last_positions/{appNamespace}",
+      "tag": "Elasticsearch",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /es/position_history/{appNamespace}",
+      "tag": "Elasticsearch",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /es/zone_presence/{appNamespace}",
+      "tag": "Elasticsearch",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /esl/config/pdi-event-tracking",
+      "tag": "ESL Synchronizer",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "ESL synchronizer configuration is deployment-level configuration."
+    },
+    {
+      "id": "GET /etl/activities",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /etl/check-mappings",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy diagnostic paired with the excluded repair route; its only meaningful field is derivable from the profile list."
+    },
+    {
+      "id": "GET /etl/mapping-profiles",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /etl/mapping-profiles/{id}",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /etl/mappings",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /health",
+      "tag": "Health",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /internal/{service}/{namespace}/config",
+      "tag": "Internal Service Auth",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "id": "GET /notifications/{namespace}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/cleanup-policy",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/connections",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/connections/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/export",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/facets",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/recipient-mappings",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/recipient-mappings/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/rules",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/rules/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/saved-views",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/saved-views/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/stream",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/tenant-config",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/unread_count",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /notifications/{namespace}/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /settings/{app_namespace}",
+      "tag": "Settings",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/navigate/{namespace}/evacuation/{nodeId}",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/navigate/{namespace}/graph-analysis",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Map-authoring QA diagnostic, not an integration surface."
+    },
+    {
+      "id": "GET /spatial/navigate/{namespace}/graph-quality",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Map-authoring QA diagnostic, not an integration surface."
+    },
+    {
+      "id": "GET /spatial/navigate/{namespace}/nearest-poi/{nodeId}",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/navigate/{namespace}/statistics",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Server cache internals."
+    },
+    {
+      "id": "GET /spatial/pois/{namespace}/by-tag",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/pois/{namespace}/nearest-to-point",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/pois/{namespace}/statistics",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/pois/{namespace}/within-radius",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/zones/{namespace}/containing-point",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/zones/{namespace}/nearest-to-point",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /spatial/zones/{namespace}/within-radius",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /status/{component}",
+      "tag": "Health",
+      "phase": "P5",
+      "decision": "exclude",
+      "reason": "Infrastructure diagnostics; health() covers the client need."
+    },
+    {
+      "id": "GET /universal-filtering/documentation",
+      "tag": "Universal Filtering Documentation",
+      "phase": "P5",
+      "decision": "exclude",
+      "reason": "Returns a pointer to documentation, no data; filtering is documented statically."
+    },
+    {
+      "id": "GET /venues/cache/stats",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Server cache internals."
+    },
+    {
+      "id": "GET /venues/{namespace}",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/maps",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/maps/{mapId}",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "exclude",
+      "reason": "Served from a bundled sample dataset; 404 for real namespaces."
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/maps/{mapId}/pois",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/maps/{mapId}/zones",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/paths",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/pois",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "GET /venues/{namespace}/{venueId}/zones",
+      "tag": "Venues",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "PATCH /ai-agent/{namespace}/reports/{id}",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "PATCH /assets/{app_namespace}/{mac_address}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "PATCH /notifications/{namespace}/recipient-mappings/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "PATCH /notifications/{namespace}/rules/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "PATCH /notifications/{namespace}/{id}",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /admin/{namespace}/services/{service}/secret",
+      "tag": "Internal Service Auth",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/artifacts/clear",
+      "tag": "AI Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reports",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reports/bulk",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reports/drafts/clear",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reports/{id}/generate",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reports/{id}/instances/clear",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reports/{id}/variants/clear",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/reset",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai-agent/{namespace}/send",
+      "tag": "AI - Agent",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai/{namespace}/rules/examples",
+      "tag": "AI - Rule Generation",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /ai/{namespace}/rules/generate",
+      "tag": "AI - Rule Generation",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "POST /alert_rules/{app_namespace}",
+      "tag": "Alert Rules",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /assets/{app_namespace}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /assets/{app_namespace}/{mac_address}",
+      "tag": "Assets Data",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /assets/{namespace}/bulk-clear-declared",
+      "tag": "Declared Location",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /assets/{namespace}/bulk-declare",
+      "tag": "Declared Location",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /assets/{namespace}/{mac_address}/documents",
+      "tag": "Asset Documents",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /assets_library/{app_namespace}",
+      "tag": "Asset Tree",
+      "phase": "P2",
+      "decision": "exclude",
+      "reason": "Full-replace write of the asset tree; done in the product UI. Read access is in scope."
+    },
+    {
+      "id": "POST /dashboards",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /dashboards/{id}/share",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /dashboards/{id}/unshare",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /data_filters_taxonomy/{app_namespace}",
+      "tag": "Data Models",
+      "phase": "P2",
+      "decision": "exclude",
+      "reason": "Full-replace write of the data model; done in the product UI. Read access is in scope."
+    },
+    {
+      "id": "POST /es/query/{appNamespace}/{dataType}",
+      "tag": "Elasticsearch",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /etl/mapping-profiles",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /etl/mappings",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy alias of the mapping-profiles route with different status codes."
+    },
+    {
+      "id": "POST /etl/parse-excel-headers",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /etl/upload",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /internal/{service}/{namespace}/register",
+      "tag": "Internal Service Auth",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "id": "POST /notifications/{namespace}/bulk",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/bulk/undo",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/connections",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/connections/{id}/test",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/recipient-mappings",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/rules",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/saved-views",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/send",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/{id}/acknowledge",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/{id}/archive",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/{id}/mute",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "exclude",
+      "reason": "Only extra effect over bulk mute is a registry row the server never reads and cannot delete; bulk covers the need."
+    },
+    {
+      "id": "POST /notifications/{namespace}/{id}/pin",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/{id}/read",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /notifications/{namespace}/{id}/snooze",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /publisher/{app_namespace}",
+      "tag": "Asset Positions",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /settings/{app_namespace}",
+      "tag": "Settings",
+      "phase": "P5",
+      "decision": "exclude",
+      "reason": "Full-replace write of the whole namespace configuration; an operator task. settings.get() stays."
+    },
+    {
+      "id": "POST /spatial/navigate/{namespace}/accessible-path",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /spatial/navigate/{namespace}/multi-stop",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /spatial/navigate/{namespace}/shortest-path",
+      "tag": "Navigation",
+      "phase": "P4",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /spatial/pois/{namespace}/analyze-custom",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /spatial/zones/{namespace}/analyze-custom",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /spatial/zones/{namespace}/calculate-distances",
+      "tag": "Spatial Analysis",
+      "phase": "P3",
+      "decision": "wrap"
+    },
+    {
+      "id": "POST /tag-actions/{appNamespace}",
+      "tag": "BLE Communications",
+      "phase": "P2",
+      "decision": "wrap"
+    },
+    {
+      "id": "PUT /admin/{namespace}/services/{service}/config",
+      "tag": "Internal Service Auth",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "Service-to-service and operator endpoints."
+    },
+    {
+      "id": "PUT /ai-agent/{namespace}/reports/{id}/versions",
+      "tag": "AI Agent Reports",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "AI agent, agent reports and AI rule generation are product-UI features, not an integration surface."
+    },
+    {
+      "id": "PUT /dashboards/{id}",
+      "tag": "Dashboard",
+      "phase": "P5",
+      "decision": "wrap"
+    },
+    {
+      "id": "PUT /esl/config/pdi-event-tracking",
+      "tag": "ESL Synchronizer",
+      "phase": "none",
+      "decision": "exclude",
+      "reason": "ESL synchronizer configuration is deployment-level configuration."
+    },
+    {
+      "id": "PUT /etl/fix-mapping/{id}",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Duplicate of mappingProfiles.update(id, { keyColumns })."
+    },
+    {
+      "id": "PUT /etl/mapping-profiles/{id}",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "wrap"
+    },
+    {
+      "id": "PUT /etl/mappings/{id}",
+      "tag": "ETL",
+      "phase": "P7",
+      "decision": "exclude",
+      "reason": "Legacy alias of the mapping-profiles route with different status codes."
+    },
+    {
+      "id": "PUT /notifications/{namespace}/cleanup-policy",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    },
+    {
+      "id": "PUT /notifications/{namespace}/tenant-config",
+      "tag": "Notifications",
+      "phase": "P6",
+      "decision": "wrap"
+    }
+  ]
+}

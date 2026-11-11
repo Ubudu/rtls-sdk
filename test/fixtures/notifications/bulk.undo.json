@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "Undo of a bulk action: { restored } = documents restored. The spec declares no content for this 200.",
+  "_operation": "POST /notifications/{namespace}/bulk/undo",
+  "status": 200,
+  "body": {
+    "restored": 2
+  }
+}

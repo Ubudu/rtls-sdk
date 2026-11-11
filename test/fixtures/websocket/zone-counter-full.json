@@ -1,0 +1,43 @@
+{
+  "_source": "server-code",
+  "_note": "Zone counter update that carries the full zone Feature: the engine then adds map_uuid and sets is_synthetic_exit to true, whether or not the change came from a synthetic exit.",
+  "_nonHttp": "WS-M3",
+  "_usi": ["USI-P8-8"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "UPDATE_ZONE_COUNTER",
+    "app_namespace": "test_namespace",
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "zone": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.352, 48.8564],
+            [2.3526, 48.8564],
+            [2.3526, 48.8568],
+            [2.352, 48.8568],
+            [2.352, 48.8564]
+          ]
+        ]
+      },
+      "properties": {
+        "id": 3,
+        "name": "Loading-Dock",
+        "level": 0,
+        "rgb_color": "#FF8800",
+        "tags": ["dock"],
+        "type": "zone"
+      }
+    },
+    "total": 2,
+    "total_tags": 2,
+    "total_mobiles": 0,
+    "avg_time": 60,
+    "avg_time_tags": 60,
+    "avg_time_mobiles": 0,
+    "timestamp": "2026-01-01T12:01:00Z",
+    "is_synthetic_exit": true
+  }
+}

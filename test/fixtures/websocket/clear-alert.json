@@ -1,0 +1,11 @@
+{
+  "_source": "server-code",
+  "_note": "Notify event with event_type CLEAR_ALERT: the broker would forward it, but no producer exists; the SDK delivers it on the unknown event, not as an alert.",
+  "_nonHttp": "WS-M13",
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "CLEAR_ALERT",
+    "app_namespace": "test_namespace",
+    "user_udid": "025d4b000001"
+  }
+}

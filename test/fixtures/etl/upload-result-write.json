@@ -1,0 +1,31 @@
+{
+  "_source": "live",
+  "_note": "201 body of a writing upload (debugMode false) that updated one existing asset (recorded live, S2): success is always true; counters per profile (USI-P7-2). The spec UploadResult schema is wrong (USI-P7-1).",
+  "_operation": "POST /etl/upload",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "7c4e16fb" },
+  "status": 201,
+  "body": {
+    "_id": "64b000000000000000000005",
+    "filename": "sdk-test-000000-etl-write.csv",
+    "status": "completed",
+    "userId": "<redacted>",
+    "success": true,
+    "debugMode": false,
+    "results": {
+      "totalRows": 1,
+      "processedProfiles": [
+        {
+          "profileId": "64b000000000000000000001",
+          "profileName": "sdk-test-000000-etl-profile",
+          "rowsProcessed": 1,
+          "rowsChanged": 1,
+          "rowsSkipped": 0,
+          "unassociated": 0,
+          "errors": []
+        }
+      ],
+      "debugMode": false
+    },
+    "created_at": "2026-11-11T13:39:38.425Z"
+  }
+}

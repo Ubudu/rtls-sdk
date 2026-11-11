@@ -1,0 +1,29 @@
+{
+  "_source": "server-code",
+  "_note": "Hand-built: a profile with one legacy string-valued mapping (the model allows it; imports ignore it). The SDK returns it untouched.",
+  "_operation": "GET /etl/mapping-profiles",
+  "status": 200,
+  "body": [
+    {
+      "_id": "64b000000000000000000002",
+      "name": "sdk-test-000000-etl-legacy",
+      "description": "sdk-test ETL profile",
+      "sourceType": "csv",
+      "mappings": {
+        "user_udid": {
+          "sourceColumn": "MAC",
+          "transformation": "none",
+          "required": true
+        },
+        "Name": "user_name"
+      },
+      "keyColumns": ["MAC"],
+      "requiredFields": [],
+      "applicationId": "test-namespace",
+      "userId": "00000000-0000-0000-0000-000000000000",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-01-01T00:00:00.000Z",
+      "__v": 0
+    }
+  ]
+}

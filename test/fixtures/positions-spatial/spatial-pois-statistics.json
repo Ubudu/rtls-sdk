@@ -1,0 +1,8 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-9.",
+  "_operation": "GET /spatial/pois/{namespace}/statistics",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": { "total_pois": 0, "levels": {}, "tags": {}, "venues": {} }
+}

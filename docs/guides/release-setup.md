@@ -1,175 +1,120 @@
-# Release Setup Guide
+# Release setup
 
-This guide explains how to configure the CI/CD pipeline for releasing to GitHub and npm.
+How the SDK is built, checked and released. Maintainers only.
 
-## Overview
+## 1. Pipelines
 
-The release pipeline is triggered when you push a version tag (e.g., `v1.0.0`) to GitLab. It will:
+The **GitLab pipeline** (`.gitlab-ci.yml`) is canonical. GitHub (`github.com/ubudu/rtls-sdk`) is a mirror that
+GitLab pushes to on every release tag; its workflows (`.github/workflows/`) repeat the offline checks for the
+mirror.
 
-1. Run tests and build the SDK
-2. Push the code and tag to GitHub
-3. Publish the package to npm
+| Stage | Job | Runs on | What it does |
+|---|---|---|---|
+| `offline` | `offline` (Node 20, 22, 24) | merge requests, the default branch, tags | `npm ci`, installs Bun 1.4.4 as a consumer runtime, then `npm run ci:offline`: spec check, lint, format check, typecheck, unit coverage, contract tests, build, pack smoke test, docs snippets and links |
+| `live` | `live-readonly` (Node 22) | the default branch, **manual** | read-only integration run (`npm run test:integration`, no tier variable) and the sweeper check; present only when the protected, masked variables `RTLS_API_KEY` and `APP_NAMESPACE` are defined |
+| `live` | `spec-drift` | scheduled pipelines only | `npm run spec:drift`: compares the vendored spec with the live one (informational, may fail) |
+| `release` | `push-to-github` | tags `vX.Y.Z` | pushes the tagged commit to the mirror's `main` and pushes the tag |
+| `release` | `publish-npm` | tags `vX.Y.Z` | `npm run generate`, `npm run build`, `npm publish --access public` |
 
-## Prerequisites
+Release jobs start only after the `offline` stage of the tag pipeline has passed. Nothing in the offline lane
+reaches the network after the installs.
 
-Before your first release, you need to set up:
+GitHub workflows:
 
-- A GitHub repository for the public SDK
-- Two CI/CD variables in GitLab
+- `ci.yml`: on pushes to `main` and `develop` and on pull requests to `main`, job `build` runs the same
+  `npm run ci:offline` on Node 20, 22 and 24 (Bun 1.4.4 installed for the pack smoke test), then job
+  `publish-dry-run` runs `npm pack --dry-run`.
+- `release.yml`: a manual workflow (version input) that bumps the version, tags, pushes and publishes from
+  GitHub with the GitHub secret `NPM_TOKEN`. It is not part of the canonical flow: releases are tagged on GitLab.
+  Never run it for a version that GitLab publishes.
 
-## Step 1: Create GitHub Repository
+## 2. The vendored spec
 
-1. Go to [github.com/new](https://github.com/new)
-2. Create repository `ubudu/rtls-sdk`
-3. Keep it empty (no README, no .gitignore)
+The OpenAPI spec is vendored in `spec/rtls-api.swagger.json`. `npm run generate` (also run by `npm run build`
+and on `npm install` through `prepare`) builds `src/generated/schema.ts` from that file only; no build step
+downloads anything.
 
-## Step 2: Generate GitHub Deploy Key
+- `npm run spec:check` (part of `ci:offline`) checks that the vendored file is normalised, matches
+  `spec/spec.lock.json`, and that regenerating the types gives exactly the local `src/generated/schema.ts` (a
+  stale or hand-edited schema fails; the file is generated, not committed).
+- `npm run spec:update` replaces it with the live spec and rewrites the lock file (a deliberate maintainer
+  step, reviewed like code); then run `npm run generate && npm run spec:check`.
+- `npm run spec:drift` reports differences between the vendored and the live spec; it is informational.
 
-Generate an SSH key pair for GitLab to push to GitHub:
+## 3. One-time setup
 
-```bash
-ssh-keygen -t ed25519 -C "gitlab-ci-rtls-sdk" -f ~/.ssh/gitlab_to_github_rtls -N ""
-```
+### GitHub mirror and deploy key
 
-### Add Public Key to GitHub
+1. Create the repository `ubudu/rtls-sdk` on GitHub, empty.
+2. Generate a key pair for GitLab to push with:
 
-1. Go to `github.com/ubudu/rtls-sdk` → **Settings** → **Deploy keys**
-2. Click **Add deploy key**
-3. Title: `GitLab CI`
-4. Paste the public key:
    ```bash
-   cat ~/.ssh/gitlab_to_github_rtls.pub
+   ssh-keygen -t ed25519 -C "gitlab-ci-rtls-sdk" -f ~/.ssh/gitlab_to_github_rtls -N ""
    ```
-5. Check **Allow write access**
-6. Click **Add key**
 
-### Add Private Key to GitLab
+3. On GitHub, **Settings → Deploy keys → Add deploy key**: paste the public key (`~/.ssh/gitlab_to_github_rtls.pub`),
+   tick **Allow write access**.
+4. On GitLab, **Settings → CI/CD → Variables → Add variable**:
+   - Key `GITHUB_DEPLOY_KEY`, value the private key (`~/.ssh/gitlab_to_github_rtls`, including the
+     `BEGIN`/`END` lines).
+   - Type **Variable**, not File: the job pipes the variable's content to `ssh-add -`, and a File variable
+     would hand it a path instead of the key.
+   - **Protect variable** ticked. It cannot be masked (multi-line value).
 
-1. Go to your GitLab project → **Settings** → **CI/CD** → **Variables**
-2. Click **Add variable**
-3. Configure:
-   - Key: `GITHUB_DEPLOY_KEY`
-   - Value: paste the private key content (including `-----BEGIN/END-----` lines)
-     ```bash
-     cat ~/.ssh/gitlab_to_github_rtls
-     ```
-   - Type: **File**
-   - Flags: Check **Protect variable** (do NOT mask - multi-line keys can't be masked)
+### npm token
 
-## Step 3: Create npm Token
+1. On npmjs.com, create an **Automation** token for an account that may publish `ubudu-rtls-sdk`.
+2. On GitLab, add the variable `NPM_TOKEN`: type **Variable**, **Protect variable** and **Mask variable** ticked.
 
-### Generate Token on npm
+### Protected tags
 
-1. Go to [npmjs.com](https://www.npmjs.com) → Click your avatar → **Access Tokens**
-2. Click **Generate New Token** → **Classic Token**
-3. Select **Automation** (bypasses 2FA for CI/CD)
-4. Copy the token (shown only once)
+Protected variables are only given to protected branches and tags. Under **Settings → Repository → Protected
+tags**, protect `v*` (allowed to create: maintainers).
 
-### Add Token to GitLab
+| Variable | Type | Protected | Masked | Used by |
+|---|---|---|---|---|
+| `GITHUB_DEPLOY_KEY` | Variable | yes | no (multi-line) | `push-to-github` |
+| `NPM_TOKEN` | Variable | yes | yes | `publish-npm` |
+| `RTLS_API_KEY`, `APP_NAMESPACE` | Variable | yes | yes | `live-readonly` (optional) |
 
-1. Go to your GitLab project → **Settings** → **CI/CD** → **Variables**
-2. Click **Add variable**
-3. Configure:
-   - Key: `NPM_TOKEN`
-   - Value: paste the npm token
-   - Type: **Variable**
-   - Flags: Check **Protect variable** AND **Mask variable**
+## 4. Release checklist
 
-## Step 4: Protect Version Tags
+1. On the default branch, the pipeline is green: `npm run ci:offline` passes locally too.
+2. The generated documentation is current (not part of `ci:offline`): `npm run docs:api:check` and
+   `npm run docs:coverage:check` pass.
+3. `CHANGELOG.md`: the release section is complete; replace `Unreleased` in its heading with the release date
+   when tagging.
+4. The migration guide covers every breaking change of the release.
+5. Bump the version: `npm version <x.y.z> --no-git-tag-version`, commit `package.json` and `package-lock.json`.
+6. Tag and push the tag: `git tag v<x.y.z> && git push origin v<x.y.z>`.
+7. Check the tag pipeline: `offline` passes, then `push-to-github` and `publish-npm`.
+8. Check the package on npmjs.com (`ubudu-rtls-sdk@<x.y.z>`) and the tag on the GitHub mirror.
 
-Protected variables are only available to protected branches and tags. You must protect version tags for publishing to work.
+## 5. Troubleshooting
 
-1. Go to your GitLab project → **Settings** → **Repository** → **Protected tags**
-2. Click **Add tag**
-3. Configure:
-   - Tag: `v*` (wildcard matches all version tags like `v0.1.0`, `v1.2.3`)
-   - Allowed to create: **Maintainers** (or your preference)
-4. Click **Protect**
+### `push-to-github` fails at `ssh-add`
 
-This ensures only maintainers can create release tags, and those tags have access to the protected CI/CD variables.
+- `GITHUB_DEPLOY_KEY` is a File variable: change its type to **Variable**.
+- The value lost its line breaks or the `BEGIN`/`END` lines: paste the whole private key again.
 
-## Step 5: First Release
+### `push-to-github` is rejected by GitHub
 
-Once the variables are configured:
+- The deploy key has no write access on the GitHub repository.
 
-```bash
-# Update version in package.json
-npm version 0.1.0
+### `npm publish` fails with `ENEEDAUTH`
 
-# Push with tags
-git push origin main --tags
-```
+The job did not receive `NPM_TOKEN`:
 
-The pipeline will automatically:
-- Push to GitHub
-- Publish `ubudu-rtls-sdk@0.1.0` to npm
+1. The tag is not protected while the variable is: protect `v*`.
+2. The variable name is not exactly `NPM_TOKEN`.
+3. The token expired: create a new Automation token.
 
-## Variables Summary
+### `npm publish` fails with 403
 
-| Variable | Type | Protected | Masked | Description |
-|----------|------|-----------|--------|-------------|
-| `GITHUB_DEPLOY_KEY` | File | ✅ Yes | ❌ No | SSH private key for GitHub |
-| `NPM_TOKEN` | Variable | ✅ Yes | ✅ Yes | npm automation token |
+- The token is not an Automation token, or its account may not publish `ubudu-rtls-sdk`.
+- The version already exists on npm: versions cannot be republished; bump and tag again.
 
-> **Important**: Both variables must be **protected** so they're only available to protected tags. The deploy key cannot be masked because it's multi-line.
+### A protected tag cannot be deleted from the command line
 
-## Troubleshooting
-
-### Push to GitHub fails
-
-- Verify the deploy key has **write access** enabled on GitHub
-- Check the key is added as a **File** type variable in GitLab
-- Ensure the GitHub repository exists and is empty for first push
-
-### npm publish fails with ENEEDAUTH
-
-```
-npm error code ENEEDAUTH
-npm error need auth This command requires you to be logged in
-```
-
-This usually means the `NPM_TOKEN` is not available to the pipeline. Common causes:
-
-1. **Tag not protected**: If `NPM_TOKEN` is a protected variable, the tag must also be protected
-   - Check GitLab logs for `non_protected` in cache path
-   - Solution: Add `v*` to protected tags (Settings → Repository → Protected tags)
-
-2. **Variable not set**: The variable doesn't exist or has a typo
-   - Verify the variable name is exactly `NPM_TOKEN`
-
-3. **Token expired or invalid**: npm tokens can expire
-   - Generate a new Automation token on npmjs.com
-
-### Cannot delete protected tag via command line
-
-```
-remote: GitLab: You can only delete protected tags using the web interface.
-```
-
-Protected tags must be deleted through GitLab UI:
-- Go to Repository → Tags → find the tag → click Delete (trash icon)
-- Or retry the failed pipeline if you just needed to fix variables
-
-### npm publish fails with 403
-
-- Verify the npm token is an **Automation** token (not Granular or Read-only)
-- Check the package name `ubudu-rtls-sdk` is available or you have publish access
-- Ensure the token was created by an npm user with publish permissions
-
-## Release Checklist
-
-### First-time setup (once per project)
-- [ ] GitHub repository created and empty
-- [ ] Deploy key added to GitHub with write access
-- [ ] `GITHUB_DEPLOY_KEY` variable added to GitLab (File, Protected)
-- [ ] `NPM_TOKEN` variable added to GitLab (Variable, Protected, Masked)
-- [ ] Protected tags configured: `v*` pattern
-
-### For each release
-- [ ] Update version in `package.json`
-- [ ] Update CHANGELOG (if applicable)
-- [ ] Commit changes to `main`
-- [ ] Create and push tag: `git tag v0.1.0 && git push origin v0.1.0`
-- [ ] Verify pipeline succeeds in GitLab
-- [ ] Verify package appears on [npmjs.com](https://www.npmjs.com/package/ubudu-rtls-sdk)
-- [ ] Verify code appears on GitHub
+GitLab deletes protected tags only from the web interface (**Repository → Tags**). To repeat a release after
+fixing variables, retry the failed jobs of the tag pipeline instead.

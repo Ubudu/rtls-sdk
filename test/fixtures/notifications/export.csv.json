@@ -1,0 +1,11 @@
+{
+  "_source": "server-code",
+  "_note": "CSV export: fixed 11-column header, \\n line ends, no trailing newline, RFC-4180 quoting of fields holding a comma, a quote or a newline; zone_name/asset_name empty for sent items. The spec declares no content for this 200.",
+  "_operation": "GET /notifications/{namespace}/export",
+  "status": 200,
+  "contentType": "text/csv; charset=utf-8",
+  "headers": {
+    "Content-Disposition": "attachment; filename=\"notifications.csv\""
+  },
+  "text": "_id,created_at,kind,severity,title,read,acknowledged,archived,thread_key,zone_name,asset_name\n665f1c2e9b1d4a0012345601,1718983070000,direct_message,info,\"Door open, north side\nsecond line\",false,false,false,dm:conv-1,,\n665f1c2e9b1d4a0012345602,1718983010000,mission,warning,\"Check \"\"freezer\"\" 3\",false,false,false,mission:m-1,,"
+}

@@ -1,0 +1,116 @@
+{
+  "_source": "spec",
+  "_note": "Live capture (P4-T2, tier R), 3 connected path nodes and the 2 segments between them (of 104 nodes, 142 segments); names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /venues/{namespace}/{venueId}/paths",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": { "type": "Point", "coordinates": [4.5000506, 45.5000817] },
+        "properties": {
+          "id": 656131045,
+          "external_id": 656131045,
+          "type": "path_node",
+          "node_type": "waypoint",
+          "name": "Node 1",
+          "level": 0,
+          "is_active": true,
+          "cross_level_connections": [],
+          "tags": []
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": { "type": "Point", "coordinates": [4.50006, 45.5001633] },
+        "properties": {
+          "id": 83058115,
+          "external_id": 83058115,
+          "type": "path_node",
+          "node_type": "waypoint",
+          "name": "Node 2",
+          "level": 0,
+          "is_active": true,
+          "cross_level_connections": [],
+          "tags": []
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": { "type": "Point", "coordinates": [4.500178, 45.5001563] },
+        "properties": {
+          "id": 2142355211,
+          "external_id": 2142355211,
+          "type": "path_node",
+          "node_type": "waypoint",
+          "name": "Node 3",
+          "level": 0,
+          "is_active": true,
+          "cross_level_connections": [],
+          "tags": []
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [4.5000506, 45.5000817],
+            [4.50006, 45.5001633]
+          ]
+        },
+        "properties": {
+          "id": 477639410,
+          "external_id": 477639410,
+          "source_node_id": 656131045,
+          "target_node_id": 83058115,
+          "level": 0,
+          "bidirectional": true,
+          "distance": 9.3,
+          "estimated_time": 8,
+          "accessibility": {
+            "wheelchair": true,
+            "visual_impaired": true,
+            "hearing_impaired": true
+          },
+          "penalty_factor": 1,
+          "is_active": true,
+          "tags": [],
+          "type": "path_segment"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [4.50006, 45.5001633],
+            [4.500178, 45.5001563]
+          ]
+        },
+        "properties": {
+          "id": 629807427,
+          "external_id": 629807427,
+          "source_node_id": 83058115,
+          "target_node_id": 2142355211,
+          "level": 0,
+          "bidirectional": true,
+          "distance": 8.5,
+          "estimated_time": 7,
+          "accessibility": {
+            "wheelchair": true,
+            "visual_impaired": true,
+            "hearing_impaired": true
+          },
+          "penalty_factor": 1,
+          "is_active": true,
+          "tags": [],
+          "type": "path_segment"
+        }
+      }
+    ],
+    "metadata": { "type": "paths", "count": 246, "timestamp": "2026-11-11T13:31:06.511Z" }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "moduleDetection": "force",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUncheckedIndexedAccess": false,
+    "types": ["node", "vitest/globals"],
+    "paths": {
+      "ubudu-rtls-sdk": ["./src/index.ts"],
+      "../harness": ["./test/integration/harness/index.ts"]
+    }
+  },
+  "files": []
+}

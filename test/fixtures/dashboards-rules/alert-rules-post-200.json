@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "Successful full replace: the positions server answers 200 with an empty body (Content-Length 0) and no Content-Type; the SDK resolves undefined.",
+  "_operation": "POST /alert_rules/{app_namespace}",
+  "status": 200,
+  "headers": { "Content-Length": "0" },
+  "body": null
+}

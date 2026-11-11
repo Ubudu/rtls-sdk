@@ -1,0 +1,18 @@
+{
+  "_source": "server-code",
+  "_note": "Zone occupancy counter update raised by the analysis engine after a presence change: totals and average dwell times in seconds, split into tags and mobiles; the zone is a stub carrying only its id.",
+  "_nonHttp": "WS-M3",
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "UPDATE_ZONE_COUNTER",
+    "app_namespace": "test_namespace",
+    "zone": { "properties": { "id": 3 } },
+    "total": 4,
+    "total_tags": 3,
+    "total_mobiles": 1,
+    "avg_time": 125.5,
+    "avg_time_tags": 140,
+    "avg_time_mobiles": 82,
+    "timestamp": "2026-01-01T12:00:00Z"
+  }
+}

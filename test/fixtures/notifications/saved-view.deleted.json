@@ -1,0 +1,6 @@
+{
+  "_source": "spec",
+  "_operation": "DELETE /notifications/{namespace}/saved-views/{id}",
+  "status": 204,
+  "body": null
+}

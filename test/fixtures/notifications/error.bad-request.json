@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "Handler validation error with a message.",
+  "status": 400,
+  "body": {
+    "error": "bad_request",
+    "message": "mission.status must be open|in_progress|done"
+  }
+}

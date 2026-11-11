@@ -1,0 +1,81 @@
+{
+  "_source": "live",
+  "_note": "200 body of the activity log (recorded live, W8 + W11): the run profile create entry and the W9 dry-run upload entry, re-wrapped in one page with recomputed pagination. The spec activity enums are wrong (USI-P7-1, USI-P7-10).",
+  "_operation": "GET /etl/activities",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "7c4e16fb" },
+  "status": 200,
+  "body": {
+    "activities": [
+      {
+        "_id": "64b000000000000000000003",
+        "userId": "<redacted>",
+        "action": "create",
+        "resourceType": "mapping",
+        "resourceId": "64b000000000000000000001",
+        "details": { "name": "sdk-test-000000-etl-profile", "applicationId": "test-namespace" },
+        "timestamp": "2026-11-11T13:39:35.410Z",
+        "__v": 0
+      },
+      {
+        "_id": "64b000000000000000000004",
+        "userId": "<redacted>",
+        "action": "upload",
+        "resourceType": "file",
+        "resourceId": "64b000000000000000000002",
+        "details": {
+          "filename": "sdk-test-000000-etl-dry.csv",
+          "status": "completed",
+          "debugMode": true,
+          "uploadId": "64b000000000000000000002",
+          "applicationId": "test-namespace",
+          "applicationIds": ["test-namespace"],
+          "mappingProfiles": "sdk-test-000000-etl-profile",
+          "filesize": 81,
+          "mappingProfileIds": ["64b000000000000000000001"],
+          "processingStats": {
+            "totalRows": 2,
+            "totalProcessed": 2,
+            "totalChanged": 1,
+            "totalSkipped": 0,
+            "totalUnassociated": 0,
+            "totalErrors": 1,
+            "debugMode": true,
+            "processingTime": 7
+          },
+          "uploadResults": {
+            "_id": "64b000000000000000000002",
+            "filename": "sdk-test-000000-etl-dry.csv",
+            "status": "completed",
+            "userId": "<redacted>",
+            "success": true,
+            "debugMode": true,
+            "results": {
+              "totalRows": 2,
+              "processedProfiles": [
+                {
+                  "profileId": "64b000000000000000000001",
+                  "profileName": "sdk-test-000000-etl-profile",
+                  "rowsProcessed": 2,
+                  "rowsChanged": 1,
+                  "rowsSkipped": 0,
+                  "unassociated": 0,
+                  "processingErrors": [
+                    {
+                      "rowIndex": 2,
+                      "message": "Required field 'user_name' has invalid or empty value"
+                    }
+                  ]
+                }
+              ],
+              "debugMode": true
+            },
+            "created_at": "2026-11-11T13:39:37.060Z"
+          }
+        },
+        "timestamp": "2026-11-11T13:39:37.060Z",
+        "__v": 0
+      }
+    ],
+    "pagination": { "total": 2, "page": 1, "limit": 10, "pages": 1 }
+  }
+}

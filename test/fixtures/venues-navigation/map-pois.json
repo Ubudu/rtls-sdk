@@ -1,0 +1,8 @@
+{
+  "_source": "live",
+  "_note": "Live capture (P4-T2, tier R), map-level POIs (sample-data route, {items,total}, USI-P4-6); names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /venues/{namespace}/{venueId}/maps/{mapId}/pois",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": { "items": [], "total": 0 }
+}

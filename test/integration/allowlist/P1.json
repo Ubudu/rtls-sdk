@@ -1,0 +1,239 @@
+{
+  "phase": "P1",
+  "entries": [
+    {
+      "id": "P1-3",
+      "file": "src/client/http.ts",
+      "lines": [392, 400],
+      "match": "throw new ResponseParseError(",
+      "category": "unreachable-live",
+      "reason": "A-3: no production endpoint answers a 2xx with a JSON content type whose body is not valid JSON, so the ResponseParseError branch of the body parser cannot run live.",
+      "unitTest": "test/unit/core/transport.request.test.ts"
+    },
+    {
+      "id": "P1-45",
+      "file": "src/client/http.ts",
+      "lines": [404, 407],
+      "match": "try {",
+      "category": "unreachable-live",
+      "reason": "A 2xx JSON body with text/plain or no content type (and its malformed fallback): no wrapped route is known to send one; the lanes' runs never took it.",
+      "unitTest": "test/unit/core/transport.request.test.ts"
+    },
+    {
+      "id": "P1-46",
+      "file": "src/client/http.ts",
+      "lines": [423, 424],
+      "match": "if (signal?.aborted) throw error;",
+      "category": "unreachable-live",
+      "reason": "An error body that cannot be read (the connection fails or the caller aborts while it is read): a test cannot make production break a connection mid-body.",
+      "unitTest": "test/unit/core/transport.request.test.ts"
+    },
+    {
+      "id": "P1-47",
+      "file": "src/client/http.ts",
+      "lines": [431, 431],
+      "match": "return text;",
+      "category": "unreachable-live",
+      "reason": "An error body that looks like JSON but is not: no route answers malformed JSON on an error; the lanes' runs never took it.",
+      "unitTest": "test/unit/core/transport.request.test.ts"
+    },
+    {
+      "id": "P1-4",
+      "file": "src/client/retry.ts",
+      "lines": [214, 214],
+      "match": "return retryAfter > policy.maxRetryAfterMs ? undefined : retryAfter;",
+      "category": "unreachable-live",
+      "reason": "A-4: the Retry-After wait and the maxRetryAfterMs refusal need a 429 or 503 carrying Retry-After; provoking a rate-limit storm or an outage on production is not safe.",
+      "unitTest": "test/unit/core/retry.test.ts"
+    },
+    {
+      "id": "P1-32",
+      "file": "src/client/transport.ts",
+      "lines": [414, 415],
+      "match": "finished = true;",
+      "category": "unreachable-live",
+      "reason": "A 2xx text/event-stream response without a body: the server's stream route always opens a body and sends an open event, so this end-of-stream branch cannot be reached live (the null check itself runs on every stream).",
+      "unitTest": "test/unit/core/transport.stream.test.ts"
+    },
+    {
+      "id": "P1-29",
+      "file": "src/client/transport.ts",
+      "lines": [440, 440],
+      "match": "finished = true;",
+      "category": "unreachable-live",
+      "reason": "Normal end of an event stream, when the server closes the response: the only wrapped event stream (notifications) stays open until the client ends it (abort, idle timeout, consumer stop), and no live run saw the server close it. The read loop above it runs live in P6's stream tests.",
+      "unitTest": "test/unit/core/transport.stream.test.ts"
+    },
+    {
+      "id": "P1-53",
+      "file": "src/errors.ts",
+      "lines": [153, 153],
+      "match": "return body.errors as Record<string, string[]>;",
+      "category": "unreachable-live",
+      "reason": "ValidationError.errors from an { errors: { field: [messages] } } body: no route of the API answers such a map (the field is deprecated since 0.3.0 for that reason; validation messages arrive in details), so this return runs in the unit tests only.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-19",
+      "file": "src/errors.ts",
+      "lines": [193, 194],
+      "match": "status: 410, code: 'GONE'",
+      "category": "unreachable-live",
+      "reason": "A-1 (410): no wrapped route answers 410 to a request a tier-R test can make; GoneError is built only from a server 410.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-20",
+      "file": "src/errors.ts",
+      "lines": [209, 210],
+      "match": "status: 415, code: 'UNSUPPORTED_MEDIA_TYPE'",
+      "category": "unreachable-live",
+      "reason": "A-1 (415): the SDK always sends a supported content type, and P0's guard admits only JSON or the upload forms, so the server never answers 415 live.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-21",
+      "file": "src/errors.ts",
+      "lines": [222, 226],
+      "match": "super(",
+      "category": "unreachable-live",
+      "reason": "A-1 (429): RateLimitError is built only from a server 429; provoking the notifications rate limiter (60 requests per minute) is a rate-limit storm on production.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-23",
+      "file": "src/errors.ts",
+      "lines": [241, 242],
+      "match": "status: 503, code: 'SERVICE_UNAVAILABLE'",
+      "category": "unreachable-live",
+      "reason": "A-1 (503): ServiceUnavailableError needs the API to be not ready (health 503) or an edge outage; neither can be caused by a test.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-28",
+      "file": "src/errors.ts",
+      "lines": [295, 298],
+      "match": "const { contentType, ...rest } = init;",
+      "category": "unreachable-live",
+      "reason": "A-3 (class): ResponseParseError is constructed only by the body parser's malformed-JSON branch (P1-3), which no production endpoint reaches.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-34",
+      "file": "src/errors.ts",
+      "lines": [376, 376],
+      "match": "return [body.details];",
+      "category": "unreachable-live",
+      "reason": "E4b (details string): only the spatial asset routes answer it, with a 500; no safe request makes production fail.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-8",
+      "file": "src/errors.ts",
+      "lines": [379, 379],
+      "match": "return body.violations.map(detailLine);",
+      "category": "excluded-by-policy",
+      "reason": "A-8 (violations → details): the only server response with a violations body is the Elasticsearch query guard's 400, reachable live only by sending that guard a query it rejects; no live test probes the guard (LIVE-TESTING §5; O20). Kept at release.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-35",
+      "file": "src/errors.ts",
+      "lines": [388, 388],
+      "match": "return Array.isArray(value) && value.every((v) => typeof v === 'string');",
+      "category": "unreachable-live",
+      "reason": "E3 (error.details of a typed envelope): isStringArray runs only for the E3 envelope of the AI report routes, which the SDK does not wrap (out of scope).",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-36",
+      "file": "src/errors.ts",
+      "lines": [402, 411],
+      "match": "if (name[0] === '#') {",
+      "category": "unreachable-live",
+      "reason": "E10 character references: the live E10 page (L-E13, 413) has no character reference in the first pre line the SDK reads, so the decoding callback does not run live; if a later run reaches it the check reports this entry unneeded.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-37",
+      "file": "src/errors.ts",
+      "lines": [425, 425],
+      "match": "return undefined;",
+      "category": "unreachable-live",
+      "reason": "E10 without a message: an HTML error page whose first pre holds no non-empty line; the Express error page always puts the error text there.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-38",
+      "file": "src/errors.ts",
+      "lines": [434, 434],
+      "match": "return undefined;",
+      "category": "unreachable-live",
+      "reason": "E8 of blank lines: a text error body made only of whitespace; the text errors the API sends (P2's asset writes, D-6) always carry a message line.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-2",
+      "file": "src/errors.ts",
+      "lines": [444, 444],
+      "match": "return { message: 'Upstream service unavailable', body }",
+      "category": "unreachable-live",
+      "reason": "A-2 (E9): the proxy text answers only a 502/504 when the upstream positions service is unreachable, an outage a test cannot cause. The E10 HTML branch runs live in L-E13.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-41",
+      "file": "src/errors.ts",
+      "lines": [463, 469],
+      "match": "const code = nonEmptyString(error.code);",
+      "category": "unreachable-live",
+      "reason": "E3 ({error: {code, message}}): the typed envelope of the AI report routes, which the SDK does not wrap (out of scope).",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-42",
+      "file": "src/errors.ts",
+      "lines": [479, 479],
+      "match": "return { message: errorText, apiCode: code, details, body: raw }; // E5",
+      "category": "unreachable-live",
+      "reason": "E5 ({error, code}): the AI agent turn conflicts, out of scope; no lane run took this return.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-49",
+      "file": "src/errors.ts",
+      "lines": [492, 492],
+      "match": "return { message: status, details, body: raw }; // E7",
+      "category": "unreachable-live",
+      "reason": "E7 ({status}): only GET /health answers it, with a 503 while the API is not ready; a test cannot cause that.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-24",
+      "file": "src/errors.ts",
+      "lines": [503, 509],
+      "match": "const v = value.trim();",
+      "category": "unreachable-live",
+      "reason": "A-1 (Retry-After parser): no wrapped live response carries Retry-After; only the notifications 429 and outages do, which cannot be provoked safely.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-26",
+      "file": "src/errors.ts",
+      "lines": [575, 575],
+      "match": "return new GoneError(message, body, init);",
+      "category": "unreachable-live",
+      "reason": "A-1 (410 mapping): createError maps a server 410 here; no tier-R request gets one.",
+      "unitTest": "test/unit/core/errors.test.ts"
+    },
+    {
+      "id": "P1-27",
+      "file": "src/errors.ts",
+      "lines": [579, 586],
+      "match": "return new UnsupportedMediaTypeError(message, body, init);",
+      "category": "unreachable-live",
+      "reason": "A-1 (415, 429, 503, other 5xx and any other status): these statuses are not provoked safely on production; a redirect or 1xx/3xx never reaches the mapper (P0 G1 refuses redirects).",
+      "unitTest": "test/unit/core/errors.test.ts"
+    }
+  ]
+}

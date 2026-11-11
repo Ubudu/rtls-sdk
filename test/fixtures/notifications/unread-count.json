@@ -1,0 +1,10 @@
+{
+  "_source": "spec",
+  "_note": "Shape seen by the read-only probe on the test namespace (empty inbox).",
+  "_operation": "GET /notifications/{namespace}/unread_count",
+  "status": 200,
+  "body": {
+    "unread": 0,
+    "needs_action": 0
+  }
+}

@@ -1,204 +1,86 @@
+// Write section: tier none; budget positions=0 notifications=0 ble=0 etl=0; read skips none
 /**
- * 07 - Default Context with Ubudu RTLS SDK
+ * 07 - Default context
  *
- * This example covers:
- * - Setting default namespace/venueId at client creation
- * - Changing context at runtime
- * - Creating scoped clients
- * - ContextError handling
+ * A client carries a default namespace, venue, map and level; scoped clients copy the context without changing
+ * the original. The namespace and venue defaults apply wherever a call needs them and does not pass its own
+ * value. The default level applies to navigation and to the spatial zone and POI lookups only: venue and zone
+ * listings take `level` per call. The default map is read only by the deprecated map routes. Missing context
+ * raises a ContextError before any request is sent. Read-only.
+ *
+ *   npm run js -- javascript/07-default-context.js      (from examples/)
  */
+import { ContextError, createRtlsClient } from 'ubudu-rtls-sdk';
+import { runExample } from '../shared/config.js';
 
-import { config } from 'dotenv';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, '../../.env') });
-
-import { createRtlsClient, ContextError } from '@ubudu/rtls-sdk';
-
-// =============================================================================
-// Configuration
-// =============================================================================
-
-const NAMESPACE = process.env.APP_NAMESPACE;
-const API_KEY = process.env.RTLS_API_KEY;
-
-if (!NAMESPACE || !API_KEY) {
-  console.error('Missing APP_NAMESPACE or RTLS_API_KEY in .env');
-  process.exit(1);
-}
-
-console.log('Ubudu RTLS SDK - Default Context\n');
-
-// =============================================================================
-// 1. Create Client with Defaults
-// =============================================================================
-
-async function createWithDefaults() {
-  console.log('1. Create Client with Defaults...');
-
-  // Set namespace once - all calls use it automatically
-  const client = createRtlsClient({
-    apiKey: API_KEY,
-    namespace: NAMESPACE,
-  });
-
-  console.log(`   namespace: ${client.namespace}`);
-  console.log(`   venueId: ${client.venueId ?? 'not set'}`);
-
-  return client;
-}
-
-// =============================================================================
-// 2. Use Default Context
-// =============================================================================
-
-async function useDefaults(client) {
-  console.log('\n2. Use Default Context...');
-
-  // No namespace needed in these calls
+await runExample('07-default-context', async ({ client, config, log }) => {
+  // 1. The namespace set at creation is the default of every call.
   const assets = await client.assets.list();
-  console.log(`   assets.list() → ${assets.length}`);
+  log(`assets (default namespace): ${assets.length}`);
 
-  const positions = await client.positions.listCached();
-  console.log(`   positions.listCached() → ${positions.length}`);
+  // 2. A per-call namespace wins over the default. The same value is used here; another namespace is passed the
+  //    same way.
+  const sameAssets = await client.assets.list({ namespace: config.namespace });
+  log(`assets (per-call namespace): ${sameAssets.length}`);
 
-  const venues = await client.venues.list();
-  console.log(`   venues.list() → ${venues.length}`);
-
-  return venues;
-}
-
-// =============================================================================
-// 3. Set Venue at Runtime
-// =============================================================================
-
-async function setVenueRuntime(client, venues) {
-  console.log('\n3. Set Venue at Runtime...');
-
-  if (venues.length === 0) {
-    console.log('   No venues available');
-    return;
-  }
-
-  client.setVenue(venues[0].id);
-  console.log(`   setVenue(${venues[0].id})`);
-
-  // Now venue-scoped calls work without parameters
+  // 3. A default venue for venue-scoped resources, and a per-call venueId.
+  const [venue] = await client.venues.list();
+  if (!venue) throw new Error('the namespace has no venue');
+  client.setVenue(venue.id);
   const zones = await client.zones.list();
-  console.log(`   zones.list() → ${zones.features.length} zones`);
-}
+  log(`zones (default venue): ${zones.features.length}`);
+  const zonesPerCall = await client.zones.list({ venueId: venue.id });
+  log(`zones (per-call venueId): ${zonesPerCall.features.length}`);
 
-// =============================================================================
-// 4. Chainable Setters
-// =============================================================================
+  // 4. Scoped clients: forNamespace(), forVenue(), forMap() and withContext() return new clients; the original
+  //    keeps its context.
+  const maps = await client.venues.listMaps();
+  const map = maps[0];
+  if (!map) throw new Error('the venue has no map');
+  const nsClient = client.forNamespace(config.namespace);
+  const venueClient = client.forVenue(venue.id);
+  const mapClient = client.forMap(map.id, { level: map.level });
+  const ctxClient = client.withContext({ venueId: venue.id, mapId: map.id });
+  log(
+    `forNamespace keeps the venue: ${nsClient.venueId === venue.id}, forVenue sets the venue: ${venueClient.venueId === venue.id}`
+  );
+  log(
+    `forMap sets the map and level: ${mapClient.mapId === map.id && mapClient.level === map.level}, withContext sets the map: ${ctxClient.mapId === map.id}`
+  );
+  log(`original client still has no default map: ${client.mapId === undefined}`);
 
-function chainableSetters(client) {
-  console.log('\n4. Chainable Setters...');
+  // 5. setContext() sets several defaults at once. Venue and zone listings do not apply the default level:
+  //    pass `level` per call to list one floor.
+  client.setContext({ mapId: map.id, level: map.level });
+  log(
+    `setContext sets the map and level: ${client.mapId === map.id && client.level === map.level}`
+  );
+  const levelZones = await client.zones.list({ level: map.level });
+  log(`zones on level ${map.level}: ${levelZones.features.length}`);
+  const levelPois = await client.venues.listPois({ level: map.level });
+  log(`venue POIs on level ${map.level}: ${levelPois.features.length}`);
 
-  client.setNamespace(NAMESPACE).setLevel(0);
-  console.log(`   setNamespace().setLevel(0)`);
-  console.log(`   level: ${client.level}`);
-}
-
-// =============================================================================
-// 5. Scoped Clients
-// =============================================================================
-
-function scopedClients(client) {
-  console.log('\n5. Scoped Clients (Immutable)...');
-
-  // Create new client with different venue
-  const scoped = client.withContext({
-    namespace: NAMESPACE,
-    venueId: 999,
-    level: 2,
-  });
-
-  console.log(`   Original venueId: ${client.venueId}`);
-  console.log(`   Scoped venueId: ${scoped.venueId}`);
-}
-
-// =============================================================================
-// 6. ContextError Handling
-// =============================================================================
-
-async function contextErrorHandling() {
-  console.log('\n6. ContextError Handling...');
-
-  // Client without namespace
-  const emptyClient = createRtlsClient({ apiKey: API_KEY });
-
+  // 6. clearContext() removes every default: the next venue-scoped call raises ContextError, nothing is sent.
+  client.clearContext();
   try {
-    await emptyClient.assets.list();
-    console.log('   Unexpected success');
-  } catch (error) {
-    if (error instanceof ContextError) {
-      console.log(`   Caught: ${error.field} required`);
-      console.log(`   Fix: ${error.suggestion}`);
-    }
+    await client.zones.list();
+    throw new Error('zones.list() without context did not raise');
+  } catch (e) {
+    if (!(e instanceof ContextError)) throw e;
+    log(`after clearContext: ContextError for ${e.field}`);
   }
-}
 
-// =============================================================================
-// 7. Override for Specific Calls
-// =============================================================================
-
-async function overrideExample(client) {
-  console.log('\n7. Override for Specific Calls...');
-
-  // Override namespace for one call
-  const assets = await client.assets.list({ namespace: NAMESPACE });
-  console.log(`   list({ namespace: '...' }) → ${assets.length}`);
-}
-
-// =============================================================================
-// 8. Practical Workflow
-// =============================================================================
-
-async function practicalWorkflow() {
-  console.log('\n8. Practical Workflow...');
-
-  // Step 1: Create client with namespace
-  const client = createRtlsClient({
-    apiKey: API_KEY,
-    namespace: NAMESPACE,
+  // 7. Navigation always needs a venue: without one the SDK raises ContextError locally.
+  const noVenue = createRtlsClient({
+    apiKey: config.apiKey,
+    namespace: config.namespace,
+    baseUrl: config.baseUrl,
   });
-  console.log('   Created client with namespace');
-
-  // Step 2: Discover and set venue
-  const venues = await client.venues.list();
-  if (venues.length > 0) {
-    client.setVenue(venues[0].id);
-    console.log(`   Set venue: ${venues[0].name}`);
-
-    // Step 3: Clean API calls
-    const zones = await client.zones.list();
-    console.log(`   zones.list() → ${zones.features.length} zones`);
-  }
-}
-
-// =============================================================================
-// Main
-// =============================================================================
-
-async function main() {
   try {
-    const client = await createWithDefaults();
-    const venues = await useDefaults(client);
-    await setVenueRuntime(client, venues);
-    chainableSetters(client);
-    scopedClients(client);
-    await contextErrorHandling();
-    await overrideExample(client);
-    await practicalWorkflow();
-
-    console.log('\nDone!');
-  } catch (error) {
-    console.error('Failed:', error.message);
-    process.exit(1);
+    await noVenue.navigation.shortestPath({ start: 'a', end: 'b' });
+    throw new Error('shortestPath() without a venue did not raise');
+  } catch (e) {
+    if (!(e instanceof ContextError)) throw e;
+    log(`navigation without a venue: ContextError for ${e.field}`);
   }
-}
-
-main();
+});

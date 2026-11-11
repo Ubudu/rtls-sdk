@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "E8 plain-text error with text/plain: malformed JSON on the asset write mounts that keep byte parity with the positions server.",
+  "status": 500,
+  "contentType": "text/plain",
+  "text": "JSON error: Unexpected token"
+}

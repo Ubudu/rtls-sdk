@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "413 Express default HTML page for a JSON body over 100 kB (a very large mappings object). Stack frames are placeholders.",
+  "status": 413,
+  "contentType": "text/html; charset=utf-8",
+  "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>PayloadTooLargeError: request entity too large<br> &nbsp; &nbsp;at readStream (&lt;anonymous&gt;)</pre>\n</body>\n</html>\n"
+}

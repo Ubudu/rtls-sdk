@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "rtls-live-coverage-allowlist",
+  "title": "Live-coverage allowlist test/integration/allowlist/<phase>.json (P0 §5.5.4)",
+  "definitions": {
+    "lineEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "file", "lines", "match", "category", "reason", "unitTest"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^P(?:[0-9]|10)-[0-9]+$" },
+        "file": { "type": "string", "pattern": "^src/.+\\.ts$" },
+        "lines": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "match": { "type": "string", "minLength": 1 },
+        "method": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["unreachable-live", "excluded-by-policy", "environment"] },
+        "reason": { "type": "string", "minLength": 20 },
+        "unitTest": { "type": "string", "minLength": 1 },
+        "runScoped": { "const": true },
+        "deferredTo": { "enum": ["P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9"] }
+      }
+    },
+    "operationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "op", "category", "reason", "unitTest"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^P(?:[0-9]|10)-[0-9]+$" },
+        "op": { "type": "string", "pattern": "^(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS) /" },
+        "category": { "const": "excluded-by-policy" },
+        "reason": { "type": "string", "minLength": 20 },
+        "unitTest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "residueEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "match", "perRun", "category", "reason"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "match": { "type": "string", "minLength": 1 },
+        "perRun": { "type": "boolean" },
+        "category": { "const": "non-removable" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "oneOf": [{ "$ref": "#/definitions/lineEntry" }, { "$ref": "#/definitions/operationEntry" }]
+      }
+    },
+    "file": {
+      "oneOf": [
+        { "$ref": "#/definitions/entries" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["phase", "entries"],
+          "properties": {
+            "phase": { "type": "string", "pattern": "^P(?:[0-9]|10)$" },
+            "entries": { "$ref": "#/definitions/entries" },
+            "residue": { "type": "array", "items": { "$ref": "#/definitions/residueEntry" } }
+          }
+        }
+      ]
+    }
+  },
+  "$ref": "#/definitions/file"
+}

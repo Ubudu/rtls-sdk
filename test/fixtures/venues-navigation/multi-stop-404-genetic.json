@@ -1,0 +1,10 @@
+{
+  "_source": "server-code",
+  "_note": "rtls-api 3.3.8 multi-stop with algorithm 'genetic' (in the spec enum) always fails with a 404 whose message contains this phrase; live wraps it in a longer message, so tests match the phrase, not the whole text. The spec declares no such answer.",
+  "_operation": "POST /spatial/navigate/{namespace}/multi-stop",
+  "status": 404,
+  "body": {
+    "success": false,
+    "message": "TSPSolver.genetic is not a function"
+  }
+}

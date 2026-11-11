@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "500 instead of 400 for a create that fails model validation (USI-P7-7).",
+  "status": 500,
+  "body": {
+    "error": "MappingProfile validation failed: name: Path `name` is required."
+  }
+}

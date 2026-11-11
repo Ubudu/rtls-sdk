@@ -1,12 +1,12 @@
 {
   "name": "ubudu-rtls-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Official TypeScript SDK for the Ubudu RTLS API",
   "author": "Ubudu",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ubudu/rtls-sdk.git"
+    "url": "git+https://github.com/ubudu/rtls-sdk.git"
   },
   "keywords": [
     "ubudu",
@@ -18,7 +18,7 @@
     "typescript"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20.3.0"
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -34,7 +34,8 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -43,29 +44,46 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "generate": "openapi-typescript \"https://rtls.ubudu.com/api/docs/swagger.json\" -o src/generated/schema.ts",
-    "build": "tsup",
+    "generate": "openapi-typescript spec/rtls-api.swagger.json -o src/generated/schema.ts --empty-objects-unknown",
+    "spec:check": "node scripts/spec/check.mjs",
+    "spec:update": "node scripts/spec/update.mjs",
+    "spec:drift": "node scripts/spec/drift.mjs",
+    "build": "npm run generate && tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:coverage": "node scripts/coverage/unit-check.mjs",
+    "test:contract": "node scripts/contract.mjs",
+    "manifest:report": "node scripts/manifest/report.mjs",
+    "test:integration": "node scripts/integration.mjs",
+    "test:integration:sweep": "tsx test/integration/harness/sweep-cli.ts",
+    "test:integration:snapshot": "tsx test/integration/harness/snapshot-cli.ts",
+    "test:integration:scan": "tsx test/integration/harness/scan-cli.ts",
+    "coverage:live:check": "node scripts/coverage/live-check.mjs",
+    "test:pack": "npm run build && node scripts/pack-smoke.mjs",
     "test:ws": "vitest run test/websocket",
     "test:ws:watch": "vitest watch test/websocket",
-    "test:ws:integration": "vitest run --config vitest.integration.config.ts test/websocket/*.integration.test.ts",
-    "test:examples": "cd examples && npm install && npm run all",
-    "test:examples:ts": "cd examples && npm install && npm run ts:all",
-    "test:examples:js": "cd examples && npm install && npm run js:all",
-    "lint": "eslint src test --ext .ts",
-    "lint:fix": "eslint src test --ext .ts --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "typecheck": "tsc --noEmit",
+    "lint": "node scripts/quality.mjs lint",
+    "lint:fix": "node scripts/quality.mjs lint --fix",
+    "format": "node scripts/quality.mjs format --write",
+    "format:check": "node scripts/quality.mjs format",
+    "typecheck": "node scripts/quality.mjs typecheck",
+    "docs:snippets": "node scripts/docs/snippets.mjs",
+    "docs:links": "node scripts/docs/links.mjs",
+    "docs:api": "typedoc --options docs/api/typedoc.json",
+    "docs:api:check": "npm run docs:api && git diff --exit-code -- docs/api/reference && test -z \"$(git status --porcelain -- docs/api/reference)\"",
+    "docs:coverage": "node docs/api/tools/gen-endpoint-coverage.mjs",
+    "docs:coverage:check": "node docs/api/tools/gen-endpoint-coverage.mjs --check",
+    "docs:endpoint-coverage": "npm run docs:coverage",
+    "examples:install": "npm ci --prefix examples",
+    "examples:check": "npm run build && node scripts/examples/run.mjs",
+    "examples:all": "npm run build && node examples/run-all.mjs",
+    "ci:offline": "npm run spec:check && npm run lint && npm run format:check && npm run typecheck && npm run test:coverage && npm run test:contract && npm run build && npm run test:pack && npm run docs:snippets && npm run docs:links",
     "prepublishOnly": "npm run build",
-    "prepare": "npm run generate || true"
+    "prepare": "npm run generate"
   },
   "dependencies": {
-    "openapi-fetch": "^0.13.0"
+    "openapi-fetch": "~0.13.8"
   },
   "peerDependencies": {
     "ws": "^8.0.0"
@@ -76,19 +94,33 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "@types/ws": "^8.5.13",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "@vitest/coverage-v8": "^2.0.0",
-    "dotenv": "^17.2.3",
-    "eslint": "^8.56.0",
-    "msw": "^2.1.0",
-    "openapi-typescript": "^7.4.0",
-    "prettier": "^3.2.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.3.0",
-    "vitest": "^2.0.0",
-    "ws": "^8.18.0"
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^20.19.0",
+    "@types/ws": "^8.18.2",
+    "@vitest/coverage-v8": "~3.2.7",
+    "@vitest/eslint-plugin": "1.6.27",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "istanbul-lib-coverage": "^3.2.2",
+    "json-rules-engine": "6.1.2",
+    "msw": "^2.15.0",
+    "mustache": "2.3.2",
+    "openapi-typescript": "~7.13.0",
+    "picomatch": "^4.0.7",
+    "prettier": "^3.9.10",
+    "publint": "^0.3.25",
+    "tinyglobby": "^0.2.17",
+    "tsup": "~8.5.1",
+    "tsx": "^4.23.15",
+    "typedoc": "0.28.20",
+    "typedoc-plugin-markdown": "4.14.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "~3.2.7",
+    "ws": "^8.22.2"
   }
 }

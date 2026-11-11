@@ -1,0 +1,14 @@
+{
+  "_source": "server-code",
+  "_note": "Synthetic zone exit raised when a tag's presence expires: the zone is a stub carrying only its id, and the asset's name and tags are not added.",
+  "_nonHttp": "WS-M2",
+  "_usi": ["USI-P8-7"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "EXIT_ZONE",
+    "app_namespace": "test_namespace",
+    "user_udid": "025d4b000001",
+    "zone": { "properties": { "id": 3 } },
+    "timestamp": 1767268860000
+  }
+}

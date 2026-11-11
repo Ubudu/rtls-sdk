@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "403 of every /etl route for a key without the access_data_import role: {error: <code>, message}.",
+  "status": 403,
+  "body": {
+    "error": "insufficient_role",
+    "message": "This feature requires the access_data_import role"
+  }
+}

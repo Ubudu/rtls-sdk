@@ -1,274 +1,339 @@
 /**
- * WebSocket Subscriber Client
+ * Subscriber: subscription state `{ types, uuids, active }`, one FIFO queue with one pending
+ * confirmation, UNSUBSCRIBE → SUBSCRIBE for changes, replay after a reconnect, and a delivery guard.
  *
- * This module provides the RtlsWebSocketSubscriber class for receiving
- * real-time position updates, zone events, alerts, and asset changes.
+ * @module websocket/subscriber
  */
-
+import { isValidMac, normalizeMac } from '../utils/mac';
 import { BaseWebSocketConnection } from './connection';
+import { WebSocketSubscriptionError } from './errors';
+import { classifyMessage, type WebSocketMessage, type WebSocketMessageKind } from './messages';
 import {
-  type WebSocketSubscriberConfig,
-  type SubscriberEventMap,
-  type WebSocketMessage,
-  type SubscribeMessage,
-  type SubscriptionResult,
   SubscriptionType,
+  WEBSOCKET_DEFAULTS,
   WEBSOCKET_URLS,
-  WebSocketSubscriptionError,
-  classifyMessage,
-  isSubscriptionConfirmation,
+  type SubscribeMessage,
+  type SubscriberEventMap,
+  type SubscriptionRequest,
+  type SubscriptionResult,
+  type SubscriptionState,
+  type SubscriptionTypes,
+  type WebSocketSubscriberConfig,
+  type WsConnectionEvents,
 } from './types';
 
-/** Subscription type or array of types */
-export type SubscriptionTypes = SubscriptionType | SubscriptionType[];
+const ALL_TYPES: readonly SubscriptionType[] = Object.values(SubscriptionType);
+const NOT_CONNECTED = 'WebSocket not connected. Call connect() first.';
+
+type Types = SubscriptionType[] | 'ALL';
+
+interface Pending {
+  types: Types;
+  settle: (error?: WebSocketSubscriptionError) => void;
+}
+
+function copy(types: Types): Types {
+  return types === 'ALL' ? 'ALL' : [...types];
+}
+
+function isSubscriptionType(value: unknown): value is SubscriptionType {
+  return (ALL_TYPES as readonly unknown[]).includes(value);
+}
+
+/** Validates and deduplicates a type list (input order); `[]` means all. */
+function checkTypes(list: readonly unknown[]): Types {
+  const invalid = list.filter((value) => !isSubscriptionType(value));
+  if (invalid.length > 0) {
+    throw new WebSocketSubscriptionError(
+      `Invalid subscription type(s): ${invalid.map(String).join(', ')}. Valid types: ${ALL_TYPES.join(', ')}`
+    );
+  }
+  return list.length === 0 ? 'ALL' : [...new Set(list as SubscriptionType[])];
+}
+
+/** Validates a tag filter: non-empty strings, MAC-shaped entries normalised, deduplicated; `[]` → `null`. */
+function checkUuids(uuids: unknown): string[] | null {
+  if (uuids === null) return null;
+  if (!Array.isArray(uuids)) {
+    throw new WebSocketSubscriptionError(
+      'Invalid tag filter: expected an array of strings or null'
+    );
+  }
+  const out = new Set<string>();
+  for (const entry of uuids as unknown[]) {
+    if (typeof entry !== 'string' || entry === '') {
+      throw new WebSocketSubscriptionError(
+        'Invalid tag filter entry: every entry must be a non-empty string'
+      );
+    }
+    out.add(isValidMac(entry) ? normalizeMac(entry) : entry);
+  }
+  return out.size === 0 ? null : [...out];
+}
+
+/** `{ types, uuids? }` of a request; `uuids` undefined = keep the current filter. */
+function parseRequest(request: unknown): { types: Types; uuids?: string[] | null } {
+  if (request === 'ALL') return { types: 'ALL' };
+  if (typeof request === 'string') return { types: checkTypes([request]) };
+  if (Array.isArray(request)) return { types: checkTypes(request) };
+  if (typeof request === 'object' && request !== null) {
+    const { types, uuids } = request as { types?: unknown; uuids?: unknown };
+    const list = Array.isArray(types) ? types : [types];
+    const parsedTypes = types === undefined || types === 'ALL' ? 'ALL' : checkTypes(list);
+    return uuids === undefined
+      ? { types: parsedTypes }
+      : { types: parsedTypes, uuids: checkUuids(uuids) };
+  }
+  throw new WebSocketSubscriptionError(
+    'Invalid subscription request: expected "ALL", a type, a type list or { types, uuids }'
+  );
+}
 
 /**
- * WebSocket subscriber for receiving real-time RTLS data
+ * Subscriber of the broker's `ws/subscriber` socket.
  *
  * @example
  * ```typescript
- * const subscriber = new RtlsWebSocketSubscriber({
- *   apiKey: 'your-api-key',
- *   namespace: 'your-namespace',
- * });
- *
- * // Register handlers before connecting
- * subscriber.on('POSITIONS', (pos) => {
- *   console.log(`Tag ${pos.user_uuid} at ${pos.lat}, ${pos.lon}`);
- * });
- *
- * // Connect and subscribe
+ * const subscriber = new RtlsWebSocketSubscriber({ apiKey, namespace });
+ * subscriber.on('POSITIONS', (p) => console.log(p.user_uuid, p.lat, p.lon));
  * await subscriber.connect();
  * await subscriber.subscribe([SubscriptionType.POSITIONS]);
- *
- * // Later: disconnect
- * await subscriber.disconnect();
  * ```
  */
 export class RtlsWebSocketSubscriber extends BaseWebSocketConnection<SubscriberEventMap> {
-  private mapUuid?: string;
-  private activeSubscriptions: SubscriptionType[] = [];
-  private subscriptionPromise: Promise<SubscriptionResult> | null = null;
-  private subscriptionResolver: ((result: SubscriptionResult) => void) | null = null;
-  private subscriptionRejecter: ((error: Error) => void) | null = null;
-  private subscriptionTimeout: ReturnType<typeof setTimeout> | null = null;
-  private readonly subscriptionTimeoutMs = 10000;
+  private readonly mapUuid: string | undefined;
+  private readonly subscriptionTimeoutMs: number;
+  private types: Types | null = null;
+  private uuids: string[] | null = null;
+  private active = false;
+  /** The current socket holds a broker registration (a SUBSCRIBE was sent, no UNSUBSCRIBE since). */
+  private registered = false;
+  private pending: Pending | null = null;
+  private queue: Promise<void> = Promise.resolve();
 
   constructor(config: WebSocketSubscriberConfig) {
-    super(config, config.subscriberUrl ?? WEBSOCKET_URLS.SUBSCRIBER);
+    super(config, config?.subscriberUrl ?? WEBSOCKET_URLS.SUBSCRIBER, 'RtlsWebSocketSubscriber');
     this.mapUuid = config.mapUuid;
+    this.subscriptionTimeoutMs =
+      config.subscriptionTimeoutMs ?? WEBSOCKET_DEFAULTS.SUBSCRIPTION_TIMEOUT_MS;
+    this.afterOpen = () => this.replay();
+    this.frameHandler = (message) => this.route(message);
+    this.socketGone = (cause) => this.forgetSocket(cause);
   }
 
   /**
-   * Subscribe to specific event types
-   * Must be called after connect() to receive events.
+   * Subscribes (`'ALL'` by default; `[]` is a deprecated alias of `'ALL'`). On a socket that already sent
+   * SUBSCRIBE, the change is sent as UNSUBSCRIBE then SUBSCRIBE. Resolves on the broker's confirmation.
    *
-   * @param types - Single subscription type or array of types. If empty, subscribes to all.
-   * @returns Promise resolving to subscription result
-   *
-   * @example
-   * ```typescript
-   * // Subscribe to single type
-   * await subscriber.subscribe(SubscriptionType.POSITIONS);
-   *
-   * // Subscribe to multiple types
-   * await subscriber.subscribe([
-   *   SubscriptionType.POSITIONS,
-   *   SubscriptionType.ALERTS
-   * ]);
-   *
-   * // Subscribe to all types
-   * await subscriber.subscribe([]);
-   * ```
+   * @throws {WebSocketSubscriptionError} not connected, invalid input (nothing sent), timeout, close or
+   * `disconnect()` before the confirmation, send failure
    */
-  async subscribe(types: SubscriptionTypes = []): Promise<SubscriptionResult> {
-    if (!this.isConnected()) {
-      throw new WebSocketSubscriptionError('WebSocket not connected. Call connect() first.');
+  async subscribe(request: SubscriptionRequest = 'ALL'): Promise<SubscriptionResult> {
+    const parsed = parseRequest(request);
+    if (!this.isConnected()) throw new WebSocketSubscriptionError(NOT_CONNECTED, parsed.types);
+    return this.enqueue(async () => {
+      const uuids = parsed.uuids === undefined ? this.uuids : parsed.uuids;
+      try {
+        await this.register(parsed.types, uuids);
+      } catch (error) {
+        // A confirmation timeout leaves the SUBSCRIBE registered on the socket (the broker may hold it):
+        // the requested state is stored, so a reconnect replays it.
+        if (this.registered) this.store(parsed.types, uuids);
+        throw error;
+      }
+      this.store(parsed.types, uuids);
+      return {
+        success: true,
+        types: copy(parsed.types),
+        uuids: uuids === null ? null : [...uuids],
+      };
+    });
+  }
+
+  /**
+   * Without `types`: UNSUBSCRIBE (delivery stops, no replay). With `types`: the remaining types are
+   * re-subscribed (UNSUBSCRIBE, SUBSCRIBE); none remaining → UNSUBSCRIBE only. From `'ALL'` the remainder is the
+   * explicit list of the other filter values. Not connected: only the stored state changes (the next `connect()`
+   * replays it while active).
+   */
+  async unsubscribe(types?: SubscriptionTypes): Promise<void> {
+    const removed =
+      types === undefined ? ALL_TYPES : checkTypes(Array.isArray(types) ? types : [types]);
+    return this.enqueue(async () => {
+      if (this.types === null) return;
+      const current = this.types === 'ALL' ? ALL_TYPES : this.types;
+      const remaining = removed === 'ALL' ? [] : current.filter((type) => !removed.includes(type));
+      const live = this.active && this.isConnected();
+      if (remaining.length > 0 && live) {
+        await this.register(remaining, this.uuids);
+      }
+      if (remaining.length > 0) {
+        this.types = remaining;
+        return;
+      }
+      this.active = false;
+      if (live && this.registered)
+        this.sendOrFail({ type: 'UNSUBSCRIBE', app_namespace: this.namespace });
+      this.registered = false;
+    });
+  }
+
+  /**
+   * Replaces the tag filter (positions only). Active: FILTER_MGT (`[]` clears); inactive: stored and sent with
+   * the next SUBSCRIBE. MAC-shaped entries are normalised.
+   *
+   * @throws {WebSocketSubscriptionError} an entry that is not a non-empty string (nothing sent), send failure
+   */
+  async setTagFilter(uuids: readonly string[] | null): Promise<void> {
+    const filter = checkUuids(uuids);
+    return this.enqueue(async () => {
+      this.uuids = filter;
+      if (this.active && this.registered && this.isConnected()) {
+        this.sendOrFail({ type: 'FILTER_MGT', app_namespace: this.namespace, uuids: filter ?? [] });
+      }
+    });
+  }
+
+  /** The stored subscription; `null` before the first `subscribe()`. */
+  getSubscription(): SubscriptionState | null {
+    if (this.types === null) return null;
+    return {
+      types: copy(this.types),
+      uuids: this.uuids === null ? null : [...this.uuids],
+      active: this.active,
+    };
+  }
+
+  /** The filter values delivered now: under `'ALL'` the five values; inactive `[]`. */
+  getActiveSubscriptions(): SubscriptionType[] {
+    if (!this.active || this.types === null) return [];
+    return this.types === 'ALL' ? [...ALL_TYPES] : [...this.types];
+  }
+
+  // ─── Internals ──────────────────────────────────────────────────────────────
+
+  private store(types: Types, uuids: string[] | null): void {
+    this.types = types;
+    this.uuids = uuids;
+    this.active = true;
+  }
+
+  private async enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    const previous = this.queue;
+    let release!: () => void;
+    this.queue = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    try {
+      await previous;
+      return await operation();
+    } finally {
+      release();
     }
+  }
 
-    // Normalize to array
-    const typesArray = Array.isArray(types) ? types : [types];
-
-    // Validate types
-    const validTypes = Object.values(SubscriptionType);
-    const invalidTypes = typesArray.filter(t => !validTypes.includes(t));
-    if (invalidTypes.length > 0) {
+  /** Sends SUBSCRIBE (after UNSUBSCRIBE when registered) and waits for the matching confirmation. */
+  private async register(types: Types, uuids: string[] | null): Promise<void> {
+    if (!this.isConnected()) throw new WebSocketSubscriptionError(NOT_CONNECTED, copy(types));
+    const frame: SubscribeMessage = { type: 'SUBSCRIBE', app_namespace: this.namespace };
+    if (types !== 'ALL') frame.data_type_filter = [...types];
+    if (uuids !== null) frame.uuids = [...uuids];
+    try {
+      if (this.registered) {
+        this.sendFrame({ type: 'UNSUBSCRIBE', app_namespace: this.namespace });
+        this.registered = false;
+      }
+      this.sendFrame({ ...frame });
+    } catch (error) {
       throw new WebSocketSubscriptionError(
-        `Invalid subscription type(s): ${invalidTypes.join(', ')}. Valid types: ${validTypes.join(', ')}`,
-        invalidTypes as SubscriptionType[]
+        `Subscription failed: ${this.safeMessage(error)}`,
+        copy(types),
+        error
       );
     }
-
-    // Build subscription message
-    const message: SubscribeMessage = {
-      type: 'SUBSCRIBE',
-      app_namespace: this.getNamespace(),
-    };
-
-    if (this.mapUuid) {
-      message.map_uuid = this.mapUuid;
-    }
-
-    if (typesArray.length > 0) {
-      message.data_type_filter = typesArray;
-    }
-
-    this.debug('Sending SUBSCRIBE:', message);
-
-    // Create promise for subscription confirmation
-    this.subscriptionPromise = new Promise((resolve, reject) => {
-      this.subscriptionResolver = resolve;
-      this.subscriptionRejecter = reject;
-
-      // Timeout after configured duration
-      this.subscriptionTimeout = setTimeout(() => {
-        const error = new WebSocketSubscriptionError(
-          'Subscription confirmation timeout',
-          typesArray
-        );
-        this.subscriptionRejecter?.(error);
-        this.cleanupSubscriptionPromise();
+    this.registered = true;
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending = null;
+        reject(new WebSocketSubscriptionError('Subscription confirmation timeout', copy(types)));
       }, this.subscriptionTimeoutMs);
+      this.pending = {
+        types,
+        settle: (error) => {
+          clearTimeout(timer);
+          this.pending = null;
+          if (error === undefined) resolve();
+          else reject(error);
+        },
+      };
     });
-
-    // Send subscription message
-    this.send(message);
-
-    // Store active subscriptions
-    this.activeSubscriptions = typesArray.length > 0
-      ? [...typesArray]
-      : [...validTypes];
-
-    return this.subscriptionPromise;
   }
 
-  /**
-   * Unsubscribe from specific event types
-   *
-   * @param types - Single type or array of types to unsubscribe from
-   */
-  async unsubscribe(types: SubscriptionTypes): Promise<void> {
-    const typesArray = Array.isArray(types) ? types : [types];
-
-    // Remove from active subscriptions
-    this.activeSubscriptions = this.activeSubscriptions.filter(
-      t => !typesArray.includes(t)
-    );
-
-    // Note: The RTLS API doesn't support selective unsubscription
-    // To change subscriptions, you need to re-subscribe with new types
-    this.debug('Updated active subscriptions:', this.activeSubscriptions);
-
-    // If there are remaining subscriptions, re-subscribe
-    if (this.activeSubscriptions.length > 0 && this.isConnected()) {
-      await this.subscribe(this.activeSubscriptions);
+  private sendOrFail(frame: Record<string, unknown>): void {
+    try {
+      this.sendFrame(frame);
+    } catch (error) {
+      throw new WebSocketSubscriptionError(
+        `Subscription change failed: ${this.safeMessage(error)}`,
+        undefined,
+        error
+      );
     }
   }
 
   /**
-   * Get currently active subscriptions
+   * Replays the stored active subscription on every new socket (a reconnect, or a manual `connect()` after
+   * `disconnect()`, a drop without reconnect or `reconnect_failed`); the connection is ready when it is confirmed.
    */
-  getActiveSubscriptions(): SubscriptionType[] {
-    return [...this.activeSubscriptions];
+  private async replay(): Promise<void> {
+    if (!this.active) return;
+    await this.enqueue(async () => {
+      if (this.active && this.types !== null) await this.register(this.types, this.uuids);
+    });
   }
 
-  /**
-   * Handle incoming messages
-   */
-  protected handleMessage(data: WebSocketMessage): void {
-    // Always emit generic message event
-    this.emit('message', data);
+  private forgetSocket(cause: 'close' | 'disconnect'): void {
+    this.registered = false;
+    const message =
+      cause === 'disconnect'
+        ? 'Disconnected before confirmation'
+        : 'Connection closed before confirmation';
+    const pending = this.pending;
+    if (pending !== null)
+      pending.settle(new WebSocketSubscriptionError(message, copy(pending.types)));
+  }
 
-    // Handle subscription confirmation
-    if (isSubscriptionConfirmation(data)) {
-      this.handleSubscriptionConfirmation(data);
+  private route(message: WebSocketMessage): void {
+    const kind = classifyMessage(message);
+    if (kind === 'CONFIRMATION') {
+      if (message.app_namespace === this.namespace) this.pending?.settle();
       return;
     }
-
-    // Classify and route message
-    const messageType = classifyMessage(data);
-
-    if (messageType !== 'UNKNOWN' && messageType !== 'CONFIRMATION') {
-      // Emit type-specific event
-      switch (messageType) {
-        case SubscriptionType.POSITIONS:
-          this.emit('POSITIONS', data as SubscriberEventMap['POSITIONS']);
-          break;
-        case SubscriptionType.ZONES_ENTRIES_EVENTS:
-          this.emit('ZONES_ENTRIES_EVENTS', data as SubscriberEventMap['ZONES_ENTRIES_EVENTS']);
-          break;
-        case SubscriptionType.ZONE_STATS_EVENTS:
-          this.emit('ZONE_STATS_EVENTS', data as SubscriberEventMap['ZONE_STATS_EVENTS']);
-          break;
-        case SubscriptionType.ALERTS:
-          this.emit('ALERTS', data as SubscriberEventMap['ALERTS']);
-          break;
-        case SubscriptionType.ASSETS:
-          this.emit('ASSETS', data as SubscriberEventMap['ASSETS']);
-          break;
-      }
-    } else {
-      this.debug('Received message with unknown type:', data);
-    }
-  }
-
-  /**
-   * Handle subscription confirmation message
-   */
-  private handleSubscriptionConfirmation(data: WebSocketMessage): void {
-    if (!this.subscriptionResolver) {
-      this.debug('Received subscription confirmation but no pending subscription');
+    if (!this.delivers(kind)) return;
+    const mapUuid = (message as Record<string, unknown>).map_uuid;
+    if (this.mapUuid !== undefined && typeof mapUuid === 'string' && mapUuid !== this.mapUuid)
       return;
-    }
-
-    this.debug('Subscription confirmed:', data);
-
-    const msg = data as Record<string, unknown>;
-    const result: SubscriptionResult = {
-      success: true,
-      types: (msg.types as SubscriptionType[]) ?? 'ALL',
-    };
-
-    this.subscriptionResolver(result);
-    this.cleanupSubscriptionPromise();
+    this.emitFrame(kind === 'UNKNOWN' ? 'unknown' : kind, message);
   }
 
   /**
-   * Clean up subscription promise state
+   * Emits a routed frame on the event of its kind. `classifyMessage` chose the kind from the frame itself, so the
+   * frame has that event's shape; TypeScript cannot correlate the two, the implementation signature states it.
    */
-  private cleanupSubscriptionPromise(): void {
-    if (this.subscriptionTimeout) {
-      clearTimeout(this.subscriptionTimeout);
-      this.subscriptionTimeout = null;
-    }
-    this.subscriptionResolver = null;
-    this.subscriptionRejecter = null;
-    this.subscriptionPromise = null;
+  private emitFrame(
+    event: Exclude<keyof SubscriberEventMap, keyof WsConnectionEvents>,
+    message: WebSocketMessage
+  ): void;
+  private emitFrame<K extends keyof SubscriberEventMap>(
+    event: K,
+    message: SubscriberEventMap[K]
+  ): void {
+    this.emit(event, message);
   }
 
-  /**
-   * Re-subscribe after reconnection
-   */
-  protected override onReconnected(): void {
-    super.onReconnected();
-
-    if (this.activeSubscriptions.length > 0) {
-      this.debug('Re-subscribing after reconnection');
-      this.subscribe(this.activeSubscriptions).catch(error => {
-        this.logger.error('Failed to re-subscribe after reconnection', error);
-        this.emit('error', {
-          error: error as Error,
-          timestamp: new Date()
-        });
-      });
-    }
-  }
-
-  /**
-   * Override disconnect to clean up subscriptions
-   */
-  override async disconnect(): Promise<void> {
-    this.cleanupSubscriptionPromise();
-    await super.disconnect();
+  /** Typed events only for kinds the current state can deliver; `unknown` only under `'ALL'`. */
+  private delivers(kind: WebSocketMessageKind): boolean {
+    if (!this.active || this.types === null) return false;
+    return this.types === 'ALL' || (this.types as readonly string[]).includes(kind);
   }
 }

@@ -1,7 +1,6 @@
 stages:
-  - validate
-  - test
-  - build
+  - offline
+  - live
   - release
 
 variables:
@@ -24,65 +23,81 @@ default:
     - npm ci
 
 # =============================================================================
-# Development Pipeline (MRs and main branch)
+# Development Pipeline (MRs, main branch and tags)
 # =============================================================================
 
-lint:
-  stage: validate
-  <<: *node-setup
+# Offline lane: spec, lint, format, typecheck, unit coverage, contract, build, pack smoke and docs checks
+# (npm run ci:offline), on the latest Node 20, 22 and 24 images. Bun (pinned) is installed only as a
+# consumer runtime: the pack smoke test runs the packed package's consumers under it, to check that the
+# published package loads under Bun; every test and build step runs on Node. Nothing in the lane reaches the network after the two installs.
+offline:
+  stage: offline
+  parallel:
+    matrix:
+      - NODE_VERSION: ["20", "22", "24"]
+  variables:
+    npm_config_cache: "$CI_PROJECT_DIR/.npm"
+    BUN_VERSION: "1.4.4"
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: "offline-$NODE_VERSION"
+    paths:
+      - .npm/
   script:
-    - npm run generate
-    - npm run lint
-    - npm run format:check
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-typecheck:
-  stage: validate
-  <<: *node-setup
-  script:
-    - npm run generate
-    - npm run typecheck
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-test:
-  stage: test
-  <<: *node-setup
-  script:
-    - npm run generate
-    - npm run test:coverage
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+    - npm ci --prefer-offline --no-audit --no-fund
+    - npm install --global --no-audit --no-fund "bun@$BUN_VERSION"
+    - npm run ci:offline
+  coverage: '/Lines\s*:\s*([\d.]+)%/'
   artifacts:
     when: always
+    expire_in: 1 week
+    paths:
+      - coverage/
     reports:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-    paths:
-      - coverage/
-    expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG
 
-build:
-  stage: build
-  <<: *node-setup
+# Live lane, tier R only (no tier variable is set here). Inert until the owner defines the protected,
+# masked variables RTLS_API_KEY and APP_NAMESPACE; then a manual job on the default branch, never scheduled.
+# Live runs use Node 22 or later. No artifact holds response bodies.
+live-readonly:
+  stage: live
+  variables:
+    NODE_VERSION: "22"
+  resource_group: rtls-live
   script:
-    - npm run generate
-    - npm run build
+    - npm ci
+    - npm run test:integration
+    - npm run test:integration:sweep -- --check
   artifacts:
-    paths:
-      - dist/
-    expire_in: 1 week
+    when: always
+    reports:
+      junit: coverage-live/junit.xml
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_COMMIT_TAG
+    - if: $RTLS_API_KEY && $APP_NAMESPACE && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+
+# Scheduled comparison of the vendored spec with the live one (one public request, no credential).
+spec-drift:
+  stage: live
+  allow_failure: true
+  script:
+    - npm ci
+    - npm run spec:drift
+  artifacts:
+    when: always
+    paths:
+      - .cache/spec-drift.md
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
 
 # =============================================================================
 # Release Pipeline (tags only)

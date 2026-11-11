@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "400 of upload and parse-excel-headers without a file part: {error: <sentence>}.",
+  "status": 400,
+  "body": {
+    "error": "No file uploaded"
+  }
+}

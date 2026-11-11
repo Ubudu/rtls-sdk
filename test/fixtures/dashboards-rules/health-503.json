@@ -1,0 +1,6 @@
+{
+  "_source": "spec",
+  "_operation": "GET /health",
+  "status": 503,
+  "body": { "status": "MongoDB connection not ready" }
+}

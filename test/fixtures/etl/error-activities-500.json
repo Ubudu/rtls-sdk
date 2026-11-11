@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "A 500 answer of the activities list (GET /etl/activities), kept for the error-mapping test.",
+  "status": 500,
+  "body": {
+    "error": "Internal server error"
+  }
+}

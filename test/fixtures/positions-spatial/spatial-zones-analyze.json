@@ -1,0 +1,75 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-1.",
+  "_operation": "POST /spatial/zones/{namespace}/analyze-custom",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "reference_point": { "lat": 48.8, "lon": 2.3 },
+    "total_zones": 10,
+    "containing_zones": [
+      {
+        "index": 0,
+        "properties": {
+          "id": 1,
+          "level": 0,
+          "name": "Zone 1",
+          "rgb_color": "#2E79FF",
+          "tags": ["tag-1"],
+          "type": "map_zone"
+        },
+        "distance_meters": 0,
+        "centroid_distance_meters": 0,
+        "is_inside": true,
+        "centroid": { "lat": 48.8, "lon": 2.3 }
+      }
+    ],
+    "nearby_zones": [
+      {
+        "index": 0,
+        "properties": {
+          "id": 1,
+          "level": 0,
+          "name": "Zone 1",
+          "rgb_color": "#2E79FF",
+          "tags": ["tag-1"],
+          "type": "map_zone"
+        },
+        "distance_meters": 0,
+        "centroid_distance_meters": 0,
+        "is_inside": true,
+        "centroid": { "lat": 48.8, "lon": 2.3 }
+      },
+      {
+        "index": 1,
+        "properties": {
+          "id": 2,
+          "level": 0,
+          "name": "Zone 2",
+          "rgb_color": "#f5ec00",
+          "tags": ["tag-1"],
+          "type": "map_zone"
+        },
+        "distance_meters": 14,
+        "centroid_distance_meters": 20,
+        "is_inside": false,
+        "centroid": { "lat": 48.8000166, "lon": 2.2997287 }
+      },
+      {
+        "index": 2,
+        "properties": {
+          "id": 3,
+          "level": 0,
+          "name": "Zone 3",
+          "rgb_color": "#00fdff",
+          "tags": ["tag-1"],
+          "type": "map_zone"
+        },
+        "distance_meters": 15,
+        "centroid_distance_meters": 35,
+        "is_inside": false,
+        "centroid": { "lat": 48.7996831, "lon": 2.3000372 }
+      }
+    ]
+  }
+}

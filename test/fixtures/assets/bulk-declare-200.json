@@ -1,0 +1,11 @@
+{
+  "_source": "spec",
+  "_operation": "POST /assets/{namespace}/bulk-declare",
+  "status": 200,
+  "body": {
+    "success": 2,
+    "failed": 0,
+    "created": 0,
+    "errors": []
+  }
+}

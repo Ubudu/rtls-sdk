@@ -1,0 +1,9 @@
+{
+  "_source": "spec",
+  "_operation": "POST /assets/{namespace}/bulk-declare",
+  "status": 400,
+  "body": {
+    "error": "DL_013",
+    "message": "Duplicate identifier in request: 025d4b000001"
+  }
+}

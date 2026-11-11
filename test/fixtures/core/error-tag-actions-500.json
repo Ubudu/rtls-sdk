@@ -1,0 +1,15 @@
+{
+  "_source": "server-code",
+  "_note": "{message, success: false} envelope of a partial tag-action failure (POST /tag-actions/{appNamespace} 500): no error key; the per-tag results are kept in the body. The spec declares {error} with nothing required, so the body validates although its shape differs; no _operation is set for that reason.",
+  "status": 500,
+  "body": {
+    "message": "Some actions failed",
+    "tagCount": 1,
+    "results": [
+      {
+        "success": false
+      }
+    ],
+    "success": false
+  }
+}

@@ -1,425 +1,293 @@
-/**
- * RtlsWebSocketClient (Unified) Unit Tests
- */
+// Unified client (P8-T9, §8.2 U1–U8) and the createWebSocket() compatibility check (P8-T10, U9).
+import { RtlsClient } from '../../src/client';
+import {
+  RtlsWebSocketClient,
+  RtlsWebSocketPublisher,
+  RtlsWebSocketSubscriber,
+  SubscriptionType,
+  WebSocketAuthenticationError,
+} from '../../src/websocket';
+import type { WebSocketClientConfig } from '../../src/websocket';
+import {
+  FakeBrowserWebSocket,
+  FakeNodeWebSocket,
+  FakeRtServer,
+  assertWsClean,
+  eventNamesOf,
+  flush,
+  recordEvents,
+  trackUnhandledRejections,
+} from './support/fake-server';
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { RtlsWebSocketClient, SubscriptionType } from '../../src/websocket';
-import {
-  MockWebSocket,
-  setupWebSocketMock,
-  teardownWebSocketMock,
-  flushPromises,
-} from './mocks/websocket';
-import {
-  TEST_CONFIG,
-  createPositionMessage,
-} from './mocks/fixtures';
+const NS = 'test_namespace';
+const SUB_URL = 'ws://127.0.0.1:1/api/ws/subscriber';
+const PUB_URL = 'ws://127.0.0.1:1/api/ws/publisher';
+const POSITION = {
+  app_namespace: NS,
+  user_uuid: '025d4b000001',
+  user_udid: '025d4b000001',
+  lat: 1,
+  lon: 2,
+  map_uuid: 'map-2',
+  timestamp: 1,
+  zone: { id: 0, name: 'OUTSIDE_ALL_ZONES', tags: [], color: null },
+};
+const MINIMAL = { macAddress: '025d4b000001', latitude: 1, longitude: 2 };
+
+let server: FakeRtServer;
+const rejections = trackUnhandledRejections();
+const created: RtlsWebSocketClient[] = [];
+
+function client(overrides: Partial<WebSocketClientConfig> = {}): RtlsWebSocketClient {
+  const ws = new RtlsWebSocketClient({
+    namespace: NS,
+    apiKey: 'key-123',
+    subscriberUrl: SUB_URL,
+    publisherUrl: PUB_URL,
+    mapUuid: 'map-1',
+    WebSocket: FakeBrowserWebSocket,
+    ...overrides,
+  });
+  created.push(ws);
+  return ws;
+}
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  server = new FakeRtServer();
+});
+
+afterEach(async () => {
+  for (const ws of created.splice(0)) await ws.disconnect();
+  server.stop();
+  assertWsClean(rejections.list);
+  vi.useRealTimers();
+});
+afterAll(() => rejections.stop());
 
 describe('RtlsWebSocketClient', () => {
-  beforeEach(() => {
-    setupWebSocketMock();
+  it('U1: empty namespace → ContextError; no credential → WebSocketAuthenticationError', () => {
+    expect(() => new RtlsWebSocketClient({ namespace: '', apiKey: 'k' })).toThrow(
+      expect.objectContaining({ name: 'ContextError', field: 'Namespace' })
+    );
+    expect(() => new RtlsWebSocketClient({ namespace: NS })).toThrow(WebSocketAuthenticationError);
+    expect(
+      () => new RtlsWebSocketClient({ namespace: NS, apiKey: 'k', mapUuid: 'm' })
+    ).not.toThrow();
   });
 
-  afterEach(() => {
-    teardownWebSocketMock();
+  it('U2: connect() both, subscriberOnly, publisherOnly; no mapUuid → no publisher', async () => {
+    const both = client();
+    await both.connect();
+    expect([
+      both.isSubscriberConnected(),
+      both.isPublisherConnected(),
+      both.isConnected(),
+    ]).toStrictEqual([true, true, true]);
+    const subOnly = client();
+    await subOnly.connect({ subscriberOnly: true });
+    expect([
+      subOnly.isSubscriberConnected(),
+      subOnly.isPublisherConnected(),
+      subOnly.isConnected(),
+    ]).toStrictEqual([true, false, false]);
+    const pubOnly = client();
+    await pubOnly.connect({ publisherOnly: true });
+    expect([pubOnly.isSubscriberConnected(), pubOnly.isPublisherConnected()]).toStrictEqual([
+      false,
+      true,
+    ]);
+    const noPublisher = client({ mapUuid: undefined });
+    await noPublisher.connect();
+    expect(noPublisher.getPublisher()).toBeNull();
+    expect([noPublisher.isConnected(), noPublisher.isPublisherConnected()]).toStrictEqual([
+      true,
+      false,
+    ]);
+    expect(server.sockets.map((s) => s.url.split('?')[0])).toStrictEqual([
+      SUB_URL,
+      PUB_URL,
+      SUB_URL,
+      PUB_URL,
+      SUB_URL,
+    ]);
   });
 
-  describe('constructor', () => {
-    it('should create client with subscriber only (no mapUuid)', () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      expect(client).toBeInstanceOf(RtlsWebSocketClient);
-      expect(client.getPublisher()).toBeNull();
-      expect(client.getSubscriber()).not.toBeNull();
-    });
-
-    it('should create client with both subscriber and publisher', () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      expect(client).toBeInstanceOf(RtlsWebSocketClient);
-      expect(client.getPublisher()).not.toBeNull();
-      expect(client.getSubscriber()).not.toBeNull();
-    });
-
-    it('should throw if no auth provided', () => {
-      expect(() => {
-        new RtlsWebSocketClient({
-          namespace: TEST_CONFIG.namespace,
-        });
-      }).toThrow(/apiKey or token/);
-    });
-
-    it('should throw if no namespace provided', () => {
-      expect(() => {
-        new RtlsWebSocketClient({
-          apiKey: TEST_CONFIG.apiKey,
-          namespace: '',
-        });
-      }).toThrow(/namespace/);
-    });
+  it('U3: subscriber events under their names, publisher lifecycle as publisher:*, once/off', async () => {
+    const ws = client({ reconnect: { jitter: 'none', initialDelayMs: 100 } });
+    const log = recordEvents(ws, [
+      'connected',
+      'disconnected',
+      'message',
+      'POSITIONS',
+      'publisher:connected',
+      'publisher:disconnected',
+      'publisher:reconnecting',
+      'publisher:reconnected',
+      'publisher:error',
+      'publisher:reconnect_failed',
+    ]);
+    const once = vi.fn();
+    const offed = vi.fn();
+    ws.once('POSITIONS', once);
+    ws.on('POSITIONS', offed);
+    ws.off('POSITIONS', offed);
+    await ws.connect();
+    await ws.subscribe();
+    server.emit('POSITIONS', POSITION);
+    server.emit('POSITIONS', POSITION);
+    server.dropAbruptly(server.sockets[1]);
+    await vi.advanceTimersByTimeAsync(100);
+    await flush();
+    expect(once).toHaveBeenCalledTimes(1);
+    expect(offed).not.toHaveBeenCalled();
+    expect(eventNamesOf(log)).toStrictEqual([
+      'connected',
+      'publisher:connected',
+      'message',
+      'message',
+      'POSITIONS',
+      'message',
+      'POSITIONS',
+      'publisher:disconnected',
+      'publisher:reconnecting',
+      'publisher:connected',
+      'publisher:reconnected',
+    ]);
   });
 
-  describe('connect()', () => {
-    it('should connect subscriber only when no mapUuid', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      expect(client.isSubscriberConnected()).toBe(true);
-      expect(client.isPublisherConnected()).toBe(false);
+  it('U4: subscribe, unsubscribe, setTagFilter, getSubscription, getActiveSubscriptions delegate', async () => {
+    const ws = client();
+    await ws.connect();
+    await expect(ws.subscribe([SubscriptionType.POSITIONS])).resolves.toMatchObject({
+      types: ['POSITIONS'],
     });
-
-    it('should connect both subscriber and publisher when mapUuid provided', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      expect(client.isSubscriberConnected()).toBe(true);
-      expect(client.isPublisherConnected()).toBe(true);
+    await ws.setTagFilter(['tag-1']);
+    expect(ws.getSubscription()).toStrictEqual({
+      types: ['POSITIONS'],
+      uuids: ['tag-1'],
+      active: true,
     });
-
-    it('should connect only subscriber with subscriberOnly option', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      await client.connect({ subscriberOnly: true });
-      await flushPromises();
-
-      expect(client.isSubscriberConnected()).toBe(true);
-      expect(client.isPublisherConnected()).toBe(false);
-    });
-
-    it('should connect only publisher with publisherOnly option', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      await client.connect({ publisherOnly: true });
-      await flushPromises();
-
-      expect(client.isSubscriberConnected()).toBe(false);
-      expect(client.isPublisherConnected()).toBe(true);
-    });
+    expect(ws.getActiveSubscriptions()).toStrictEqual(['POSITIONS']);
+    await ws.unsubscribe();
+    expect(ws.getSubscription()).toMatchObject({ active: false });
+    expect(server.commands()).toStrictEqual(['S', 'F', 'U']);
   });
 
-  describe('subscribe()', () => {
-    it('should delegate to subscriber', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      // Get the mock for subscriber
-      const mockWs = MockWebSocket.lastInstance!;
-
-      const subscribePromise = client.subscribe([SubscriptionType.POSITIONS]);
-      await flushPromises();
-
-      mockWs.simulateSubscriptionConfirmation([SubscriptionType.POSITIONS]);
-      const result = await subscribePromise;
-
-      expect(result.success).toBe(true);
+  it('U5: sendPosition / sendBatch without a publisher return "Publisher not configured" results', async () => {
+    const ws = client({ mapUuid: undefined });
+    await expect(ws.sendPosition(MINIMAL)).resolves.toStrictEqual({
+      success: false,
+      error: 'Publisher not configured. Provide mapUuid in config.',
     });
-
-    it('should track active subscriptions', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      const mockWs = MockWebSocket.lastInstance!;
-
-      const subscribePromise = client.subscribe([
-        SubscriptionType.POSITIONS,
-        SubscriptionType.ALERTS,
-      ]);
-
-      await flushPromises();
-      mockWs.simulateSubscriptionConfirmation();
-      await subscribePromise;
-
-      const active = client.getActiveSubscriptions();
-      expect(active).toContain(SubscriptionType.POSITIONS);
-      expect(active).toContain(SubscriptionType.ALERTS);
+    await expect(ws.sendBatch([MINIMAL, MINIMAL])).resolves.toStrictEqual({
+      success: false,
+      sent: 0,
+      failed: 2,
+      errors: ['Publisher not configured. Provide mapUuid in config.'],
+    });
+    const withPublisher = client();
+    await expect(withPublisher.sendPosition(MINIMAL)).resolves.toStrictEqual({ success: true });
+    await expect(withPublisher.sendBatch([MINIMAL])).resolves.toStrictEqual({
+      success: true,
+      sent: 1,
+      failed: 0,
     });
   });
 
-  describe('on()/off()/once()', () => {
-    it('should delegate event handlers to subscriber', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      const positionHandler = vi.fn();
-      client.on('POSITIONS', positionHandler);
-
-      await client.connect();
-      await flushPromises();
-
-      const mockWs = MockWebSocket.lastInstance!;
-      mockWs.simulateMessage(createPositionMessage());
-
-      expect(positionHandler).toHaveBeenCalled();
-    });
-
-    it('should return unsubscribe function', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      const positionHandler = vi.fn();
-      const unsubscribe = client.on('POSITIONS', positionHandler);
-
-      await client.connect();
-      await flushPromises();
-
-      unsubscribe();
-
-      const mockWs = MockWebSocket.lastInstance!;
-      mockWs.simulateMessage(createPositionMessage());
-
-      expect(positionHandler).not.toHaveBeenCalled();
-    });
-
-    it('should support once() for one-time handlers', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      const positionHandler = vi.fn();
-      client.once('POSITIONS', positionHandler);
-
-      await client.connect();
-      await flushPromises();
-
-      const mockWs = MockWebSocket.lastInstance!;
-      mockWs.simulateMessage(createPositionMessage());
-      mockWs.simulateMessage(createPositionMessage());
-
-      expect(positionHandler).toHaveBeenCalledTimes(1);
-    });
+  it('U6: mapUuid is not passed to the subscriber (a position of another map is still typed-emitted)', async () => {
+    const ws = client({ mapUuid: 'map-1' });
+    const positions: unknown[] = [];
+    ws.on('POSITIONS', (p) => positions.push(p));
+    await ws.connect({ subscriberOnly: true });
+    await ws.subscribe();
+    server.emit('POSITIONS', POSITION);
+    expect(positions).toStrictEqual([POSITION]);
   });
 
-  describe('sendPosition()', () => {
-    it('should delegate to publisher', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      const result = await client.sendPosition({
-        macAddress: 'aabbccddeeff',
-        latitude: 48.8566,
-        longitude: 2.3522,
-      });
-
-      expect(result.success).toBe(true);
+  it('U7: status getters; disconnect() closes both', async () => {
+    const ws = client();
+    expect(ws.getConnectionStatus()).toStrictEqual({
+      subscriber: { state: 'DISCONNECTED', reconnectAttempts: 0 },
+      publisher: { state: 'DISCONNECTED', reconnectAttempts: 0 },
     });
-
-    it('should return error if no publisher configured', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        // No mapUuid = no publisher
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      const result = await client.sendPosition({
-        macAddress: 'aabbccddeeff',
-        latitude: 48.8566,
-        longitude: 2.3522,
-      });
-
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Publisher not configured');
+    await ws.connect();
+    expect(ws.getConnectionStatus()).toMatchObject({
+      subscriber: { state: 'CONNECTED' },
+      publisher: { state: 'CONNECTED' },
     });
+    expect(ws.getSubscriber()).toBeInstanceOf(RtlsWebSocketSubscriber);
+    expect(ws.getPublisher()).toBeInstanceOf(RtlsWebSocketPublisher);
+    expect(ws.getNamespace()).toBe(NS);
+    expect(ws.getConfig()).toMatchObject({ namespace: NS, mapUuid: 'map-1' });
+    expect(ws.getConfig()).not.toBe(ws.getConfig());
+    await ws.disconnect();
+    expect(server.openSockets()).toStrictEqual([]);
+    expect(ws.getConnectionStatus().publisher?.state).toBe('DISCONNECTED');
+    expect(client({ mapUuid: undefined }).getConnectionStatus().publisher).toBeNull();
   });
 
-  describe('sendBatch()', () => {
-    it('should delegate to publisher', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      const result = await client.sendBatch([
-        { macAddress: 'aabbccddeeff', latitude: 48.8566, longitude: 2.3522 },
-        { macAddress: '112233445566', latitude: 48.8570, longitude: 2.3530 },
-      ]);
-
-      expect(result.success).toBe(true);
-      expect(result.sent).toBe(2);
+  it('U8: WebSocket, credentials, keepalive and reconnect reach both; each URL only its socket', async () => {
+    const ws = client({
+      WebSocket: FakeNodeWebSocket,
+      token: 'tok-1',
+      authTransport: 'header',
+      keepAliveIntervalMs: 1000,
+      reconnect: false,
     });
-
-    it('should return error if no publisher configured', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      const result = await client.sendBatch([
-        { macAddress: 'aabbccddeeff', latitude: 48.8566, longitude: 2.3522 },
-      ]);
-
-      expect(result.success).toBe(false);
-      expect(result.errors).toBeDefined();
-    });
+    const log = recordEvents(ws, [
+      'disconnected',
+      'publisher:disconnected',
+      'reconnecting',
+      'publisher:reconnecting',
+    ]);
+    await ws.connect();
+    const [sub, pub] = server.sockets as FakeNodeWebSocket[];
+    expect([sub?.url, pub?.url]).toStrictEqual([SUB_URL, PUB_URL]);
+    expect([sub?.headers(), pub?.headers()]).toStrictEqual([
+      { Authorization: 'Bearer tok-1' },
+      { Authorization: 'Bearer tok-1' },
+    ]);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect([sub?.pings, pub?.pings]).toStrictEqual([1, 1]);
+    server.dropAbruptly();
+    expect(eventNamesOf(log)).toStrictEqual(['disconnected', 'publisher:disconnected']);
   });
+});
 
-  describe('getConnectionStatus()', () => {
-    it('should return status for both subscriber and publisher', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      let status = client.getConnectionStatus();
-      expect(status.subscriber.state).toBe('DISCONNECTED');
-      expect(status.publisher?.state).toBe('DISCONNECTED');
-
-      await client.connect();
-      await flushPromises();
-
-      status = client.getConnectionStatus();
-      expect(status.subscriber.state).toBe('CONNECTED');
-      expect(status.publisher?.state).toBe('CONNECTED');
+describe('RtlsClient.createWebSocket() (P1 code) builds a working P8 client', () => {
+  it('U9: apiKey client → ?apiKey= on both URLs; connect() and subscribe() resolve; accessToken → ?token=', async () => {
+    const rest = new RtlsClient({ apiKey: 'k', namespace: NS, baseUrl: 'http://127.0.0.1:1/api' });
+    const ws = rest.createWebSocket({
+      WebSocket: FakeNodeWebSocket,
+      mapUuid: 'm',
+      keepAliveIntervalMs: 0,
     });
-
-    it('should return null for publisher when not configured', () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      const status = client.getConnectionStatus();
-      expect(status.publisher).toBeNull();
+    created.push(ws);
+    await ws.connect();
+    await expect(ws.subscribe()).resolves.toStrictEqual({
+      success: true,
+      types: 'ALL',
+      uuids: null,
     });
-  });
+    expect(server.sockets.map((s) => s.url)).toStrictEqual([
+      'ws://127.0.0.1:1/api/ws/subscriber?apiKey=k',
+      'ws://127.0.0.1:1/api/ws/publisher?apiKey=k',
+    ]);
 
-  describe('isConnected()', () => {
-    it('should return true when subscriber connected (no publisher)', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      expect(client.isConnected()).toBe(true);
+    const bearer = new RtlsClient({
+      accessToken: 'jwt-1',
+      namespace: NS,
+      baseUrl: 'http://127.0.0.1:1/api',
     });
-
-    it('should return true only when both connected (with publisher)', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      // Connect only subscriber
-      await client.connect({ subscriberOnly: true });
-      await flushPromises();
-
-      expect(client.isConnected()).toBe(false); // Publisher not connected
-
-      // Now connect publisher too
-      await client.connect({ publisherOnly: true });
-      await flushPromises();
-
-      expect(client.isConnected()).toBe(true);
+    const wsToken = bearer.createWebSocket({
+      WebSocket: FakeNodeWebSocket,
+      keepAliveIntervalMs: 0,
     });
-  });
-
-  describe('disconnect()', () => {
-    it('should disconnect all connections', async () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      await client.connect();
-      await flushPromises();
-
-      expect(client.isSubscriberConnected()).toBe(true);
-      expect(client.isPublisherConnected()).toBe(true);
-
-      await client.disconnect();
-      await flushPromises();
-
-      expect(client.isSubscriberConnected()).toBe(false);
-      expect(client.isPublisherConnected()).toBe(false);
-    });
-  });
-
-  describe('getConfig()', () => {
-    it('should return a copy of the configuration', () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-        mapUuid: TEST_CONFIG.mapUuid,
-      });
-
-      const config = client.getConfig();
-
-      expect(config.apiKey).toBe(TEST_CONFIG.apiKey);
-      expect(config.namespace).toBe(TEST_CONFIG.namespace);
-      expect(config.mapUuid).toBe(TEST_CONFIG.mapUuid);
-    });
-  });
-
-  describe('getNamespace()', () => {
-    it('should return the configured namespace', () => {
-      const client = new RtlsWebSocketClient({
-        apiKey: TEST_CONFIG.apiKey,
-        namespace: TEST_CONFIG.namespace,
-      });
-
-      expect(client.getNamespace()).toBe(TEST_CONFIG.namespace);
-    });
+    created.push(wsToken);
+    await wsToken.connect();
+    expect(server.sockets.map((s) => s.url).slice(2)).toStrictEqual([
+      'ws://127.0.0.1:1/api/ws/subscriber?token=jwt-1',
+    ]);
   });
 });

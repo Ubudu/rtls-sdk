@@ -1,0 +1,29 @@
+{
+  "_source": "spec",
+  "_operation": "GET /settings/{app_namespace}",
+  "_usi": ["USI-P5-12"],
+  "status": 200,
+  "body": {
+    "accuracy": {
+      "accuracy_meter": 5,
+      "show": false
+    },
+    "defaultSelectedModels": ["default"],
+    "map": {
+      "rotation": 0
+    },
+    "positionsExpirationPeriod": 60,
+    "tagActions": {
+      "bleComms": {
+        "ptlRed": true
+      },
+      "uwbBlink": false,
+      "pdi": {
+        "ptlRed": {
+          "enabled": true,
+          "duration": 10
+        }
+      }
+    }
+  }
+}

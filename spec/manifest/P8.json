@@ -1,0 +1,551 @@
+{
+  "phase": "P8",
+  "domain": "websocket",
+  "status": "complete",
+  "operations": [],
+  "nonHttp": [
+    {
+      "id": "WS-E1",
+      "kind": "ws-endpoint",
+      "decision": "wrap",
+      "sdk": "BaseWebSocketConnection.connect",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": [
+        "test/integration/websocket/subscriber.int.test.ts",
+        "test/integration/websocket/auth.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "id": "WS-E2",
+      "kind": "ws-endpoint",
+      "decision": "wrap",
+      "sdk": "RtlsWebSocketPublisher.sendPosition",
+      "unit": "test/websocket/publisher.test.ts",
+      "live": "test/integration/websocket/publisher.int.test.ts",
+      "tier": "S"
+    },
+    {
+      "id": "WS-E3",
+      "kind": "ws-endpoint",
+      "decision": "exclude",
+      "reason": "Broker diagnostics (connection counters), not an integration surface."
+    },
+    {
+      "id": "WS-E4",
+      "kind": "ws-endpoint",
+      "decision": "exclude",
+      "reason": "Legacy direct broker hosts are not the public gateway."
+    },
+    {
+      "id": "WS-C1",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdk": "RtlsWebSocketSubscriber.subscribe",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-C2",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdk": "RtlsWebSocketSubscriber.unsubscribe",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": [
+        "test/integration/websocket/subscriber.int.test.ts",
+        "test/integration/websocket/publisher.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "id": "WS-C3",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdk": "RtlsWebSocketSubscriber.setTagFilter",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": [
+        "test/integration/websocket/subscriber.int.test.ts",
+        "test/integration/websocket/publisher.int.test.ts"
+      ],
+      "tier": "R"
+    },
+    {
+      "id": "WS-C4",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Destructive operator command."
+    },
+    {
+      "id": "WS-C5",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Destructive operator command."
+    },
+    {
+      "id": "WS-C6",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "The broker does not handle it (no-op)."
+    },
+    {
+      "id": "WS-C7",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/node-ws.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-C8",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "The broker never answers an application-level ping and logs every such frame; protocol ping covers Node and reconnect covers browsers."
+    },
+    {
+      "id": "WS-C9",
+      "kind": "ws-command",
+      "decision": "wrap",
+      "sdk": ["RtlsWebSocketPublisher.sendPosition", "RtlsWebSocketPublisher.sendBatch"],
+      "unit": "test/websocket/publisher.test.ts",
+      "live": "test/integration/websocket/publisher.int.test.ts",
+      "tier": "S"
+    },
+    {
+      "id": "WS-C10",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "On this socket the broker rebuilds the asset from a fixed field set and loses the other fields; positions.publish with patchAssetData (HTTP) preserves them. Rejected inside extra."
+    },
+    {
+      "id": "WS-C11",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Cartesian positions need a per-network transform provisioned by the operator; not a client surface. Rejected inside extra."
+    },
+    {
+      "id": "WS-C12",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "Declared locations belong to client.declaredLocations. Rejected inside extra."
+    },
+    {
+      "id": "WS-C13",
+      "kind": "ws-command",
+      "decision": "exclude",
+      "reason": "The broker ignores arrays; the SDK sends one frame per position."
+    },
+    {
+      "id": "WS-M1",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "isPositionMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M2",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "isZoneEntryExitMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M3",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "isZoneStatsMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M4",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "isAlertMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M5",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "classifyMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M6",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "isAssetMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M7",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "classifyMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M8",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "classifyMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M9",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "classifyMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M10",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "classifyMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M11",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "sdk": "classifyMessage",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M12",
+      "kind": "ws-message",
+      "decision": "wrap",
+      "unit": ["test/websocket/messages.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "id": "WS-M13",
+      "kind": "ws-message",
+      "decision": "exclude",
+      "reason": "No producer exists; delivered on the unknown event, no longer misclassified as ALERTS."
+    },
+    {
+      "id": "WS-M14",
+      "kind": "ws-message",
+      "decision": "exclude",
+      "reason": "The broker never forwards it over WebSocket."
+    }
+  ],
+  "sdkMethods": [
+    {
+      "name": "BaseWebSocketConnection.connect",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "BaseWebSocketConnection.disconnect",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "BaseWebSocketConnection.getConnectionStatus",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "BaseWebSocketConnection.getState",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "BaseWebSocketConnection.isConnected",
+      "unit": ["test/websocket/connection.test.ts", "test/websocket/subscriber.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketSubscriber.subscribe",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketSubscriber.unsubscribe",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketSubscriber.setTagFilter",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketSubscriber.getSubscription",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketSubscriber.getActiveSubscriptions",
+      "unit": "test/websocket/subscriber.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketPublisher.sendPosition",
+      "unit": "test/websocket/publisher.test.ts",
+      "live": [
+        "test/integration/websocket/publisher.int.test.ts",
+        "test/integration/websocket/subscriber.int.test.ts"
+      ],
+      "tier": "S"
+    },
+    {
+      "name": "RtlsWebSocketPublisher.sendBatch",
+      "unit": "test/websocket/publisher.test.ts",
+      "live": [
+        "test/integration/websocket/publisher.int.test.ts",
+        "test/integration/websocket/subscriber.int.test.ts"
+      ],
+      "tier": "S"
+    },
+    {
+      "name": "RtlsWebSocketPublisher.getMapUuid",
+      "unit": "test/websocket/publisher.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.connect",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.disconnect",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.subscribe",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.unsubscribe",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.setTagFilter",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getSubscription",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getActiveSubscriptions",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.sendPosition",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.sendBatch",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getConnectionStatus",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.isConnected",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.isSubscriberConnected",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.isPublisherConnected",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getSubscriber",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getPublisher",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getConfig",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "RtlsWebSocketClient.getNamespace",
+      "unit": "test/websocket/client.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.on",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.once",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.off",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.removeAllListeners",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.listenerCount",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.hasListeners",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "TypedEventEmitter.eventNames",
+      "unit": "test/websocket/events.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "classifyMessage",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isPositionMessage",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isZoneEntryExitMessage",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isZoneStatsMessage",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isAlertMessage",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isAssetMessage",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "isSubscriptionConfirmation",
+      "unit": "test/websocket/messages.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "normalizeMacAddress",
+      "unit": ["test/websocket/messages.test.ts", "test/unit/core/exports.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R",
+      "deprecated": true
+    },
+    {
+      "name": "isValidMacAddress",
+      "unit": ["test/websocket/messages.test.ts", "test/unit/core/exports.test.ts"],
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R",
+      "deprecated": true
+    },
+    {
+      "name": "POSITION_ORIGIN",
+      "unit": "test/unit/core/exports.test.ts",
+      "live": "test/integration/websocket/subscriber.int.test.ts",
+      "tier": "R",
+      "deprecated": true
+    }
+  ]
+}

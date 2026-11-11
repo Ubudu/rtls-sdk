@@ -1,0 +1,79 @@
+{
+  "_source": "server-code",
+  "_note": "JSON export (any format other than csv): bare NotificationItem[] with an attachment Content-Disposition. The spec declares no content for this 200.",
+  "_operation": "GET /notifications/{namespace}/export",
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "headers": {
+    "Content-Disposition": "attachment; filename=\"notifications.json\""
+  },
+  "body": [
+    {
+      "_id": "665f1c2e9b1d4a0012345601",
+      "app_namespace": "ns-test",
+      "user_id": "user-1",
+      "event_id": "0b6c1f0e-2f43-4c1a-9a51-1d2f3e4a5b61",
+      "kind": "direct_message",
+      "event_type": "NOTIFICATION",
+      "severity": "info",
+      "title": "Cold room door open",
+      "body": "The **north** door has been open for 5 minutes.",
+      "source": "operator",
+      "source_ref": "user:user-1",
+      "conversation_id": "conv-1",
+      "params": {
+        "displayMessage": "Door open"
+      },
+      "thread_key": "dm:conv-1",
+      "search_text": "cold room door open the north door has been open for 5 minutes.",
+      "read": false,
+      "read_at": null,
+      "acknowledged": false,
+      "acked_at": null,
+      "acked_by": null,
+      "archived": false,
+      "archived_at": null,
+      "pinned": false,
+      "muted": false,
+      "snooze_until": null,
+      "deliveries": [],
+      "created_at": 1718983070000,
+      "__v": 0
+    },
+    {
+      "_id": "665f1c2e9b1d4a0012345602",
+      "app_namespace": "ns-test",
+      "user_id": "user-1",
+      "event_id": "6a2d9e47-1b3c-4f5a-8e6d-7c8b9a0f1e2d",
+      "kind": "mission",
+      "event_type": "NOTIFICATION",
+      "severity": "warning",
+      "title": "Check freezer 3",
+      "body": "Temperature is drifting; please check **freezer 3**.",
+      "source": "operator",
+      "source_ref": "user:user-1",
+      "params": {},
+      "thread_key": "mission:m-1",
+      "search_text": "check freezer 3 temperature is drifting; please check freezer 3.",
+      "read": false,
+      "read_at": null,
+      "acknowledged": false,
+      "acked_at": null,
+      "acked_by": null,
+      "archived": false,
+      "archived_at": null,
+      "pinned": false,
+      "muted": false,
+      "snooze_until": null,
+      "deliveries": [],
+      "created_at": 1718983010000,
+      "__v": 0,
+      "mission": {
+        "assignee": "user-1",
+        "status": "open",
+        "due": 1718986610000
+      },
+      "mission_id": "m-1"
+    }
+  ]
+}

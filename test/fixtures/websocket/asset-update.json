@@ -1,0 +1,25 @@
+{
+  "_source": "server-code",
+  "_note": "Asset change notification sent by the API after an asset write: the stored asset record under data, keyed by the asset MAC. Asset events carry no timestamp.",
+  "_nonHttp": "WS-M6",
+  "body": {
+    "type": "assets",
+    "action": "update",
+    "app_namespace": "test_namespace",
+    "mac_address": "025d4b000001",
+    "data": {
+      "user_udid": "025d4b000001",
+      "user_name": "Asset-001",
+      "user_type": "forklift",
+      "model": "GenericTag",
+      "color": "#0088FF",
+      "path": "Site/Building-A",
+      "tags": ["fleet"],
+      "external_id": "EXT-001",
+      "data": { "department": "logistics" },
+      "createdBy": "test_namespace",
+      "dateCreated": 1767225600000,
+      "dateChanged": 1767268800000
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "phase": "P4",
+  "entries": [
+    {
+      "id": "P4-1",
+      "op": "POST /spatial/navigate/{namespace}/accessible-path",
+      "category": "excluded-by-policy",
+      "reason": "Policy record for navigation.accessiblePath (P4 spec 9.4): the call is excluded from live runs (USI-P4-12; LIVE-TESTING 5, guard G2 rejects it in every tier). The method's lines run live through its two local-guard calls; every request-building line, including the single transport call of postRoute, is shared with shortestPath.",
+      "unitTest": "test/resources/venues-navigation/navigation.test.ts"
+    },
+    {
+      "id": "P4-2",
+      "file": "src/resources/venues.ts",
+      "lines": [116, 119],
+      "match": "throw new ResponseParseError(",
+      "method": "venues.list",
+      "category": "unreachable-live",
+      "reason": "toArray's ResponseParseError: GET /venues/{ns} and /maps answer a JSON array, or {data, pagination} only when limit or page is sent, which the SDK never does (USI-P4-3); no other body is reachable live. The envelope branch is one expression that runs on every call.",
+      "unitTest": "test/resources/venues-navigation/venues.test.ts"
+    },
+    {
+      "id": "P4-3",
+      "file": "src/utils/geojson.ts",
+      "lines": [58, 67],
+      "match": ".map(({ properties: p, geometry }) => ({",
+      "method": "extractPoisFromGeoJSON",
+      "category": "unreachable-live",
+      "reason": "Body of the extractPoisFromGeoJSON mapping callback: Demo Factory has no POI (P4-T1 recorded 0 POI features), so no feature reaches the callback live; the function itself runs live through venues.listPoisAsArray (unit case G-2).",
+      "unitTest": "test/resources/venues-navigation/geojson.test.ts"
+    }
+  ]
+}

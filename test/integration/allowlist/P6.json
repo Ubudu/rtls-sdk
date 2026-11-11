@@ -1,0 +1,62 @@
+{
+  "phase": "P6",
+  "entries": [
+    {
+      "id": "P6-1",
+      "file": "src/resources/notifications/cleanup-policy.ts",
+      "lines": [67, 79],
+      "match": "const { ctx, request } = splitCallOptions(options);",
+      "method": "notifications.cleanupPolicy.replace",
+      "category": "excluded-by-policy",
+      "reason": "cleanupPolicy.replace() after its client guard (request and return): Demo Factory has no stored policy row, and a PUT creates a permanent row (no delete operation); the tier-C test runs only when a stored row exists. The guard itself runs live (read test 10).",
+      "unitTest": "test/resources/notifications/cleanup-policy.test.ts"
+    },
+    {
+      "id": "P6-2",
+      "file": "src/resources/notifications/admin.ts",
+      "lines": [73, 86],
+      "match": "if (!READ_ONLY_KEYS.includes(key) && value !== undefined) body[key] = value;",
+      "method": "notifications.admin.tenantConfig.update",
+      "category": "excluded-by-policy",
+      "reason": "tenantConfig.update() metadata strip, request and return: no tenant configuration is stored, and a PUT creates a permanent document (no delete operation); the tier-C test runs only when one exists. The empty-patch guard runs live (read tests 10 and 12).",
+      "unitTest": "test/resources/notifications/admin.test.ts"
+    },
+    {
+      "id": "P6-4",
+      "file": "src/resources/notifications/stream.ts",
+      "lines": [96, 96],
+      "match": "return undefined;",
+      "category": "unreachable-live",
+      "reason": "Drop of an event whose data is not JSON: the server emits only the open, item, state and unread_count events, always with a JSON object as data (unit case T5).",
+      "unitTest": "test/resources/notifications/stream.test.ts"
+    },
+    {
+      "id": "P6-6",
+      "file": "src/resources/notifications/index.ts",
+      "lines": [596, 598],
+      "match": "if (item === undefined) {",
+      "method": "notifications.sendToSelf",
+      "category": "unreachable-live",
+      "reason": "sendToSelf() empty-201 ResponseParseError branch: a successful self-send always returns the caller's created item (unit case N10).",
+      "unitTest": "test/resources/notifications/send.test.ts"
+    },
+    {
+      "id": "P6-17",
+      "file": "src/resources/notifications/index.ts",
+      "lines": [636, 640],
+      "match": "if (typeof userId !== 'string' || userId === '') {",
+      "category": "unreachable-live",
+      "reason": "sendToSelf() identity lookup without a user_id: every live answer of the lookup carries a user_id, so this branch runs only in the unit case (cleanup policy without user_id).",
+      "unitTest": "test/resources/notifications/send.test.ts"
+    },
+    {
+      "id": "P6-18",
+      "file": "src/resources/notifications/stream.ts",
+      "lines": [153, 156],
+      "match": ".catch((error: unknown): NotificationStreamEnd => ({",
+      "category": "unreachable-live",
+      "reason": "Defensive catch on the stream's done promise: the reconnect loop catches every transport and listener failure itself, so this branch only keeps done from rejecting on an unexpected internal failure (unit case T20, loop that throws).",
+      "unitTest": "test/resources/notifications/stream.test.ts"
+    }
+  ]
+}

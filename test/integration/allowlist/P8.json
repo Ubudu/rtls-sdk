@@ -1,0 +1,41 @@
+{
+  "phase": "P8",
+  "entries": [
+    {
+      "id": "P8-1",
+      "file": "src/websocket/runtime.ts",
+      "lines": [54, 54],
+      "match": "return undefined;",
+      "category": "environment",
+      "reason": "A failed dynamic import of the optional ws package (ws not installed) resolves to undefined; the live runtime is Node with ws installed, so the import never fails there.",
+      "unitTest": "test/websocket/runtime.test.ts"
+    },
+    {
+      "id": "P8-2",
+      "file": "src/websocket/runtime.ts",
+      "lines": [90, 93],
+      "match": "if (typeof deps.globalWebSocket === 'function') {",
+      "category": "environment",
+      "reason": "Global-fallback and no-implementation branches of resolveWebSocketImpl: on a Node with ws installed (the live runtime) resolution never falls through to them; R3-R5 and the dist smoke cover them.",
+      "unitTest": "test/websocket/runtime.test.ts"
+    },
+    {
+      "id": "P8-3",
+      "file": "src/websocket/runtime.ts",
+      "lines": [161, 165],
+      "match": "if (data instanceof ArrayBuffer)",
+      "category": "environment",
+      "reason": "decodeFrame binary branches (ArrayBuffer, typed-array views, other types): live runtimes deliver the broker's text frames as strings.",
+      "unitTest": "test/websocket/connection.test.ts"
+    },
+    {
+      "id": "P8-4",
+      "file": "src/websocket/connection.ts",
+      "lines": [512, 513],
+      "match": "Dropped a frame that is not a JSON object",
+      "category": "unreachable-live",
+      "reason": "Invalid-JSON frame branch of the connection: the broker only sends JSON objects, so a frame that does not parse cannot be provoked live.",
+      "unitTest": "test/websocket/connection.test.ts"
+    }
+  ]
+}

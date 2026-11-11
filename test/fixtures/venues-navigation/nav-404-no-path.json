@@ -1,0 +1,13 @@
+{
+  "_source": "server-code",
+  "_note": "rtls-api 3.3.8 route between disconnected nodes: 404 with the human text in message and a sentinel in error, plus the node ids as strings. Synthetic ids.",
+  "_operation": "POST /spatial/navigate/{namespace}/shortest-path",
+  "status": 404,
+  "body": {
+    "success": false,
+    "message": "No path found between nodes",
+    "error": "Navigation service not initialized",
+    "startNodeId": "101",
+    "endNodeId": "999"
+  }
+}

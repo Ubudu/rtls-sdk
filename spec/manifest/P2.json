@@ -1,0 +1,192 @@
+{
+  "phase": "P2",
+  "domain": "assets",
+  "status": "complete",
+  "operations": [
+    {
+      "op": "GET /assets_library/{app_namespace}",
+      "decision": "wrap",
+      "sdk": "assetTree.get",
+      "unit": "test/resources/assets/asset-tree.test.ts",
+      "live": "test/integration/assets/asset-tree-data-models.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "POST /assets_library/{app_namespace}",
+      "decision": "exclude",
+      "reason": "Full-replace write of the asset tree; done in the product UI. Read access is in scope."
+    },
+    {
+      "op": "GET /assets/{app_namespace}",
+      "decision": "wrap",
+      "sdk": ["assets.list", "assets.iterate", "assets.getAll"],
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P2-1"]
+    },
+    {
+      "op": "POST /assets/{app_namespace}",
+      "decision": "wrap",
+      "sdk": "assets.batchSave",
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-4", "USI-P2-6"]
+    },
+    {
+      "op": "DELETE /assets/{app_namespace}",
+      "decision": "wrap",
+      "sdk": "assets.batchDelete",
+      "unit": "test/resources/assets/assets.test.ts",
+      "allowlist": "P2-2",
+      "usi": ["USI-P2-5"]
+    },
+    {
+      "op": "GET /assets/{app_namespace}/{mac_address}",
+      "decision": "wrap",
+      "sdk": "assets.get",
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P2-3"]
+    },
+    {
+      "op": "POST /assets/{app_namespace}/{mac_address}",
+      "decision": "wrap",
+      "sdk": "assets.create",
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-2", "USI-P2-6"]
+    },
+    {
+      "op": "PATCH /assets/{app_namespace}/{mac_address}",
+      "decision": "wrap",
+      "sdk": "assets.update",
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-3", "USI-P2-6"]
+    },
+    {
+      "op": "DELETE /assets/{app_namespace}/{mac_address}",
+      "decision": "wrap",
+      "sdk": ["assets.delete", "assets.batchDelete"],
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-3"]
+    },
+    {
+      "op": "GET /asset_history/{app_namespace}/{mac_address}",
+      "decision": "wrap",
+      "sdk": "assets.getHistory",
+      "unit": "test/resources/assets/assets.test.ts",
+      "live": "test/integration/assets/assets.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P2-7"]
+    },
+    {
+      "op": "GET /asset_stats/{app_namespace}/{start_time}/{end_time}",
+      "decision": "exclude",
+      "reason": "Namespace-wide audit counters of asset-record changes; an operator report, not an integration need."
+    },
+    {
+      "op": "POST /tag-actions/{appNamespace}",
+      "decision": "wrap",
+      "sdk": "tagActions.send",
+      "unit": "test/resources/assets/tag-actions.test.ts",
+      "live": "test/integration/assets/tag-actions.int.test.ts",
+      "tier": "S",
+      "usi": ["USI-P2-8"]
+    },
+    {
+      "op": "GET /data_filters_taxonomy/{app_namespace}",
+      "decision": "wrap",
+      "sdk": "dataModels.get",
+      "unit": "test/resources/assets/data-models.test.ts",
+      "live": "test/integration/assets/asset-tree-data-models.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P2-9"]
+    },
+    {
+      "op": "POST /data_filters_taxonomy/{app_namespace}",
+      "decision": "exclude",
+      "reason": "Full-replace write of the data model; done in the product UI. Read access is in scope."
+    },
+    {
+      "op": "POST /assets/{namespace}/bulk-declare",
+      "decision": "wrap",
+      "sdk": "declaredLocations.bulkDeclare",
+      "unit": "test/resources/assets/declared-locations.test.ts",
+      "live": "test/integration/assets/declared-locations.int.test.ts",
+      "tier": "S",
+      "usi": ["USI-P2-10", "USI-P2-11"]
+    },
+    {
+      "op": "POST /assets/{namespace}/bulk-clear-declared",
+      "decision": "wrap",
+      "sdk": "declaredLocations.bulkClear",
+      "unit": "test/resources/assets/declared-locations.test.ts",
+      "live": "test/integration/assets/declared-locations.int.test.ts",
+      "tier": "S",
+      "usi": ["USI-P2-10", "USI-P2-11"]
+    },
+    {
+      "op": "POST /assets/{namespace}/{mac_address}/documents",
+      "decision": "wrap",
+      "sdk": "assetDocuments.upload",
+      "unit": "test/resources/assets/asset-documents.test.ts",
+      "live": "test/integration/assets/asset-documents.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-12", "USI-P2-13"]
+    },
+    {
+      "op": "GET /assets/{namespace}/{mac_address}/documents",
+      "decision": "wrap",
+      "sdk": ["assetDocuments.listPage", "assetDocuments.list"],
+      "unit": "test/resources/assets/asset-documents.test.ts",
+      "live": "test/integration/assets/asset-documents.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P2-12", "USI-P2-14"]
+    },
+    {
+      "op": "GET /assets/{namespace}/documents/jobs/{jobId}",
+      "decision": "wrap",
+      "sdk": ["assetDocuments.getJob", "assetDocuments.waitForJob"],
+      "unit": "test/resources/assets/asset-documents.test.ts",
+      "live": "test/integration/assets/asset-documents.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "GET /assets/{namespace}/{mac_address}/documents/{documentId}",
+      "decision": "wrap",
+      "sdk": "assetDocuments.get",
+      "unit": "test/resources/assets/asset-documents.test.ts",
+      "live": "test/integration/assets/asset-documents.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-12", "USI-P2-14"]
+    },
+    {
+      "op": "DELETE /assets/{namespace}/{mac_address}/documents/{documentId}",
+      "decision": "wrap",
+      "sdk": "assetDocuments.delete",
+      "unit": "test/resources/assets/asset-documents.test.ts",
+      "live": "test/integration/assets/asset-documents.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-12"]
+    },
+    {
+      "op": "GET /assets/{namespace}/{mac_address}/documents/{documentId}/download",
+      "decision": "wrap",
+      "sdk": "assetDocuments.download",
+      "unit": "test/resources/assets/asset-documents.test.ts",
+      "live": "test/integration/assets/asset-documents.int.test.ts",
+      "tier": "W",
+      "usi": ["USI-P2-15"]
+    }
+  ],
+  "nonHttp": [],
+  "sdkMethods": []
+}

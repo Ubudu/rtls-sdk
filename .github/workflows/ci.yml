@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22, 24]
 
     steps:
       - uses: actions/checkout@v4
@@ -26,20 +26,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate types
-        run: npm run generate
+      # Bun is a consumer runtime only: the pack smoke test runs the packed package's consumers under it
+      # (pinned as on GitLab); every test and build step runs on Node.
+      - name: Setup Bun (consumer runtime of the pack smoke test)
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.4"
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npm run typecheck
-
-      - name: Test
-        run: npm run test:coverage
-
-      - name: Build
-        run: npm run build
+      # Same offline lane as the GitLab pipeline (which is canonical): spec, lint, format, typecheck,
+      # unit coverage, contract, build, pack smoke and docs checks.
+      - name: Offline checks
+        run: npm run ci:offline
 
   publish-dry-run:
     runs-on: ubuntu-latest

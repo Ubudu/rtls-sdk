@@ -1,0 +1,15 @@
+{
+  "_source": "server-code",
+  "_note": "The spec declares 422 without a schema. A test that was not delivered answers { verified: false, delivery: { channel, status: \"skipped\" | \"failed\", error, ts } } with no error code; here an email connection without an address (no I/O).",
+  "_operation": "POST /notifications/{namespace}/connections/{id}/test",
+  "status": 422,
+  "body": {
+    "verified": false,
+    "delivery": {
+      "channel": "email",
+      "status": "skipped",
+      "error": "not_connected",
+      "ts": 1730000001000
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "_source": "server-code",
+  "_note": "Elasticsearch query guard rejection of a scripted clause: 400 {error, violations} with every dotted path. Never provoked live (P3 section 9.1); unit-only (U-Q-4).",
+  "_operation": "POST /es/query/{appNamespace}/{dataType}",
+  "status": 400,
+  "body": {
+    "error": "scripted clauses are not permitted: dsl.query.script",
+    "violations": ["dsl.query.script"]
+  }
+}

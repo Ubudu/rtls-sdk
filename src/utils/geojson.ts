@@ -1,78 +1,129 @@
+/**
+ * Flatten the GeoJSON collections of the venue routes into plain items. Every extractor skips features whose
+ * `geometry` is `null` (the server's validator lets such features through).
+ *
+ * @module utils/geojson
+ */
 import type {
-  ZoneFeatureCollection,
-  ZoneFeature,
-  POIFeatureCollection,
-  POIFeature,
+  GeoJSONGeometry,
   PathFeatureCollection,
+  PathNode,
   PathNodeFeature,
+  PathSegment,
   PathSegmentFeature,
+  POI,
+  POIFeatureCollection,
+  Zone,
+  ZoneFeatureCollection,
 } from '../types/geojson';
-import type { Zone, POI, PathNode, PathSegment } from '../types';
+
+/** A feature whose geometry is set (`null` geometries are skipped). */
+function hasGeometry(feature: { geometry: GeoJSONGeometry | null }): boolean {
+  return feature.geometry != null;
+}
 
 /**
- * Extracts flat Zone objects from GeoJSON FeatureCollection.
+ * Extracts flat {@link Zone} objects from a zone collection (`color` from `rgb_color`, `geometry` kept).
+ *
+ * @example
+ * ```typescript
+ * import { extractZonesFromGeoJSON } from 'ubudu-rtls-sdk';
+ *
+ * const zones = extractZonesFromGeoJSON(await client.zones.list());
+ * ```
  */
 export function extractZonesFromGeoJSON(geoJson: ZoneFeatureCollection): Zone[] {
-  return geoJson.features.map((feature: ZoneFeature) => ({
-    id: feature.properties.id,
-    name: feature.properties.name,
-    level: feature.properties.level,
-    color: feature.properties.rgb_color,
-    tags: feature.properties.tags,
-    type: feature.properties.type,
-    geometry: feature.geometry,
+  return geoJson.features.filter(hasGeometry).map(({ properties: p, geometry }) => ({
+    id: p.id,
+    name: p.name,
+    level: p.level,
+    color: p.rgb_color,
+    tags: p.tags,
+    type: p.type,
+    geometry,
   }));
 }
 
 /**
- * Extracts flat POI objects from GeoJSON FeatureCollection.
+ * Extracts flat {@link POI} objects from a POI collection (`[lon, lat]` → `lat`/`lng`; missing `tags` → `[]`).
+ *
+ * @example
+ * ```typescript
+ * import { extractPoisFromGeoJSON } from 'ubudu-rtls-sdk';
+ *
+ * const pois = extractPoisFromGeoJSON(await client.venues.listPois());
+ * ```
  */
 export function extractPoisFromGeoJSON(geoJson: POIFeatureCollection): POI[] {
-  return geoJson.features.map((feature: POIFeature) => ({
-    id: feature.properties.id,
-    name: feature.properties.name,
-    description: feature.properties.description,
-    level: feature.properties.level,
-    color: feature.properties.color,
-    tags: feature.properties.tags,
-    lat: feature.geometry.coordinates[1],
-    lng: feature.geometry.coordinates[0],
+  return geoJson.features.filter(hasGeometry).map(({ properties: p, geometry }) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    level: p.level,
+    color: p.color,
+    tags: p.tags ?? [],
+    lat: geometry.coordinates[1],
+    lng: geometry.coordinates[0],
   }));
 }
 
 /**
- * Extracts path nodes from GeoJSON FeatureCollection.
+ * Extracts the path nodes of a path collection (segments are ignored).
+ *
+ * @example
+ * ```typescript
+ * import { extractPathNodesFromGeoJSON } from 'ubudu-rtls-sdk';
+ *
+ * const nodes = extractPathNodesFromGeoJSON(await client.venues.listPaths());
+ * ```
  */
 export function extractPathNodesFromGeoJSON(geoJson: PathFeatureCollection): PathNode[] {
   return geoJson.features
-    .filter((f): f is PathNodeFeature => f.properties.type === 'path_node')
-    .map((feature) => ({
-      id: feature.properties.id,
-      externalId: feature.properties.external_id,
-      nodeType: feature.properties.node_type,
-      name: feature.properties.name,
-      level: feature.properties.level,
-      isActive: feature.properties.is_active,
-      crossLevelConnections: feature.properties.cross_level_connections,
-      tags: feature.properties.tags,
-      lat: feature.geometry.coordinates[1],
-      lng: feature.geometry.coordinates[0],
+    .filter((f): f is PathNodeFeature => hasGeometry(f) && f.properties.type === 'path_node')
+    .map(({ properties: p, geometry }) => ({
+      id: p.id,
+      externalId: p.external_id,
+      nodeType: p.node_type,
+      name: p.name,
+      level: p.level,
+      isActive: p.is_active,
+      crossLevelConnections: p.cross_level_connections,
+      tags: p.tags,
+      lat: geometry.coordinates[1],
+      lng: geometry.coordinates[0],
+      poiType: p.poi_type,
+      isAccessible: p.is_accessible,
+      isEmergencyExit: p.is_emergency_exit,
     }));
 }
 
 /**
- * Extracts path segments from GeoJSON FeatureCollection.
+ * Extracts the path segments of a path collection (nodes are ignored), with the stored property names.
+ *
+ * @example
+ * ```typescript
+ * import { extractPathSegmentsFromGeoJSON } from 'ubudu-rtls-sdk';
+ *
+ * const segments = extractPathSegmentsFromGeoJSON(await client.venues.listPaths());
+ * ```
  */
 export function extractPathSegmentsFromGeoJSON(geoJson: PathFeatureCollection): PathSegment[] {
   return geoJson.features
-    .filter((f): f is PathSegmentFeature => f.properties.type === 'path_segment')
-    .map((feature) => ({
-      id: feature.properties.id,
-      startNodeId: feature.properties.start_node_id,
-      endNodeId: feature.properties.end_node_id,
-      isBidirectional: feature.properties.is_bidirectional,
-      weight: feature.properties.weight,
-      level: feature.properties.level,
-      coordinates: feature.geometry.coordinates,
+    .filter((f): f is PathSegmentFeature => hasGeometry(f) && f.properties.type === 'path_segment')
+    .map(({ properties: p, geometry }) => ({
+      id: p.id,
+      externalId: p.external_id,
+      sourceNodeId: p.source_node_id,
+      targetNodeId: p.target_node_id,
+      level: p.level,
+      bidirectional: p.bidirectional,
+      distance: p.distance,
+      estimatedTime: p.estimated_time,
+      accessibility: p.accessibility,
+      penaltyFactor: p.penalty_factor,
+      isActive: p.is_active,
+      tags: p.tags,
+      connectionType: p.connection_type,
+      coordinates: geometry.coordinates,
     }));
 }

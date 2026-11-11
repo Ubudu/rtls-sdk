@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "E1 envelope of the common authentication: a credential that is not accepted. Without any credential the text is 'No authentication credentials provided'. Written by hand: L-E1 observes the same status and server message (fact U2) live each run but does not re-record this file, so _source stays server-code.",
+  "_operation": "GET /settings/{app_namespace}",
+  "status": 401,
+  "body": {
+    "error": "Failed to authenticate user"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Sample", "version": "1.0.0-sample" },
+  "paths": {
+    "/things/{ns}": {
+      "get": {
+        "tags": ["Things"],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ThingList" } }
+            }
+          },
+          "404": { "description": "not found" }
+        }
+      },
+      "post": {
+        "tags": ["Things"],
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": { "text/plain": { "schema": { "type": "string" } } }
+          },
+          "204": { "description": "no content" }
+        }
+      }
+    },
+    "/things/{ns}/{id}": {
+      "get": {
+        "tags": ["Things"],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Thing" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Things"],
+        "responses": { "200": { "description": "deleted" } }
+      }
+    },
+    "/files/{ns}/{id}": {
+      "get": {
+        "tags": ["Files"],
+        "responses": {
+          "200": {
+            "description": "file",
+            "content": {
+              "application/octet-stream": { "schema": { "type": "string", "format": "binary" } }
+            }
+          }
+        }
+      }
+    },
+    "/strict/{ns}": {
+      "get": {
+        "tags": ["Things"],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": { "a": { "type": "integer" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ThingList": {
+        "type": "object",
+        "required": ["items", "total"],
+        "properties": {
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/Thing" } },
+          "total": { "type": "integer", "format": "int64" }
+        }
+      },
+      "Thing": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "weight": { "type": "number", "format": "double" },
+          "note": { "type": "string", "nullable": true },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "owner": { "$ref": "#/components/schemas/Owner" }
+        }
+      },
+      "Owner": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": { "kind": { "type": "string", "enum": ["user", "system"] } }
+      }
+    }
+  }
+}

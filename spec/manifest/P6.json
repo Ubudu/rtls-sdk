@@ -1,0 +1,393 @@
+{
+  "phase": "P6",
+  "domain": "notifications",
+  "status": "complete",
+  "operations": [
+    {
+      "op": "GET /notifications/{namespace}",
+      "decision": "wrap",
+      "sdk": [
+        "notifications.list",
+        "notifications.listPage",
+        "notifications.iterate",
+        "notifications.listGroups"
+      ],
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S",
+      "usi": ["USI-P6-2", "USI-P6-14"]
+    },
+    {
+      "op": "GET /notifications/{namespace}/facets",
+      "decision": "wrap",
+      "sdk": "notifications.facets",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S"
+    },
+    {
+      "op": "GET /notifications/{namespace}/export",
+      "decision": "wrap",
+      "sdk": "notifications.export",
+      "unit": "test/resources/notifications/export.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S",
+      "usi": ["USI-P6-12"]
+    },
+    {
+      "op": "GET /notifications/{namespace}/unread_count",
+      "decision": "wrap",
+      "sdk": "notifications.unreadCount",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/read.int.test.ts"],
+      "tier": "R"
+    },
+    {
+      "op": "GET /notifications/{namespace}/stream",
+      "decision": "wrap",
+      "sdk": "notifications.stream",
+      "unit": "test/resources/notifications/stream.test.ts",
+      "live": [
+        "test/integration/notifications/stream.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S",
+      "allowlist": "P6-4",
+      "usi": ["USI-P6-3"]
+    },
+    {
+      "op": "GET /notifications/{namespace}/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.get",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S"
+    },
+    {
+      "op": "PATCH /notifications/{namespace}/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.updateMission",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/inbox.int.test.ts"],
+      "tier": "S"
+    },
+    {
+      "op": "POST /notifications/{namespace}/{id}/read",
+      "decision": "wrap",
+      "sdk": "notifications.markRead",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/inbox.int.test.ts"],
+      "tier": "S"
+    },
+    {
+      "op": "POST /notifications/{namespace}/{id}/acknowledge",
+      "decision": "wrap",
+      "sdk": "notifications.acknowledge",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/inbox.int.test.ts"],
+      "tier": "S"
+    },
+    {
+      "op": "POST /notifications/{namespace}/{id}/archive",
+      "decision": "wrap",
+      "sdk": "notifications.archive",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/inbox.int.test.ts"],
+      "tier": "S"
+    },
+    {
+      "op": "POST /notifications/{namespace}/bulk",
+      "decision": "wrap",
+      "sdk": "notifications.bulk",
+      "unit": "test/resources/notifications/bulk.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S",
+      "usi": ["USI-P6-4", "USI-P6-5", "USI-P6-10"]
+    },
+    {
+      "op": "POST /notifications/{namespace}/send",
+      "decision": "wrap",
+      "sdk": ["notifications.send", "notifications.sendToSelf"],
+      "unit": "test/resources/notifications/send.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S",
+      "allowlist": "P6-6",
+      "usi": ["USI-P6-1", "USI-P6-7", "USI-P6-13"]
+    },
+    {
+      "op": "GET /notifications/{namespace}/rules",
+      "decision": "wrap",
+      "sdk": "notifications.rules.list",
+      "unit": "test/resources/notifications/rules.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "W"
+    },
+    {
+      "op": "POST /notifications/{namespace}/rules",
+      "decision": "wrap",
+      "sdk": "notifications.rules.create",
+      "unit": "test/resources/notifications/rules.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "GET /notifications/{namespace}/connections",
+      "decision": "wrap",
+      "sdk": "notifications.connections.list",
+      "unit": "test/resources/notifications/connections.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "W"
+    },
+    {
+      "op": "POST /notifications/{namespace}/connections",
+      "decision": "wrap",
+      "sdk": "notifications.connections.upsert",
+      "unit": "test/resources/notifications/connections.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "GET /notifications/{namespace}/tenant-config",
+      "decision": "wrap",
+      "sdk": "notifications.admin.tenantConfig.get",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "C"
+    },
+    {
+      "op": "PUT /notifications/{namespace}/tenant-config",
+      "decision": "wrap",
+      "sdk": "notifications.admin.tenantConfig.update",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "C",
+      "allowlist": "P6-2"
+    },
+    {
+      "op": "GET /notifications/{namespace}/recipient-mappings",
+      "decision": "wrap",
+      "sdk": "notifications.admin.recipientMappings.list",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "C"
+    },
+    {
+      "op": "POST /notifications/{namespace}/recipient-mappings",
+      "decision": "wrap",
+      "sdk": "notifications.admin.recipientMappings.create",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "C"
+    },
+    {
+      "op": "GET /notifications/{namespace}/recipient-mappings/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.admin.recipientMappings.get",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "C"
+    },
+    {
+      "op": "PATCH /notifications/{namespace}/recipient-mappings/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.admin.recipientMappings.update",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "C",
+      "usi": ["USI-P6-9"]
+    },
+    {
+      "op": "DELETE /notifications/{namespace}/recipient-mappings/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.admin.recipientMappings.delete",
+      "unit": "test/resources/notifications/admin.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "C"
+    },
+    {
+      "op": "POST /notifications/{namespace}/{id}/pin",
+      "decision": "wrap",
+      "sdk": ["notifications.pin", "notifications.unpin"],
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/inbox.int.test.ts"],
+      "tier": "S"
+    },
+    {
+      "op": "POST /notifications/{namespace}/{id}/mute",
+      "decision": "exclude",
+      "reason": "Only extra effect over bulk mute is a registry row the server never reads and cannot delete; bulk covers the need.",
+      "usi": ["USI-P6-5"]
+    },
+    {
+      "op": "POST /notifications/{namespace}/{id}/snooze",
+      "decision": "wrap",
+      "sdk": "notifications.snooze",
+      "unit": "test/resources/notifications/inbox.test.ts",
+      "live": ["test/integration/notifications/inbox.int.test.ts"],
+      "tier": "S",
+      "usi": ["USI-P6-5"]
+    },
+    {
+      "op": "POST /notifications/{namespace}/bulk/undo",
+      "decision": "wrap",
+      "sdk": "notifications.undo",
+      "unit": "test/resources/notifications/bulk.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/inbox.int.test.ts"
+      ],
+      "tier": "S"
+    },
+    {
+      "op": "GET /notifications/{namespace}/rules/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.rules.get",
+      "unit": "test/resources/notifications/rules.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "PATCH /notifications/{namespace}/rules/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.rules.update",
+      "unit": "test/resources/notifications/rules.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W",
+      "usi": ["USI-P6-9"]
+    },
+    {
+      "op": "DELETE /notifications/{namespace}/rules/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.rules.delete",
+      "unit": "test/resources/notifications/rules.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "GET /notifications/{namespace}/connections/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.connections.get",
+      "unit": "test/resources/notifications/connections.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "DELETE /notifications/{namespace}/connections/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.connections.delete",
+      "unit": "test/resources/notifications/connections.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "POST /notifications/{namespace}/connections/{id}/test",
+      "decision": "wrap",
+      "sdk": "notifications.connections.test",
+      "unit": "test/resources/notifications/connections.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "GET /notifications/{namespace}/saved-views",
+      "decision": "wrap",
+      "sdk": "notifications.savedViews.list",
+      "unit": "test/resources/notifications/saved-views.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "W"
+    },
+    {
+      "op": "POST /notifications/{namespace}/saved-views",
+      "decision": "wrap",
+      "sdk": "notifications.savedViews.create",
+      "unit": "test/resources/notifications/saved-views.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "W",
+      "usi": ["USI-P6-11"]
+    },
+    {
+      "op": "GET /notifications/{namespace}/saved-views/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.savedViews.get",
+      "unit": "test/resources/notifications/saved-views.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "DELETE /notifications/{namespace}/saved-views/{id}",
+      "decision": "wrap",
+      "sdk": "notifications.savedViews.delete",
+      "unit": "test/resources/notifications/saved-views.test.ts",
+      "live": ["test/integration/notifications/settings.int.test.ts"],
+      "tier": "W"
+    },
+    {
+      "op": "GET /notifications/{namespace}/cleanup-policy",
+      "decision": "wrap",
+      "sdk": "notifications.cleanupPolicy.get",
+      "unit": "test/resources/notifications/cleanup-policy.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "C",
+      "usi": ["USI-P6-13"]
+    },
+    {
+      "op": "PUT /notifications/{namespace}/cleanup-policy",
+      "decision": "wrap",
+      "sdk": "notifications.cleanupPolicy.replace",
+      "unit": "test/resources/notifications/cleanup-policy.test.ts",
+      "live": [
+        "test/integration/notifications/read.int.test.ts",
+        "test/integration/notifications/settings.int.test.ts"
+      ],
+      "tier": "C",
+      "allowlist": "P6-1",
+      "usi": ["USI-P6-6"]
+    }
+  ],
+  "nonHttp": [],
+  "sdkMethods": []
+}

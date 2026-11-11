@@ -1,0 +1,22 @@
+{
+  "_source": "spec",
+  "_operation": "POST /notifications/{namespace}/connections",
+  "status": 201,
+  "body": {
+    "_id": "65b000000000000000000002",
+    "app_namespace": "ns-test",
+    "user_id": "64f000000000000000000001",
+    "channel": "slack",
+    "enabled": true,
+    "verified": false,
+    "credentials": {
+      "webhook_url": "https://hooks.example.invalid/services/x",
+      "bot_token": {
+        "set": true,
+        "fingerprint": "f"
+      }
+    },
+    "created_at": 1730000000000,
+    "__v": 0
+  }
+}

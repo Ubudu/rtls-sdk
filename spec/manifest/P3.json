@@ -1,0 +1,175 @@
+{
+  "phase": "P3",
+  "domain": "positions-spatial",
+  "status": "complete",
+  "operations": [
+    {
+      "op": "GET /asset_last_position/{app_namespace}/{mac_address}",
+      "decision": "wrap",
+      "sdk": "positions.getLast",
+      "unit": "test/resources/positions-spatial/positions.test.ts",
+      "live": "test/integration/positions-spatial/positions.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "GET /cache/{app_namespace}/positions",
+      "decision": "wrap",
+      "sdk": "positions.listCached",
+      "unit": "test/resources/positions-spatial/positions.test.ts",
+      "live": "test/integration/positions-spatial/positions.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "GET /cache/{app_namespace}/positions/{mac_address}",
+      "decision": "wrap",
+      "sdk": "positions.getCached",
+      "unit": "test/resources/positions-spatial/positions.test.ts",
+      "live": "test/integration/positions-spatial/positions.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "POST /publisher/{app_namespace}",
+      "decision": "wrap",
+      "sdk": "positions.publish",
+      "unit": "test/resources/positions-spatial/positions.test.ts",
+      "live": "test/integration/positions-spatial/publish.int.test.ts",
+      "tier": "S"
+    },
+    {
+      "op": "GET /es/last_positions/{appNamespace}",
+      "decision": "wrap",
+      "sdk": "positions.listLast",
+      "unit": "test/resources/positions-spatial/positions.test.ts",
+      "live": "test/integration/positions-spatial/positions.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "GET /es/position_history/{appNamespace}",
+      "decision": "wrap",
+      "sdk": "positions.getHistory",
+      "unit": "test/resources/positions-spatial/positions.test.ts",
+      "live": "test/integration/positions-spatial/positions.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "POST /es/query/{appNamespace}/{dataType}",
+      "decision": "wrap",
+      "sdk": "positions.query",
+      "unit": "test/resources/positions-spatial/query.test.ts",
+      "live": "test/integration/positions-spatial/query.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-9", "USI-P3-10"]
+    },
+    {
+      "op": "GET /api/spatial/assets/:namespace/nearest-to-point",
+      "decision": "wrap",
+      "sdk": "spatial.nearestAssets",
+      "unit": "test/resources/positions-spatial/spatial-assets.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "realPath": "/spatial/assets/{namespace}/nearest-to-point",
+      "usi": ["USI-P1-6"]
+    },
+    {
+      "op": "GET /api/spatial/assets/:namespace/nearest-realtime",
+      "decision": "wrap",
+      "sdk": "spatial.nearestAssetsRealtime",
+      "unit": "test/resources/positions-spatial/spatial-assets.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "realPath": "/spatial/assets/{namespace}/nearest-realtime",
+      "usi": ["USI-P1-6"]
+    },
+    {
+      "op": "GET /spatial/pois/{namespace}/nearest-to-point",
+      "decision": "wrap",
+      "sdk": "spatial.nearestPois",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-2"]
+    },
+    {
+      "op": "GET /spatial/pois/{namespace}/within-radius",
+      "decision": "wrap",
+      "sdk": "spatial.poisWithinRadius",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-2"]
+    },
+    {
+      "op": "GET /spatial/pois/{namespace}/by-tag",
+      "decision": "wrap",
+      "sdk": "spatial.poisByTag",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-2"]
+    },
+    {
+      "op": "GET /spatial/pois/{namespace}/statistics",
+      "decision": "wrap",
+      "sdk": "spatial.poiStatistics",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-3"]
+    },
+    {
+      "op": "POST /spatial/pois/{namespace}/analyze-custom",
+      "decision": "wrap",
+      "sdk": "spatial.analyzeCustomPois",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-6"]
+    },
+    {
+      "op": "GET /spatial/zones/{namespace}/containing-point",
+      "decision": "wrap",
+      "sdk": "spatial.zonesContainingPoint",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-1"]
+    },
+    {
+      "op": "GET /spatial/zones/{namespace}/nearest-to-point",
+      "decision": "wrap",
+      "sdk": "spatial.nearestZones",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-1", "USI-P3-13"]
+    },
+    {
+      "op": "GET /spatial/zones/{namespace}/within-radius",
+      "decision": "wrap",
+      "sdk": "spatial.zonesWithinRadius",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-1"]
+    },
+    {
+      "op": "POST /spatial/zones/{namespace}/calculate-distances",
+      "decision": "wrap",
+      "sdk": "spatial.zoneDistances",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "op": "POST /spatial/zones/{namespace}/analyze-custom",
+      "decision": "wrap",
+      "sdk": "spatial.analyzeCustomZones",
+      "unit": "test/resources/positions-spatial/spatial.test.ts",
+      "live": "test/integration/positions-spatial/spatial.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P3-6"]
+    }
+  ],
+  "nonHttp": [],
+  "sdkMethods": []
+}

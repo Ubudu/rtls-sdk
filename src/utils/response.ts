@@ -3,6 +3,9 @@ import type { PaginatedResponse } from '../types';
 /**
  * Normalizes API responses that may be arrays or paginated objects.
  * Converts direct arrays to PaginatedResponse format for consistency.
+ *
+ * @deprecated since 0.3.0 — returns the flat 0.2.0 shape; use `normalizePage`, which returns the server's
+ *   `{ data, pagination }` envelope and also converts arrays and `{ data }` objects.
  */
 export function normalizeListResponse<T>(
   response: T[] | PaginatedResponse<T>

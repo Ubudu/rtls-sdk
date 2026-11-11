@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "The spec types the body as a string. Frames are \"event: <name>\" plus one JSON \"data:\" line and a blank line; a \": hb\" heartbeat comment every 20 s; no id or retry lines. Sequence: open, heartbeat, item, state, unread_count.",
+  "_operation": "GET /notifications/{namespace}/stream",
+  "status": 200,
+  "contentType": "text/event-stream",
+  "text": "event: open\ndata: {\"app_namespace\":\"ns-test\",\"user_id\":\"64f000000000000000000001\"}\n\n: hb\n\nevent: item\ndata: {\"_id\":\"65f000000000000000000001\",\"app_namespace\":\"ns-test\",\"user_id\":\"64f000000000000000000001\",\"event_id\":\"evt-1\",\"kind\":\"direct_message\",\"event_type\":\"NOTIFICATION\",\"severity\":\"info\",\"title\":\"Hello\",\"body\":\"First message\",\"source\":\"operator\",\"conversation_id\":\"c1\",\"thread_key\":\"dm:c1\",\"read\":false,\"read_at\":null,\"acknowledged\":false,\"acked_at\":null,\"acked_by\":null,\"archived\":false,\"archived_at\":null,\"pinned\":false,\"muted\":false,\"snooze_until\":null,\"created_at\":1730000000000}\n\nevent: state\ndata: {\"id\":\"65f000000000000000000001\",\"read\":true}\n\nevent: unread_count\ndata: {\"action\":\"read\",\"affected\":2}\n\n"
+}

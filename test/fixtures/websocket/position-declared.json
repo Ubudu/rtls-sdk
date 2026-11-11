@@ -1,0 +1,31 @@
+{
+  "_source": "server-code",
+  "_note": "Declared position of a virtual asset: the broker delivers the stored declared location as a position with origin 100 and origin_detail 'declared'.",
+  "_nonHttp": "WS-M1",
+  "body": {
+    "app_namespace": "test_namespace",
+    "user_uuid": "025d4b000002",
+    "user_udid": "025d4b000002",
+    "user_name": "Asset-002",
+    "user_type": "pallet",
+    "model": "Virtual",
+    "tags": [],
+    "data": {},
+    "is_virtual": true,
+    "declared_location": {
+      "lat": 48.8567,
+      "lon": 2.3523,
+      "level": 0,
+      "map_uuid": "11111111-2222-4333-8444-555555555555"
+    },
+    "lat": 48.8567,
+    "lon": 2.3523,
+    "level": 0,
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "timestamp": "2026-01-01T12:00:05Z",
+    "zone": { "id": 3, "name": "Loading-Dock", "tags": ["dock"], "color": "#FF8800" },
+    "origin": 100,
+    "origin_detail": "declared",
+    "speed": null
+  }
+}

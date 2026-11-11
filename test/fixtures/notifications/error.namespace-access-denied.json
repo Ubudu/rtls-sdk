@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "admin route on a namespace the key cannot manage.",
+  "status": 403,
+  "body": {
+    "error": "namespace_access_denied"
+  }
+}

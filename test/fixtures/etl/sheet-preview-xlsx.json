@@ -1,0 +1,15 @@
+{
+  "_source": "spec",
+  "_note": "200 of parse-excel-headers for inputs/sample.xlsx: first sheet, columns of row 1 and the next rows as formatted strings; valid against the spec's schema, so _source stays spec when it is re-recorded. Hand-built and unconfirmed live: R7 cannot record it while USI-P7-21 holds.",
+  "_operation": "POST /etl/parse-excel-headers",
+  "status": 200,
+  "body": {
+    "columns": ["MAC", "Name"],
+    "sampleData": [
+      {
+        "MAC": "025d4b000000",
+        "Name": "sdk-test-fixture"
+      }
+    ]
+  }
+}

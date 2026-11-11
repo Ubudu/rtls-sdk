@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "Upsert of an existing asset: 200 with the plain text 'Updated' and no Content-Type header (the empty contentType marks its absence); the spec documents an Asset JSON body (USI-P2-2). Served as bytes by the handler.",
+  "_operation": "POST /assets/{app_namespace}/{mac_address}",
+  "_usi": ["USI-P2-2"],
+  "status": 200,
+  "contentType": "",
+  "text": "Updated"
+}

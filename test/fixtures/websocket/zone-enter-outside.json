@@ -1,0 +1,25 @@
+{
+  "_source": "server-code",
+  "_note": "First position of a tag new to the namespace that lies outside every zone, when the engine holds zone geometry for the map: an ENTER_ZONE for the outside-all-zones pseudo-zone, with zone null and no visit tracking.",
+  "_nonHttp": "WS-M2",
+  "_usi": ["USI-P8-7"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "ENTER_ZONE",
+    "app_namespace": "test_namespace",
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "user_udid": "025d4b000003",
+    "zone": null,
+    "timestamp": "2026-01-01T12:00:00Z",
+    "user_name": "Asset-003",
+    "external_id": null,
+    "tags": [],
+    "data": {},
+    "path": null,
+    "model": null,
+    "color": null,
+    "visit_id": null,
+    "start_ts": null,
+    "exit_ts": null
+  }
+}

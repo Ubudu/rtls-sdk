@@ -1,0 +1,20 @@
+{
+  "_source": "server-code",
+  "_usi": ["USI-P2-8"],
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.4, not re-recorded live (the tier-S live test checks the same per-item rejection): an ESL-only colour sent to a non-ESL tag is rejected per item without contacting hardware, and any failed item turns the whole answer into a 500 with the full result body. The body also validates against the spec's loose 500 {error} schema (nothing required), so no _operation is set.",
+  "status": 500,
+  "body": {
+    "message": "Some actions failed",
+    "tagCount": 1,
+    "success": false,
+    "results": [
+      {
+        "action": "ptlBlue",
+        "success": false,
+        "count": 1,
+        "statusCode": 400,
+        "error": "Action ptlBlue is ESL-only and cannot be sent to BLE tags"
+      }
+    ]
+  }
+}

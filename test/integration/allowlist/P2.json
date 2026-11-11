@@ -1,0 +1,12 @@
+{
+  "phase": "P2",
+  "entries": [
+    {
+      "id": "P2-2",
+      "op": "DELETE /assets/{app_namespace}",
+      "category": "excluded-by-policy",
+      "reason": "Policy record for assets.batchDelete (P2-T6 fallback): the SDK never sends the batch route (USI-P2-5); batchDelete sends one DELETE /assets/{app_namespace}/{mac_address} per MAC, which runs live. The unit cases assert that only the per-MAC route is sent. base.json still lists the route as wrap (handoff H-P2-F7).",
+      "unitTest": "test/resources/assets/assets.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "acknowledge on a direct message.",
+  "status": 409,
+  "body": {
+    "error": "not_actionable"
+  }
+}

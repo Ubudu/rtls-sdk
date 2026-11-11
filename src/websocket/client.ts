@@ -1,255 +1,152 @@
 /**
- * Unified WebSocket Client
+ * Unified WebSocket client: one subscriber and, when `mapUuid` is set, one publisher, with the
+ * events of both on one emitter (publisher lifecycle as `publisher:<name>`).
  *
- * This module provides the RtlsWebSocketClient class that combines
- * both publisher and subscriber functionality in a single interface.
+ * @module websocket/client
  */
-
-import { RtlsWebSocketSubscriber } from './subscriber';
+import { TypedEventEmitter } from './events';
 import { RtlsWebSocketPublisher } from './publisher';
-import {
-  type WebSocketClientConfig,
-  type SubscriberEventMap,
-  type SubscriptionResult,
-  type PublishPositionData,
-  type PublishResult,
-  type BatchPublishResult,
-  type UnifiedConnectionStatus,
+import { RtlsWebSocketSubscriber } from './subscriber';
+import type {
+  BatchPublishResult,
+  PublisherEventMap,
+  PublishResult,
+  SubscriberEventMap,
+  SubscriptionRequest,
+  SubscriptionResult,
+  SubscriptionState,
   SubscriptionType,
+  SubscriptionTypes,
+  UnifiedConnectionStatus,
+  UnifiedEventMap,
+  WebSocketClientConfig,
+  WebSocketConnectOptions,
+  WebSocketPublishPositionData,
 } from './types';
 
-/** Connect options for unified client */
-export interface ConnectOptions {
-  /** Only connect publisher */
-  publisherOnly?: boolean;
-  /** Only connect subscriber */
-  subscriberOnly?: boolean;
-}
+const NO_PUBLISHER = 'Publisher not configured. Provide mapUuid in config.';
+
+/** Every subscriber event, forwarded under its own name (a Record keeps the list exhaustive). */
+const SUBSCRIBER_EVENTS: Record<keyof SubscriberEventMap, true> = {
+  connected: true,
+  disconnected: true,
+  reconnecting: true,
+  reconnected: true,
+  reconnect_failed: true,
+  error: true,
+  message: true,
+  POSITIONS: true,
+  ZONES_ENTRIES_EVENTS: true,
+  ZONE_STATS_EVENTS: true,
+  ALERTS: true,
+  ASSETS: true,
+  TAG_LOST: true,
+  ALERT_RULES_CHANGED: true,
+  ASSETS_LIBRARY_CHANGED: true,
+  DATA_MODELS_CHANGED: true,
+  SETTINGS_CHANGED: true,
+  MAP_DATA_CHANGED: true,
+  unknown: true,
+};
+
+/** Publisher lifecycle events, forwarded as `publisher:<name>`. */
+const PUBLISHER_EVENTS = [
+  'connected',
+  'disconnected',
+  'reconnecting',
+  'reconnected',
+  'reconnect_failed',
+  'error',
+] as const satisfies readonly (keyof PublisherEventMap)[];
 
 /**
- * Unified WebSocket client combining publisher and subscriber functionality
+ * Subscriber and publisher behind one object.
  *
  * @example
  * ```typescript
- * const client = new RtlsWebSocketClient({
- *   apiKey: 'your-api-key',
- *   namespace: 'your-namespace',
- *   mapUuid: 'your-map-uuid',
- * });
- *
- * // Register event handlers
- * client.on('POSITIONS', (pos) => console.log(pos));
- *
- * // Connect both publisher and subscriber
- * await client.connect();
- *
- * // Subscribe to events
- * await client.subscribe([SubscriptionType.POSITIONS]);
- *
- * // Send positions
- * await client.sendPosition({
- *   macAddress: 'aabbccddeeff',
- *   latitude: 48.8566,
- *   longitude: 2.3522,
- * });
- *
- * await client.disconnect();
+ * const ws = new RtlsWebSocketClient({ apiKey, namespace, mapUuid });
+ * ws.on('POSITIONS', (p) => console.log(p.user_uuid));
+ * ws.on('publisher:error', ({ error }) => console.error(error.message));
+ * await ws.connect();
+ * await ws.subscribe('ALL');
  * ```
  */
-export class RtlsWebSocketClient {
-  private subscriber: RtlsWebSocketSubscriber;
-  private publisher: RtlsWebSocketPublisher | null = null;
-  private subscriberConnected = false;
-  private publisherConnected = false;
-  private readonly _config: WebSocketClientConfig;
+export class RtlsWebSocketClient extends TypedEventEmitter<UnifiedEventMap> {
+  private readonly config: WebSocketClientConfig;
+  private readonly subscriber: RtlsWebSocketSubscriber;
+  private readonly publisher: RtlsWebSocketPublisher | null;
 
   constructor(config: WebSocketClientConfig) {
-    if (!config.namespace) {
-      throw new Error('namespace is required');
-    }
-
-    if (!config.apiKey && !config.token) {
-      throw new Error('Either apiKey or token is required');
-    }
-
-    this._config = config;
-
-    // Always create subscriber
+    super();
+    const { subscriberUrl, publisherUrl, mapUuid, subscriptionTimeoutMs, ...base } = config ?? {};
     this.subscriber = new RtlsWebSocketSubscriber({
-      apiKey: config.apiKey,
-      token: config.token,
-      namespace: config.namespace,
-      subscriberUrl: config.subscriberUrl,
-      mapUuid: config.mapUuid,
-      debug: config.debug,
-      reconnectInterval: config.reconnectInterval,
-      maxReconnectAttempts: config.maxReconnectAttempts,
-      connectionTimeout: config.connectionTimeout,
+      ...base,
+      subscriberUrl,
+      subscriptionTimeoutMs,
     });
-
-    // Only create publisher if mapUuid is provided
-    if (config.mapUuid) {
-      this.publisher = new RtlsWebSocketPublisher({
-        apiKey: config.apiKey,
-        token: config.token,
-        namespace: config.namespace,
-        publisherUrl: config.publisherUrl,
-        mapUuid: config.mapUuid,
-        debug: config.debug,
-        reconnectInterval: config.reconnectInterval,
-        maxReconnectAttempts: config.maxReconnectAttempts,
-        connectionTimeout: config.connectionTimeout,
-      });
+    this.publisher = mapUuid
+      ? new RtlsWebSocketPublisher({ ...base, publisherUrl, mapUuid })
+      : null;
+    this.config = { ...config };
+    for (const event of Object.keys(SUBSCRIBER_EVENTS) as (keyof SubscriberEventMap)[]) {
+      this.forward(event);
     }
+    for (const event of PUBLISHER_EVENTS) this.forwardPublisher(event);
   }
 
-  /**
-   * Connect to WebSocket server(s)
-   *
-   * @param options - Connection options
-   * @param options.publisherOnly - Only connect the publisher
-   * @param options.subscriberOnly - Only connect the subscriber
-   *
-   * @example
-   * ```typescript
-   * // Connect both
-   * await client.connect();
-   *
-   * // Connect only subscriber
-   * await client.connect({ subscriberOnly: true });
-   *
-   * // Connect only publisher
-   * await client.connect({ publisherOnly: true });
-   * ```
-   */
-  async connect(options: ConnectOptions = {}): Promise<void> {
-    const promises: Promise<void>[] = [];
-
-    // Connect subscriber unless publisherOnly
-    if (!options.publisherOnly) {
-      promises.push(
-        this.subscriber.connect().then(() => {
-          this.subscriberConnected = true;
-        })
-      );
-    }
-
-    // Connect publisher unless subscriberOnly
-    if (!options.subscriberOnly && this.publisher) {
-      promises.push(
-        this.publisher.connect().then(() => {
-          this.publisherConnected = true;
-        })
-      );
-    }
-
-    await Promise.all(promises);
+  /** Connects the subscriber and the publisher (or only one of them). */
+  async connect(options: WebSocketConnectOptions = {}): Promise<void> {
+    const tasks: Promise<void>[] = [];
+    if (!options.publisherOnly) tasks.push(this.subscriber.connect());
+    if (!options.subscriberOnly && this.publisher !== null) tasks.push(this.publisher.connect());
+    await Promise.all(tasks);
   }
 
-  /**
-   * Subscribe to event types
-   *
-   * @param types - Array of subscription types
-   * @returns Subscription result
-   */
-  async subscribe(types: SubscriptionType | SubscriptionType[]): Promise<SubscriptionResult> {
-    return this.subscriber.subscribe(types);
+  /** Disconnects both sockets. */
+  async disconnect(): Promise<void> {
+    await Promise.all([this.subscriber.disconnect(), this.publisher?.disconnect()]);
   }
 
-  /**
-   * Unsubscribe from event types
-   *
-   * @param types - Array of subscription types to unsubscribe from
-   */
-  async unsubscribe(types: SubscriptionType | SubscriptionType[]): Promise<void> {
+  /** See `RtlsWebSocketSubscriber.subscribe`. */
+  subscribe(request?: SubscriptionRequest): Promise<SubscriptionResult> {
+    return this.subscriber.subscribe(request);
+  }
+
+  /** See `RtlsWebSocketSubscriber.unsubscribe`. */
+  unsubscribe(types?: SubscriptionTypes): Promise<void> {
     return this.subscriber.unsubscribe(types);
   }
 
-  /**
-   * Get currently active subscriptions
-   */
+  /** See `RtlsWebSocketSubscriber.setTagFilter`. */
+  setTagFilter(uuids: readonly string[] | null): Promise<void> {
+    return this.subscriber.setTagFilter(uuids);
+  }
+
+  /** See `RtlsWebSocketSubscriber.getSubscription`. */
+  getSubscription(): SubscriptionState | null {
+    return this.subscriber.getSubscription();
+  }
+
+  /** See `RtlsWebSocketSubscriber.getActiveSubscriptions`. */
   getActiveSubscriptions(): SubscriptionType[] {
     return this.subscriber.getActiveSubscriptions();
   }
 
-  /**
-   * Register an event handler
-   *
-   * @param event - Event name
-   * @param handler - Event handler function
-   * @returns Unsubscribe function
-   */
-  on<K extends keyof SubscriberEventMap>(
-    event: K,
-    handler: (data: SubscriberEventMap[K]) => void
-  ): () => void {
-    return this.subscriber.on(event, handler);
-  }
-
-  /**
-   * Register a one-time event handler
-   *
-   * @param event - Event name
-   * @param handler - Event handler function
-   * @returns Unsubscribe function
-   */
-  once<K extends keyof SubscriberEventMap>(
-    event: K,
-    handler: (data: SubscriberEventMap[K]) => void
-  ): () => void {
-    return this.subscriber.once(event, handler);
-  }
-
-  /**
-   * Remove an event handler
-   *
-   * @param event - Event name
-   * @param handler - Event handler function to remove
-   */
-  off<K extends keyof SubscriberEventMap>(
-    event: K,
-    handler: (data: SubscriberEventMap[K]) => void
-  ): void {
-    return this.subscriber.off(event, handler);
-  }
-
-  /**
-   * Send a position update
-   *
-   * @param data - Position data to publish
-   * @returns Publish result
-   */
-  async sendPosition(data: PublishPositionData): Promise<PublishResult> {
-    if (!this.publisher) {
-      return {
-        success: false,
-        error: 'Publisher not configured. Provide mapUuid in config.',
-      };
-    }
+  /** Publishes one position; without a publisher returns a failure result. */
+  async sendPosition(data: WebSocketPublishPositionData): Promise<PublishResult> {
+    if (this.publisher === null) return { success: false, error: NO_PUBLISHER };
     return this.publisher.sendPosition(data);
   }
 
-  /**
-   * Send multiple position updates in a batch
-   *
-   * @param positions - Array of position data to publish
-   * @returns Batch publish result
-   */
-  async sendBatch(positions: PublishPositionData[]): Promise<BatchPublishResult> {
-    if (!this.publisher) {
-      return {
-        success: false,
-        sent: 0,
-        failed: positions.length,
-        errors: ['Publisher not configured. Provide mapUuid in config.'],
-      };
+  /** Publishes positions; without a publisher returns a failure result. */
+  async sendBatch(positions: readonly WebSocketPublishPositionData[]): Promise<BatchPublishResult> {
+    if (this.publisher === null) {
+      return { success: false, sent: 0, failed: positions.length, errors: [NO_PUBLISHER] };
     }
     return this.publisher.sendBatch(positions);
   }
 
-  /**
-   * Get connection status for both publisher and subscriber
-   */
+  /** Status of both sockets. */
   getConnectionStatus(): UnifiedConnectionStatus {
     return {
       subscriber: this.subscriber.getConnectionStatus(),
@@ -257,83 +154,42 @@ export class RtlsWebSocketClient {
     };
   }
 
-  /**
-   * Check if subscriber is connected
-   */
+  /** `true` when the subscriber, and the publisher when configured, are connected. */
+  isConnected(): boolean {
+    return this.subscriber.isConnected() && (this.publisher?.isConnected() ?? true);
+  }
+
   isSubscriberConnected(): boolean {
     return this.subscriber.isConnected();
   }
 
-  /**
-   * Check if publisher is connected
-   */
   isPublisherConnected(): boolean {
     return this.publisher?.isConnected() ?? false;
   }
 
-  /**
-   * Check if both subscriber and publisher are connected
-   * (or just subscriber if no publisher configured)
-   */
-  isConnected(): boolean {
-    if (this.publisher) {
-      return this.subscriber.isConnected() && this.publisher.isConnected();
-    }
-    return this.subscriber.isConnected();
-  }
-
-  /**
-   * Disconnect from all WebSocket servers
-   */
-  async disconnect(): Promise<void> {
-    const promises: Promise<void>[] = [];
-
-    if (this.subscriberConnected || this.subscriber.isConnected()) {
-      promises.push(
-        this.subscriber.disconnect().then(() => {
-          this.subscriberConnected = false;
-        })
-      );
-    }
-
-    if ((this.publisherConnected || this.publisher?.isConnected()) && this.publisher) {
-      promises.push(
-        this.publisher.disconnect().then(() => {
-          this.publisherConnected = false;
-        })
-      );
-    }
-
-    await Promise.all(promises);
-  }
-
-  /**
-   * Get the underlying subscriber instance
-   * Useful for advanced configurations
-   */
   getSubscriber(): RtlsWebSocketSubscriber {
     return this.subscriber;
   }
 
-  /**
-   * Get the underlying publisher instance
-   * Returns null if publisher is not configured
-   */
   getPublisher(): RtlsWebSocketPublisher | null {
     return this.publisher;
   }
 
-  /**
-   * Get the current configuration
-   */
+  /** A copy of the configuration. */
   getConfig(): WebSocketClientConfig {
-    return { ...this._config };
+    return { ...this.config };
   }
 
-  /**
-   * Get the configured namespace
-   */
   getNamespace(): string {
-    return this._config.namespace;
+    return this.config.namespace;
+  }
+
+  private forward<K extends keyof SubscriberEventMap>(event: K): void {
+    this.subscriber.on(event, (data) => this.emit(event, data as UnifiedEventMap[K]));
+  }
+
+  private forwardPublisher<K extends (typeof PUBLISHER_EVENTS)[number]>(event: K): void {
+    const name = `publisher:${event}` as const;
+    this.publisher?.on(event, (data) => this.emit(name, data as UnifiedEventMap[typeof name]));
   }
 }

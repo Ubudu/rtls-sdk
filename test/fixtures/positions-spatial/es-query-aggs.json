@@ -1,0 +1,27 @@
+{
+  "_source": "spec",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-Q-2.",
+  "_operation": "POST /es/query/{appNamespace}/{dataType}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "took": 4,
+    "timed_out": false,
+    "terminated_early": false,
+    "_shards": { "total": 6, "successful": 6, "skipped": 0, "failed": 0 },
+    "hits": { "max_score": null, "hits": [] },
+    "aggregations": {
+      "per_hour": {
+        "buckets": [
+          { "key_as_string": "2026-11-10T13:00:00.000Z", "key": 1794315600000, "doc_count": 51975 },
+          {
+            "key_as_string": "2026-11-10T14:00:00.000Z",
+            "key": 1794319200000,
+            "doc_count": 112309
+          },
+          { "key_as_string": "2026-11-10T15:00:00.000Z", "key": 1794322800000, "doc_count": 111784 }
+        ]
+      }
+    }
+  }
+}

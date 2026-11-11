@@ -1,0 +1,41 @@
+{
+  "_source": "server-code",
+  "_note": "Server-code shape with one item, for typing (no live item exists while USI-P3-1 / USI-P3-2 empty the results). Synthetic geometry around lat 48.8, lon 2.3. The spec declares no 200 schema for this operation (USI-P3-10).",
+  "_operation": "GET /spatial/pois/{namespace}/by-tag",
+  "status": 200,
+  "body": {
+    "tag": "tag-1",
+    "level": null,
+    "total_pois": 1,
+    "pois": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [2.3001, 48.8001]
+        },
+        "properties": {
+          "id": 1,
+          "name": "POI 1",
+          "description": "Entrance",
+          "level": 0,
+          "color": "#00ff00",
+          "tags": ["tag-1"],
+          "_id": "poi-1",
+          "coordinates": {
+            "lat": 48.8001,
+            "lng": 2.3001
+          },
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "externalId": 1,
+          "externalVenueId": 1,
+          "externalApplicationId": 1,
+          "index": 0
+        },
+        "venue_id": 1,
+        "level": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "E10 Express default HTML error page (development form, with a stack in the first pre): a malformed JSON request body is rejected with 400 before any handler runs. Stack frames are placeholders.",
+  "status": 400,
+  "contentType": "text/html; charset=utf-8",
+  "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>SyntaxError: Unexpected token &#39;b&#39;, &quot;bad&quot; is not valid JSON<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at invokeCallback (&lt;anonymous&gt;)</pre>\n</body>\n</html>\n"
+}

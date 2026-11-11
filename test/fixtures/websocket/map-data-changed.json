@@ -1,0 +1,12 @@
+{
+  "_source": "server-code",
+  "_note": "Refetch hint for the map editor data of one venue map; carries only the venue and map ids. Delivered only under a subscription without a type filter.",
+  "_nonHttp": "WS-M11",
+  "_usi": ["USI-P8-3"],
+  "body": {
+    "action": "fetchMapEditorDataEvent",
+    "app_namespace": "test_namespace",
+    "venue_id": 12,
+    "map_id": 34
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.7: unknown or deleted document; the spec declares 404 without a schema.",
+  "status": 404,
+  "body": {
+    "error": "Document not found"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "_source": "server-code",
+  "_note": "Tag lost: raised once per zone whose presence expired for a tag that stopped reporting; delivered only under a subscription without a type filter.",
+  "_nonHttp": "WS-M5",
+  "_usi": ["USI-P8-3", "USI-P8-7"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "USR_EXIT",
+    "app_namespace": "test_namespace",
+    "user_udid": "025d4b000001",
+    "is_synthetic_exit": true,
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "zone": { "properties": { "id": 3 } },
+    "user_name": "Asset-001",
+    "tags": null,
+    "data": {},
+    "external_id": null
+  }
+}

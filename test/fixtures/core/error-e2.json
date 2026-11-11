@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "E2 envelope {error: <snake_code>, message: <human text>} used by the notification routes (400 bad_request, 403, 413, 429 rate_limited) and others; the spec declares only {error}.",
+  "status": 400,
+  "body": {
+    "error": "bad_request",
+    "message": "invalid kind"
+  }
+}

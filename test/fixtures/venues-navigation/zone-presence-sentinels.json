@@ -1,0 +1,19 @@
+{
+  "_source": "server-code",
+  "_note": "The two sentinel slots of the zone-presence timeline: an empty slot {id: 0, name: 'OUTSIDE_ALL_ZONES'} and a slot whose document has no zone {name: 'UNKNOWN_ZONE'} (only the timestamp). Synthetic timestamps.",
+  "_operation": "GET /es/zone_presence/{appNamespace}",
+  "status": 200,
+  "body": [
+    {
+      "id": 0,
+      "name": "OUTSIDE_ALL_ZONES",
+      "tags": [],
+      "color": null,
+      "timestamp": 1794400200000
+    },
+    {
+      "name": "UNKNOWN_ZONE",
+      "timestamp": 1794400500000
+    }
+  ]
+}

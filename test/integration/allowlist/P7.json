@@ -1,0 +1,34 @@
+{
+  "phase": "P7",
+  "entries": [],
+  "residue": [
+    {
+      "kind": "etl-activity-entry",
+      "match": "ETL activity entries whose details.name is sdk-test-<runId>-etl-profile or whose details.filename starts with sdk-test-<runId>-etl: 7 per full run (4 profile, 2 dry-run, 1 writing upload), 6 when the S block is skipped",
+      "perRun": true,
+      "category": "non-removable",
+      "reason": "The ETL activity log has no delete operation (USI-P7-15); the run's entries hold only sdk-test- names and test MACs."
+    },
+    {
+      "kind": "etl-import-row",
+      "match": "One ETL import-store row keyed by the run's test MAC testMac(41), written by the single writing upload S2",
+      "perRun": true,
+      "category": "non-removable",
+      "reason": "No operation lists or removes stored import rows, and deleting the mapping profile leaves them (USI-P7-15)."
+    },
+    {
+      "kind": "asset-history-entry",
+      "match": "Asset history entries of the run's test MAC testMac(41): create, ETL update and delete, 3 per namespace holding a copy (count not observed live)",
+      "perRun": true,
+      "category": "non-removable",
+      "reason": "The platform keeps asset history after the asset is deleted (same class as the P2 asset residue)."
+    },
+    {
+      "kind": "etl-activity-entry-example",
+      "match": "ETL activity entries from one write pass of example 18-etl-import (TypeScript twin): create, update, delete and 1 dry-run upload (details.filename sdk-test-<runId>-etl-example.csv) of the sdk-test-<runId>-etl-example profile, 4 per write pass",
+      "perRun": true,
+      "category": "non-removable",
+      "reason": "The ETL activity log has no delete operation (USI-P7-15); the stale update writes no entry; not part of the integration run."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "phase": "P5",
+  "entries": [
+    {
+      "id": "P5-1",
+      "file": "src/resources/alert-rules.ts",
+      "lines": [439, 454],
+      "match": "if (Array.isArray(stored)) {",
+      "category": "unreachable-live",
+      "reason": "Normaliser rows N1 and N3-N6: Demo Factory stores a canonical {name, rules} set; producing the other stored shapes needs a non-canonical write to production, which LIVE-TESTING §4 forbids.",
+      "unitTest": "test/resources/dashboards-rules/alert-rules.test.ts"
+    },
+    {
+      "id": "P5-2",
+      "file": "src/resources/alert-rules.ts",
+      "lines": [633, 638],
+      "match": "if (shape !== 'canonical') {",
+      "category": "unreachable-live",
+      "reason": "The read-modify-write helpers refuse a stored document that is not {name, rules}; Demo Factory stores a canonical set and producing another shape needs a non-canonical write to production, which LIVE-TESTING §4 forbids.",
+      "unitTest": "test/resources/dashboards-rules/alert-rules.test.ts"
+    },
+    {
+      "id": "P5-3",
+      "file": "src/resources/alert-rules.ts",
+      "lines": [601, 601],
+      "match": "delete rule.disabled;",
+      "method": "alertRules.setRuleEnabled",
+      "category": "excluded-by-policy",
+      "reason": "setRuleEnabled(…, true) deletes the disabled key and so enables a rule; enabling a rule in production exceeds the one disabled test entry LIVE-TESTING §4.2 allows (P5 §9.7). Unit test R5 'true → the disabled key is deleted (not false)'.",
+      "unitTest": "test/resources/dashboards-rules/alert-rules.test.ts"
+    }
+  ]
+}

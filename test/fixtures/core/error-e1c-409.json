@@ -1,0 +1,12 @@
+{
+  "_source": "server-code",
+  "_note": "E1c envelope {error: <code_like>} with extra keys: the ETL mapping-profile update answers a stale updated_at with this 409 and the stored profile under current (the id here is made up). The spec declares no 409 for the operation.",
+  "_operation": "PUT /etl/mapping-profiles/{id}",
+  "status": 409,
+  "body": {
+    "error": "stale_write",
+    "current": {
+      "_id": "000000000000000000000001"
+    }
+  }
+}

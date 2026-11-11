@@ -1,0 +1,22 @@
+{
+  "_source": "spec",
+  "_operation": "GET /notifications/{namespace}/rules/{id}",
+  "status": 200,
+  "body": {
+    "_id": "65a000000000000000000001",
+    "app_namespace": "ns-test",
+    "user_id": "64f000000000000000000001",
+    "name": "sdk-test-rule",
+    "enabled": false,
+    "match": {
+      "kinds": ["alert"],
+      "event_types": ["e"]
+    },
+    "channels": ["inapp"],
+    "throttle": {
+      "coalesce_seconds": 60
+    },
+    "created_at": 1730000000000,
+    "__v": 0
+  }
+}

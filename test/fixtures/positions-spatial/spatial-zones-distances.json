@@ -1,0 +1,41 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-4.",
+  "_operation": "POST /spatial/zones/{namespace}/calculate-distances",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "reference_point": { "lat": 48.8, "lon": 2.3 },
+    "requested_zones": 10,
+    "found_zones": 10,
+    "zones": [
+      {
+        "zone_id": 1,
+        "zone_name": "Zone 1",
+        "level": 0,
+        "boundary_distance_meters": 0,
+        "centroid_distance_meters": 0,
+        "is_inside": true,
+        "centroid": { "lat": 48.8, "lon": 2.3 }
+      },
+      {
+        "zone_id": 2,
+        "zone_name": "Zone 2",
+        "level": 0,
+        "boundary_distance_meters": 14,
+        "centroid_distance_meters": 20,
+        "is_inside": false,
+        "centroid": { "lat": 48.8000166, "lon": 2.2997287 }
+      },
+      {
+        "zone_id": 3,
+        "zone_name": "Zone 3",
+        "level": 0,
+        "boundary_distance_meters": 15,
+        "centroid_distance_meters": 35,
+        "is_inside": false,
+        "centroid": { "lat": 48.7996831, "lon": 2.3000372 }
+      }
+    ]
+  }
+}

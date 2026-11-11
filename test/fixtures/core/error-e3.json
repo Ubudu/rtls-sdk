@@ -1,0 +1,10 @@
+{
+  "_source": "server-code",
+  "_note": "E3 typed envelope {error: {code, message?, details?}} of the AI report routes (out of scope, mapped generically); here without message.",
+  "status": 404,
+  "body": {
+    "error": {
+      "code": "ReportNotFound"
+    }
+  }
+}

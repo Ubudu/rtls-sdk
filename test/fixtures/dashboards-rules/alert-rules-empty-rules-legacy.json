@@ -1,0 +1,34 @@
+{
+  "_source": "server-code",
+  "_note": "Normaliser input N3: an empty rules array next to a non-empty legacy decisions array; the engine evaluates decisions.",
+  "status": 200,
+  "body": {
+    "name": "Example legacy",
+    "rules": [],
+    "decisions": [
+      {
+        "id": "example-rule-1",
+        "conditions": {
+          "all": [
+            {
+              "fact": "zone_name",
+              "operator": "equal",
+              "value": "Example Zone"
+            }
+          ]
+        },
+        "event": {
+          "type": "message",
+          "params": {
+            "title": "Example",
+            "text": "{{user_name}} entered",
+            "style": "info",
+            "duration": 2000,
+            "coalescence": 60,
+            "coalescence_group": "example_{{user_udid}}"
+          }
+        }
+      }
+    ]
+  }
+}

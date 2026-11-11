@@ -1,0 +1,25 @@
+{
+  "_source": "live",
+  "_note": "201 body of a create (recorded live, W1): stored profile with server-assigned _id, userId, created_at, updated_at and __v 0; no defaults key (empty objects are dropped). The spec MappingProfile schema is wrong (USI-P7-1).",
+  "_operation": "POST /etl/mapping-profiles",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "7c4e16fb" },
+  "status": 201,
+  "body": {
+    "name": "sdk-test-000000-etl-profile",
+    "description": "sdk-test",
+    "sourceType": "excel",
+    "mappings": {
+      "user_udid": { "sourceColumn": "MAC" },
+      "user_name": { "sourceColumn": "Name", "transformation": "trim", "required": true },
+      "data.sdk_test_note": { "sourceColumn": "Note" }
+    },
+    "keyColumns": ["MAC"],
+    "requiredFields": [],
+    "applicationId": "test-namespace",
+    "userId": "<redacted>",
+    "_id": "64b000000000000000000001",
+    "created_at": "2026-11-11T13:39:35.409Z",
+    "updated_at": "2026-11-11T13:39:35.416Z",
+    "__v": 0
+  }
+}

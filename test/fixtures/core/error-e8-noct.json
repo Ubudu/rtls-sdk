@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "E8 plain-text error without any Content-Type header (the empty contentType marks its absence): the single-asset DELETE answers an unknown MAC this way; the P0 harness smoke test saw the same status, bytes and missing Content-Type live.",
+  "_operation": "DELETE /assets/{app_namespace}/{mac_address}",
+  "status": 404,
+  "contentType": "",
+  "text": "404 Not Found\r\n"
+}

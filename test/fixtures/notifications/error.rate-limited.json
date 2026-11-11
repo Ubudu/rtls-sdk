@@ -1,0 +1,12 @@
+{
+  "_source": "server-code",
+  "_note": "send over 60 per 60 s per user and namespace; Retry-After in seconds.",
+  "status": 429,
+  "body": {
+    "error": "rate_limited",
+    "message": "too many sends"
+  },
+  "headers": {
+    "Retry-After": "17"
+  }
+}

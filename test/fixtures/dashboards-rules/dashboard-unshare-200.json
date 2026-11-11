@@ -1,0 +1,22 @@
+{
+  "_source": "server-code",
+  "_note": "Creator view after an unshare: shared_with and selected_by emptied; data is the product UI's widget array, not the spec's object (USI-P5-6). Every value is synthetic.",
+  "_operation": "POST /dashboards/{id}/unshare",
+  "_usi": ["USI-P5-6"],
+  "status": 200,
+  "body": {
+    "_id": "65a1b2c3d4e5f60718293a4b",
+    "name": "Example A",
+    "description": "Example dashboard",
+    "application_namespace": "test-ns",
+    "data": [],
+    "created_at": "2026-01-10T08:00:00.000Z",
+    "updated_at": "2026-01-10T08:00:00.000Z",
+    "created_by": "example-user",
+    "shared_with": [],
+    "selected_by": [],
+    "selected": false,
+    "can_edit": true,
+    "__v": 0
+  }
+}

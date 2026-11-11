@@ -1,0 +1,36 @@
+{
+  "_source": "server-code",
+  "_note": "The spec's own GET example, i.e. the stored {name, rules} document the rule editor writes; its rule (id, conditions, event) does not validate against the spec AlertRule schema, which requires name and type.",
+  "_usi": ["USI-P5-1"],
+  "_operation": "GET /alert_rules/{app_namespace}",
+  "status": 200,
+  "body": {
+    "name": "",
+    "rules": [
+      {
+        "conditions": {
+          "all": [
+            {
+              "fact": "path",
+              "model": "default",
+              "operator": "equal",
+              "value": "/Root/Lv 1/"
+            }
+          ]
+        },
+        "event": {
+          "params": {
+            "coalescence": 20,
+            "coalescence_group": "test_{{user_udid}}",
+            "duration": 2000,
+            "style": "info",
+            "text": "{{user_name}} - {{user_udid}} - {{path}}",
+            "title": "Received a position from an Lv 1 asset"
+          },
+          "type": "message"
+        },
+        "id": "4c60fcf9-54f0-4d8a-bf8e-6e5f82b5c939"
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "_source": "spec",
+  "_note": "group_by=type: one row per kind (group_key = the kind), from the current page only (USI-P6-2).",
+  "_operation": "GET /notifications/{namespace}",
+  "status": 200,
+  "headers": {
+    "X-Total-Count": "2"
+  },
+  "body": [
+    {
+      "group_key": "direct_message",
+      "group_by": "type",
+      "item_ids": ["665f1c2e9b1d4a0012345601"],
+      "newest": {
+        "_id": "665f1c2e9b1d4a0012345601",
+        "title": "Cold room door open",
+        "severity": "info",
+        "created_at": 1718983070000,
+        "thread_key": "dm:conv-1"
+      },
+      "count": 1,
+      "unread_count": 1,
+      "max_severity": "info",
+      "needs_ack": false
+    },
+    {
+      "group_key": "mission",
+      "group_by": "type",
+      "item_ids": ["665f1c2e9b1d4a0012345602"],
+      "newest": {
+        "_id": "665f1c2e9b1d4a0012345602",
+        "title": "Check freezer 3",
+        "severity": "warning",
+        "created_at": 1718983010000,
+        "thread_key": "mission:m-1"
+      },
+      "count": 1,
+      "unread_count": 1,
+      "max_severity": "warning",
+      "needs_ack": true
+    }
+  ]
+}

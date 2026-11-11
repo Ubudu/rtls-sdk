@@ -1,0 +1,9 @@
+{
+  "_source": "spec",
+  "_note": "The HealthStatus body of a ready API, {status: 'OK'}, the value the live API returns (read-only probe); valid against the schema the spec declares for 200.",
+  "_operation": "GET /health",
+  "status": 200,
+  "body": {
+    "status": "OK"
+  }
+}

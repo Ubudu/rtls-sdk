@@ -1,0 +1,13 @@
+{
+  "_source": "server-code",
+  "_operation": "POST /tag-actions/{appNamespace}",
+  "_usi": ["USI-P2-8"],
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.4: an empty action array answers 200 with tagCount 0 and no device contacted. results is an array (spec: object) and the top-level success flag is undocumented.",
+  "status": 200,
+  "body": {
+    "message": "Actions sent successfully",
+    "tagCount": 0,
+    "results": [],
+    "success": true
+  }
+}

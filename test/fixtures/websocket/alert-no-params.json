@@ -1,0 +1,13 @@
+{
+  "_source": "server-code",
+  "_note": "Alert raised by a rule without event parameters that a zone event triggered: zone events carry only user_udid, so the alert has no user_udid and no user_type, and no params key.",
+  "_nonHttp": "WS-M4",
+  "_usi": ["USI-P8-11"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "NOTIFICATION",
+    "app_namespace": "test_namespace",
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "zone": { "properties": { "id": 3 } }
+  }
+}

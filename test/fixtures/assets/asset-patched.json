@@ -1,0 +1,24 @@
+{
+  "_source": "spec",
+  "_operation": "PATCH /assets/{app_namespace}/{mac_address}",
+  "_note": "The merged asset as the server answers a merge patch: keys in alphabetical order, dateChanged refreshed. Written by hand; scrubbed as asset.json.",
+  "status": 200,
+  "body": {
+    "color": "#000000",
+    "createdBy": "test-namespace",
+    "data": {
+      "battery": 80,
+      "zone": "A"
+    },
+    "dateChanged": 1745547700000,
+    "dateCreated": 1744620101741,
+    "model": "UWB-TAG-A",
+    "path": "/Root/Lv 1/",
+    "tags": ["fleet", "north"],
+    "targetApplications": ["test-namespace"],
+    "user_motion": "default",
+    "user_name": "Forklift 01",
+    "user_type": "forklift",
+    "user_udid": "025d4b000001"
+  }
+}

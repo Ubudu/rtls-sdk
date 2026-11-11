@@ -1,0 +1,9 @@
+{
+  "_source": "spec",
+  "_note": "E1 envelope {error: <human text>}, exactly the Error schema the spec declares for this 404; the same shape was seen by the read-only discovery probe.",
+  "_operation": "GET /dashboards/{id}",
+  "status": 404,
+  "body": {
+    "error": "Dashboard not found"
+  }
+}

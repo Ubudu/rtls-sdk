@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "Authentication middleware: no credential (human text, no code).",
+  "status": 401,
+  "body": {
+    "error": "No authentication credentials provided"
+  }
+}

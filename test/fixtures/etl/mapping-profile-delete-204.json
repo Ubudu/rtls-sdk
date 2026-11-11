@@ -1,0 +1,8 @@
+{
+  "_source": "spec",
+  "_note": "204 of a delete by the creator (recorded live, W12): empty body. The spec declares no 204 body shape.",
+  "_operation": "DELETE /etl/mapping-profiles/{id}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "7c4e16fb" },
+  "status": 204,
+  "body": null
+}

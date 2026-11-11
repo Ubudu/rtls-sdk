@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "E1 envelope: the 400 of an Elasticsearch read sent without its time range, seen by the read-only discovery probe. The live harness cannot re-record it: the guard (G12) refuses an unbounded /es/alerts read before it leaves.",
+  "_operation": "GET /es/alerts/{appNamespace}",
+  "status": 400,
+  "body": {
+    "error": "timestampFrom and timestampTo are required parameters"
+  }
+}

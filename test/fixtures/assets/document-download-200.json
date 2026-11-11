@@ -1,0 +1,12 @@
+{
+  "_source": "server-code",
+  "_operation": "GET /assets/{namespace}/{mac_address}/documents/{documentId}/download",
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.7: the 67-byte 1x1 PNG original, streamed with the stored Content-Type and an attachment Content-Disposition; the spec declares 200 without content.",
+  "status": 200,
+  "contentType": "image/png",
+  "headers": {
+    "Content-Disposition": "attachment; filename=\"sdk-test.png\"",
+    "Content-Length": "67"
+  },
+  "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg=="
+}

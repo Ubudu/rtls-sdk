@@ -1,0 +1,21 @@
+{
+  "_source": "live",
+  "_note": "Live capture (P4-T2, tier R), 1 map(s); map_features and beacons_positions emptied; names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /venues/{namespace}/{venueId}/maps",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": [
+    {
+      "name": "Map 1",
+      "uuid": "00000000-0000-4000-8000-000000000001",
+      "id": 92950,
+      "tiles_url_base": "https://tiles.example.invalid/maps/1/{z}/{x}/{y}.png",
+      "map_bounds": [
+        [45.4994599, 4.4997547],
+        [45.5004855, 4.5008662]
+      ],
+      "level": 0,
+      "map_features": {}
+    }
+  ]
+}

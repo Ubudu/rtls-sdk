@@ -1,0 +1,159 @@
+{
+  "phase": "P4",
+  "domain": "venues-navigation",
+  "status": "complete",
+  "operations": [
+    {
+      "op": "GET /venues/{namespace}",
+      "decision": "wrap",
+      "sdk": ["venues.list", "venues.iterate"],
+      "unit": "test/resources/venues-navigation/venues.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-1", "USI-P4-3", "USI-P4-4", "USI-P4-19"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}",
+      "decision": "wrap",
+      "sdk": ["venues.get"],
+      "unit": "test/resources/venues-navigation/venues.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-2", "USI-P4-21"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}/maps",
+      "decision": "wrap",
+      "sdk": ["venues.listMaps"],
+      "unit": "test/resources/venues-navigation/venues.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-3", "USI-P4-4"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}/maps/{mapId}/zones",
+      "decision": "wrap",
+      "sdk": ["zones.listByMap", "zones.listByMapAsArray"],
+      "unit": "test/resources/venues-navigation/zones.test.ts",
+      "live": "test/integration/venues-navigation/zones.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-6"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}/maps/{mapId}/pois",
+      "decision": "wrap",
+      "sdk": ["venues.listMapPois"],
+      "unit": "test/resources/venues-navigation/venues.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-6"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}/zones",
+      "decision": "wrap",
+      "sdk": ["zones.list", "zones.listAsArray", "zones.iterate", "zones.getAll"],
+      "unit": "test/resources/venues-navigation/zones.test.ts",
+      "live": "test/integration/venues-navigation/zones.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-4", "USI-P4-5"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}/pois",
+      "decision": "wrap",
+      "sdk": ["venues.listPois", "venues.listPoisAsArray"],
+      "unit": "test/resources/venues-navigation/venues.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-4", "USI-P4-5", "USI-P4-20"]
+    },
+    {
+      "op": "GET /venues/{namespace}/{venueId}/paths",
+      "decision": "wrap",
+      "sdk": ["venues.listPaths", "venues.listPathNodes", "venues.listPathSegments"],
+      "unit": "test/resources/venues-navigation/venues.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-4", "USI-P4-5", "USI-P4-8"]
+    },
+    {
+      "op": "POST /spatial/navigate/{namespace}/shortest-path",
+      "decision": "wrap",
+      "sdk": ["navigation.shortestPath"],
+      "unit": "test/resources/venues-navigation/navigation.test.ts",
+      "live": "test/integration/venues-navigation/navigation.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-7", "USI-P4-8", "USI-P4-9", "USI-P4-10", "USI-P4-11", "USI-P4-17"]
+    },
+    {
+      "op": "POST /spatial/navigate/{namespace}/accessible-path",
+      "decision": "wrap",
+      "sdk": ["navigation.accessiblePath"],
+      "unit": "test/resources/venues-navigation/navigation.test.ts",
+      "allowlist": "P4-1",
+      "usi": ["USI-P4-7", "USI-P4-8", "USI-P4-9", "USI-P4-10", "USI-P4-11", "USI-P4-12"]
+    },
+    {
+      "op": "POST /spatial/navigate/{namespace}/multi-stop",
+      "decision": "wrap",
+      "sdk": ["navigation.multiStop"],
+      "unit": "test/resources/venues-navigation/navigation.test.ts",
+      "live": "test/integration/venues-navigation/navigation.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-7", "USI-P4-8", "USI-P4-13", "USI-P4-17"]
+    },
+    {
+      "op": "GET /spatial/navigate/{namespace}/nearest-poi/{nodeId}",
+      "decision": "wrap",
+      "sdk": ["navigation.nearestPoi"],
+      "unit": "test/resources/venues-navigation/navigation.test.ts",
+      "live": "test/integration/venues-navigation/navigation.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-7", "USI-P4-14", "USI-P4-16", "USI-P4-17", "USI-P4-20"]
+    },
+    {
+      "op": "GET /spatial/navigate/{namespace}/evacuation/{nodeId}",
+      "decision": "wrap",
+      "sdk": ["navigation.evacuationRoute"],
+      "unit": "test/resources/venues-navigation/navigation.test.ts",
+      "live": "test/integration/venues-navigation/navigation.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-7", "USI-P4-15", "USI-P4-20"]
+    },
+    {
+      "op": "GET /es/zone_presence/{appNamespace}",
+      "decision": "wrap",
+      "sdk": ["zones.getPresence"],
+      "unit": "test/resources/venues-navigation/zones.test.ts",
+      "live": "test/integration/venues-navigation/zones.int.test.ts",
+      "tier": "R",
+      "usi": ["USI-P4-18"]
+    }
+  ],
+  "nonHttp": [],
+  "sdkMethods": [
+    {
+      "name": "extractZonesFromGeoJSON",
+      "unit": "test/resources/venues-navigation/geojson.test.ts",
+      "live": "test/integration/venues-navigation/zones.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "extractPoisFromGeoJSON",
+      "unit": "test/resources/venues-navigation/geojson.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "extractPathNodesFromGeoJSON",
+      "unit": "test/resources/venues-navigation/geojson.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R"
+    },
+    {
+      "name": "extractPathSegmentsFromGeoJSON",
+      "unit": "test/resources/venues-navigation/geojson.test.ts",
+      "live": "test/integration/venues-navigation/venues.int.test.ts",
+      "tier": "R"
+    }
+  ]
+}

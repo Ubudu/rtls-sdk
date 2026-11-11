@@ -1,0 +1,7 @@
+{
+  "_source": "spec",
+  "_operation": "DELETE /assets/{app_namespace}/{mac_address}",
+  "_note": "200 with an empty body and no Content-Type (Content-Length 0), as P0 saw live.",
+  "status": 200,
+  "body": null
+}

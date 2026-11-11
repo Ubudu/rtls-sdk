@@ -1,75 +1,69 @@
-# Ubudu RTLS SDK Documentation
+# Ubudu RTLS SDK documentation
 
-Welcome to the Ubudu RTLS SDK documentation. This SDK provides TypeScript/JavaScript bindings for the Ubudu Real-Time Location System API.
+Guides, recipes and reference for `ubudu-rtls-sdk`, the TypeScript and JavaScript SDK of the Ubudu RTLS REST and
+WebSocket API.
 
-## Guides
+## Which guide do I need
 
-| Guide | Description |
-|-------|-------------|
-| [Getting Started](./guides/getting-started.md) | Installation, configuration, first API calls |
-| [Asset Tracking](./guides/asset-tracking.md) | Asset CRUD, positions, history, statistics |
-| [Zone & Geofencing](./guides/zone-geofencing.md) | Zones, spatial queries, presence detection |
-| [Navigation](./guides/navigation.md) | POIs, paths, indoor routing |
-| [WebSocket Streaming](./guides/websocket.md) | Real-time positions, zones, alerts |
-| [Error Handling](./guides/error-handling.md) | Error types, retry strategies |
-| [Advanced Patterns](./guides/advanced-patterns.md) | Pagination, filtering, batch processing |
-| [Migration to v2](./guides/migration-v2.md) | Migrating to default context API |
-| [Release Setup](./guides/release-setup.md) | CI/CD for GitHub and npm publishing |
+| I want to… | Guide |
+|---|---|
+| install the SDK, get credentials, create a client, set the default context | [Getting started](./guides/getting-started.md) |
+| upgrade code written for 0.2 | [Migration to 0.3](./guides/migration-0.3.md) |
+| handle errors, timeouts, cancellation, retries and rate limits | [Error handling](./guides/error-handling.md) |
+| list large collections, filter, sort, bound an iteration | [Pagination and filtering](./guides/pagination-filtering.md) |
+| manage assets, their documents, declared locations, BLE tag actions | [Assets](./guides/assets.md) |
+| read live and historical positions, publish positions, run spatial queries | [Positions and spatial](./guides/positions-spatial.md) |
+| read venues, maps, zones, POIs and paths, compute indoor routes | [Venues and navigation](./guides/venues-navigation.md) |
+| manage dashboards, read alerts, edit alert rules, read settings | [Dashboards and alert rules](./guides/dashboards-alert-rules.md) |
+| read and triage the notification inbox, send notifications, follow the live stream | [Notifications](./guides/notifications.md) |
+| update existing assets from CSV or Excel files | [ETL](./guides/etl.md) |
+| stream positions, zone events and alerts in real time, publish positions | [WebSocket](./guides/websocket.md) |
+| see a complete scenario built from several domains | [Recipes](./recipes/README.md) |
+| look up a class, method or type | [API reference](./api/README.md) |
+
+## Start here
+
+- [Getting started](./guides/getting-started.md): install, credentials, first client, authentication, client
+  options, default context, `client.raw` for operations the SDK does not wrap, runtime support.
+- [Migration to 0.3](./guides/migration-0.3.md): breaking changes with before and after code, deprecated aliases,
+  new capabilities.
+
+## Concepts
+
+- [Error handling](./guides/error-handling.md): error classes, fields, status mapping, timeouts, cancellation,
+  retries, rate limits.
+- [Pagination and filtering](./guides/pagination-filtering.md): the three listing models, `collectAll`, the
+  filter DSL, `applyFilters`, sorting and field selection.
+
+## Domains
+
+- [Assets](./guides/assets.md): `client.assets`, `assetDocuments`, `assetTree`, `dataModels`,
+  `declaredLocations`, `tagActions`.
+- [Positions and spatial](./guides/positions-spatial.md): `client.positions`, `client.spatial`.
+- [Venues and navigation](./guides/venues-navigation.md): `client.venues`, `client.zones`, `client.navigation`.
+- [Dashboards and alert rules](./guides/dashboards-alert-rules.md): `client.dashboards`, `client.alerts`,
+  `client.alertRules`, `client.settings`.
+- [Notifications](./guides/notifications.md): `client.notifications` and its live stream.
+- [ETL](./guides/etl.md): `client.etl`.
+- [WebSocket](./guides/websocket.md): `RtlsWebSocketSubscriber`, `RtlsWebSocketPublisher`,
+  `RtlsWebSocketClient`, `client.createWebSocket()`.
+
+## Recipes
+
+End-to-end programs, each with a page and a TypeScript and a JavaScript example:
+[recipe index](./recipes/README.md).
+
+## Reference
+
+- [API reference overview](./api/README.md): how the reference is organised, shared utilities.
+- [Generated API reference](./api/reference/README.md): every exported class, function and type.
+- [Endpoint coverage](./api/endpoint-coverage.md): every operation of the RTLS API with the SDK method that wraps
+  it, or the reason it is not wrapped.
 
 ## Examples
 
-See the [examples directory](../examples/) for runnable TypeScript and JavaScript examples.
+Runnable examples for every domain, in TypeScript and JavaScript: [examples index](../examples/README.md).
 
-```bash
-cd examples
-npm install
-npm run ts:all  # Run all TypeScript examples
-```
+## Maintainers
 
-## API Reference
-
-See the [API Reference](./api/README.md) for detailed documentation of all classes and methods.
-
-## Quick Start
-
-```typescript
-import { createRtlsClient } from 'ubudu-rtls-sdk';
-
-const client = createRtlsClient({
-  apiKey: 'your-api-key',
-});
-
-// List assets
-const assets = await client.assets.list('namespace');
-
-// Get cached positions
-const positions = await client.positions.listCached('namespace');
-
-// Spatial query
-const nearbyZones = await client.spatial.nearestZones('namespace', {
-  lat: 48.8566,
-  lon: 2.3522,
-  limit: 5,
-});
-```
-
-## Resources
-
-The SDK provides access to these API resources:
-
-| Resource | Class | Description |
-|----------|-------|-------------|
-| Assets | `client.assets` | Asset CRUD, history, statistics |
-| Positions | `client.positions` | Real-time and historical positions |
-| Venues | `client.venues` | Venues, maps, POIs, paths |
-| Zones | `client.zones` | Zone management and presence |
-| Spatial | `client.spatial` | Spatial queries |
-| Alerts | `client.alerts` | Alert rules |
-| Dashboards | `client.dashboards` | Dashboard configuration |
-| Navigation | `client.navigation` | Indoor routing |
-| WebSocket | `RtlsWebSocketClient` | Real-time streaming |
-
-## Support
-
-- [GitHub Issues](https://github.com/ubudu/rtls-sdk/issues) - Report bugs or request features
-- [API Documentation](https://rtls.ubudu.com/api/docs) - RTLS API reference
+- [Release setup](./guides/release-setup.md): CI pipelines, GitHub mirroring, npm publishing, release checklist.

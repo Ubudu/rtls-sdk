@@ -1,0 +1,67 @@
+{
+  "_source": "server-code",
+  "_note": "The spec declares 200 without a schema. The PUT answers the merged document, redacted like the read.",
+  "_operation": "PUT /notifications/{namespace}/tenant-config",
+  "status": 200,
+  "body": {
+    "_id": "65e000000000000000000001",
+    "app_namespace": "ns-test",
+    "email": {
+      "smtp_host": "smtp.example.invalid",
+      "smtp_port": 587,
+      "from": "alerts@example.invalid",
+      "auth": {
+        "user": "mailer",
+        "pass": {
+          "set": true,
+          "fingerprint": "fp1"
+        }
+      }
+    },
+    "slack": {
+      "bot_token": {
+        "set": true,
+        "fingerprint": "fp6"
+      }
+    },
+    "telegram": {
+      "bot_token": {
+        "set": true,
+        "fingerprint": "fp3"
+      }
+    },
+    "teams": {
+      "azure_app": {
+        "client_secret": {
+          "set": true,
+          "fingerprint": "fp4"
+        }
+      }
+    },
+    "whatsapp": {
+      "cloud_api": {
+        "access_token": {
+          "set": true,
+          "fingerprint": "fp5"
+        }
+      },
+      "templates": {
+        "alert": {
+          "name": "alert_v1",
+          "lang": "en",
+          "params": ["title"]
+        }
+      }
+    },
+    "rate_limits": {
+      "email": {
+        "per_minute": 10
+      }
+    },
+    "cleanup_cap": {
+      "max_archive_days": 60
+    },
+    "updated_at": 1730000000000,
+    "__v": 0
+  }
+}

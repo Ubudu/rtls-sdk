@@ -1,0 +1,2917 @@
+{
+  "_source": "server-code",
+  "_note": "Validator cases V1-V21 plus branch cases X1-X20. Each case gives a rule (wrapped as {name: '', rules: [rule]}) or a whole set, the expected error and warning codes, the path of the first issue (first error, else first warning), and the outcome of the rule set (engine): throws while the rules are loaded (every rule of the namespace stops), rejects-at-run (no rule fires for that event) or accepts; disabled rules are not loaded. stricter marks the cases the SDK rejects although the engine accepts them. Set-level cases load no rule at all (nothing fires).",
+  "body": {
+    "cases": [
+      {
+        "id": "V1",
+        "label": "spec example rule",
+        "rule": {
+          "conditions": {
+            "all": [
+              {
+                "fact": "path",
+                "model": "default",
+                "operator": "equal",
+                "value": "/Root/Lv 1/"
+              }
+            ]
+          },
+          "event": {
+            "params": {
+              "coalescence": 20,
+              "coalescence_group": "test_{{user_udid}}",
+              "duration": 2000,
+              "style": "info",
+              "text": "{{user_name}} - {{user_udid}} - {{path}}",
+              "title": "Received a position from an Lv 1 asset"
+            },
+            "type": "message"
+          },
+          "id": "4c60fcf9-54f0-4d8a-bf8e-6e5f82b5c939"
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "V2",
+        "label": "leaf without value",
+        "rule": {
+          "id": "case-v2",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_VALUE_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-v2"
+      },
+      {
+        "id": "V3",
+        "label": "leaf without fact",
+        "rule": {
+          "id": "case-v3",
+          "conditions": {
+            "all": [
+              {
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_FACT_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-v3"
+      },
+      {
+        "id": "V4",
+        "label": "leaf without operator",
+        "rule": {
+          "id": "case-v4",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_OPERATOR_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-v4"
+      },
+      {
+        "id": "V5",
+        "label": "unknown operator regex (only leaf)",
+        "rule": {
+          "id": "case-v5",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "regex",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_OPERATOR_UNKNOWN"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "rejects-at-run",
+        "firstRuleId": "case-v5"
+      },
+      {
+        "id": "V6",
+        "label": "root not",
+        "rule": {
+          "id": "case-v6",
+          "conditions": {
+            "not": {
+              "fact": "zone_name",
+              "operator": "equal",
+              "value": "Dock"
+            }
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_ROOT_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "throws",
+        "firstRuleId": "case-v6"
+      },
+      {
+        "id": "V7",
+        "label": "root with both all and any",
+        "rule": {
+          "id": "case-v7",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ],
+            "any": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Gate"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_ROOT_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "accepts",
+        "stricter": true,
+        "firstRuleId": "case-v7"
+      },
+      {
+        "id": "V8",
+        "label": "nested not",
+        "rule": {
+          "id": "case-v8",
+          "conditions": {
+            "all": [
+              {
+                "not": {
+                  "fact": "zone_name",
+                  "operator": "equal",
+                  "value": "Dock"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_NOT_SUPPORTED"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-v8"
+      },
+      {
+        "id": "V9",
+        "label": "all is an object",
+        "rule": {
+          "id": "case-v9",
+          "conditions": {
+            "all": {}
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_GROUP_NOT_ARRAY"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all",
+        "engine": "throws",
+        "firstRuleId": "case-v9"
+      },
+      {
+        "id": "V10a",
+        "label": "no conditions key",
+        "rule": {
+          "id": "case-v10a",
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "throws",
+        "firstRuleId": "case-v10a"
+      },
+      {
+        "id": "V10b",
+        "label": "conditions null",
+        "rule": {
+          "id": "case-v10b",
+          "conditions": null,
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "rejects-at-run",
+        "firstRuleId": "case-v10b"
+      },
+      {
+        "id": "V11a",
+        "label": "no event key",
+        "rule": {
+          "id": "case-v11a",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          }
+        },
+        "errors": ["EVENT_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].event",
+        "engine": "throws",
+        "firstRuleId": "case-v11a"
+      },
+      {
+        "id": "V11b",
+        "label": "event null",
+        "rule": {
+          "id": "case-v11b",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": null
+        },
+        "errors": ["EVENT_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].event",
+        "engine": "accepts",
+        "stricter": true,
+        "firstRuleId": "case-v11b"
+      },
+      {
+        "id": "V11c",
+        "label": "event without type",
+        "rule": {
+          "id": "case-v11c",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["EVENT_TYPE_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].event.type",
+        "engine": "throws",
+        "firstRuleId": "case-v11c"
+      },
+      {
+        "id": "V11d",
+        "label": "event type empty string",
+        "rule": {
+          "id": "case-v11d",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["EVENT_TYPE_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].event.type",
+        "engine": "accepts",
+        "stricter": true,
+        "firstRuleId": "case-v11d"
+      },
+      {
+        "id": "V12a",
+        "label": "priority -1",
+        "rule": {
+          "id": "case-v12a",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": -1
+        },
+        "errors": ["PRIORITY_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "throws",
+        "firstRuleId": "case-v12a"
+      },
+      {
+        "id": "V12b",
+        "label": "priority 0.5",
+        "rule": {
+          "id": "case-v12b",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 0.5
+        },
+        "errors": ["PRIORITY_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "throws",
+        "firstRuleId": "case-v12b"
+      },
+      {
+        "id": "V12c",
+        "label": "priority 0",
+        "rule": {
+          "id": "case-v12c",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 0
+        },
+        "errors": ["PRIORITY_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "stricter": true,
+        "firstRuleId": "case-v12c"
+      },
+      {
+        "id": "V12d",
+        "label": "priority 1.5",
+        "rule": {
+          "id": "case-v12d",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 1.5
+        },
+        "errors": ["PRIORITY_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "stricter": true,
+        "firstRuleId": "case-v12d"
+      },
+      {
+        "id": "V12e",
+        "label": "priority 'abc'",
+        "rule": {
+          "id": "case-v12e",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": "abc"
+        },
+        "errors": ["PRIORITY_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "stricter": true,
+        "firstRuleId": "case-v12e"
+      },
+      {
+        "id": "V12f",
+        "label": "priority '-2'",
+        "rule": {
+          "id": "case-v12f",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": "-2"
+        },
+        "errors": ["PRIORITY_INVALID"],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "throws",
+        "firstRuleId": "case-v12f"
+      },
+      {
+        "id": "V12g",
+        "label": "priority 2",
+        "rule": {
+          "id": "case-v12g",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 2
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "V13a",
+        "label": "duplicate ids",
+        "set": {
+          "name": "",
+          "rules": [
+            {
+              "id": "case-v13a",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            },
+            {
+              "id": "case-v13a",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            }
+          ]
+        },
+        "errors": ["RULE_ID_DUPLICATE"],
+        "warnings": [],
+        "firstPath": "rules[1].id",
+        "engine": "accepts",
+        "firstRuleId": "case-v13a"
+      },
+      {
+        "id": "V13b",
+        "label": "missing id",
+        "rule": {
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["RULE_ID_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].id",
+        "engine": "accepts"
+      },
+      {
+        "id": "V13c",
+        "label": "null entry in rules",
+        "set": {
+          "name": "",
+          "rules": [null]
+        },
+        "errors": ["RULE_NOT_OBJECT"],
+        "warnings": [],
+        "firstPath": "rules[0]",
+        "engine": "throws"
+      },
+      {
+        "id": "V13d",
+        "label": "empty-string id",
+        "rule": {
+          "id": "",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["RULE_ID_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].id",
+        "engine": "accepts",
+        "firstRuleId": ""
+      },
+      {
+        "id": "V13e",
+        "label": "numeric id",
+        "rule": {
+          "id": 7,
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["RULE_ID_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].id",
+        "engine": "accepts"
+      },
+      {
+        "id": "V14-V2",
+        "label": "leaf without value on a disabled rule",
+        "rule": {
+          "id": "case-v14-2",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITION_VALUE_MISSING"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-2"
+      },
+      {
+        "id": "V14-V3",
+        "label": "leaf without fact on a disabled rule",
+        "rule": {
+          "id": "case-v14-3",
+          "conditions": {
+            "all": [
+              {
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITION_FACT_MISSING"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-3"
+      },
+      {
+        "id": "V14-V4",
+        "label": "leaf without operator on a disabled rule",
+        "rule": {
+          "id": "case-v14-4",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITION_OPERATOR_MISSING"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-4"
+      },
+      {
+        "id": "V14-V5",
+        "label": "unknown operator regex (only leaf) on a disabled rule",
+        "rule": {
+          "id": "case-v14-5",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "regex",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITION_OPERATOR_UNKNOWN"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-5"
+      },
+      {
+        "id": "V14-V6",
+        "label": "root not on a disabled rule",
+        "rule": {
+          "id": "case-v14-6",
+          "conditions": {
+            "not": {
+              "fact": "zone_name",
+              "operator": "equal",
+              "value": "Dock"
+            }
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITIONS_ROOT_INVALID"],
+        "firstPath": "rules[0].conditions",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-6"
+      },
+      {
+        "id": "V14-V7",
+        "label": "root with both all and any on a disabled rule",
+        "rule": {
+          "id": "case-v14-7",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ],
+            "any": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Gate"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITIONS_ROOT_INVALID"],
+        "firstPath": "rules[0].conditions",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-7"
+      },
+      {
+        "id": "V14-V8",
+        "label": "nested not on a disabled rule",
+        "rule": {
+          "id": "case-v14-8",
+          "conditions": {
+            "all": [
+              {
+                "not": {
+                  "fact": "zone_name",
+                  "operator": "equal",
+                  "value": "Dock"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITION_NOT_SUPPORTED"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-8"
+      },
+      {
+        "id": "V14-V9",
+        "label": "all is an object on a disabled rule",
+        "rule": {
+          "id": "case-v14-9",
+          "conditions": {
+            "all": {}
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITION_GROUP_NOT_ARRAY"],
+        "firstPath": "rules[0].conditions.all",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-9"
+      },
+      {
+        "id": "V14-V10a",
+        "label": "no conditions key on a disabled rule",
+        "rule": {
+          "id": "case-v14-10a",
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITIONS_MISSING"],
+        "firstPath": "rules[0].conditions",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-10a"
+      },
+      {
+        "id": "V14-V10b",
+        "label": "conditions null on a disabled rule",
+        "rule": {
+          "id": "case-v14-10b",
+          "conditions": null,
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["CONDITIONS_MISSING"],
+        "firstPath": "rules[0].conditions",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-10b"
+      },
+      {
+        "id": "V14-V11a",
+        "label": "no event key on a disabled rule",
+        "rule": {
+          "id": "case-v14-11a",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["EVENT_MISSING"],
+        "firstPath": "rules[0].event",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-11a"
+      },
+      {
+        "id": "V14-V11b",
+        "label": "event null on a disabled rule",
+        "rule": {
+          "id": "case-v14-11b",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": null,
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["EVENT_MISSING"],
+        "firstPath": "rules[0].event",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-11b"
+      },
+      {
+        "id": "V14-V11c",
+        "label": "event without type on a disabled rule",
+        "rule": {
+          "id": "case-v14-11c",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["EVENT_TYPE_MISSING"],
+        "firstPath": "rules[0].event.type",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-11c"
+      },
+      {
+        "id": "V14-V11d",
+        "label": "event type empty string on a disabled rule",
+        "rule": {
+          "id": "case-v14-11d",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["EVENT_TYPE_MISSING"],
+        "firstPath": "rules[0].event.type",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-11d"
+      },
+      {
+        "id": "V14-V12a",
+        "label": "priority -1 on a disabled rule",
+        "rule": {
+          "id": "case-v14-12a",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": -1,
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["PRIORITY_INVALID"],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-12a"
+      },
+      {
+        "id": "V14-V12b",
+        "label": "priority 0.5 on a disabled rule",
+        "rule": {
+          "id": "case-v14-12b",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 0.5,
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["PRIORITY_INVALID"],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-12b"
+      },
+      {
+        "id": "V14-V12c",
+        "label": "priority 0 on a disabled rule",
+        "rule": {
+          "id": "case-v14-12c",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 0,
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["PRIORITY_INVALID"],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-12c"
+      },
+      {
+        "id": "V14-V12d",
+        "label": "priority 1.5 on a disabled rule",
+        "rule": {
+          "id": "case-v14-12d",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": 1.5,
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["PRIORITY_INVALID"],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-12d"
+      },
+      {
+        "id": "V14-V12e",
+        "label": "priority 'abc' on a disabled rule",
+        "rule": {
+          "id": "case-v14-12e",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": "abc",
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["PRIORITY_INVALID"],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-12e"
+      },
+      {
+        "id": "V14-V12f",
+        "label": "priority '-2' on a disabled rule",
+        "rule": {
+          "id": "case-v14-12f",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "priority": "-2",
+          "disabled": true
+        },
+        "errors": [],
+        "warnings": ["PRIORITY_INVALID"],
+        "firstPath": "rules[0].priority",
+        "engine": "accepts",
+        "firstRuleId": "case-v14-12f"
+      },
+      {
+        "id": "V15a",
+        "label": "unclosed section",
+        "rule": {
+          "id": "case-v15a",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{#zone_name}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15b",
+        "label": "unclosed section with spaces",
+        "rule": {
+          "id": "case-v15b",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{ #zone_name }} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15c",
+        "label": "unclosed tag",
+        "rule": {
+          "id": "case-v15c",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{user_name entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15d",
+        "label": "unopened section",
+        "rule": {
+          "id": "case-v15d",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "entered{{/x}}",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15e",
+        "label": "mismatched section",
+        "rule": {
+          "id": "case-v15e",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{#a}}entered{{/b}}",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15f",
+        "label": "unclosed section in a disabled rule",
+        "rule": {
+          "id": "case-v15f",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{#zone_name}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": true
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15g",
+        "label": "plain variable",
+        "rule": {
+          "id": "case-v15g",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{user_udid}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "V15h",
+        "label": "raw insertion triple mustache",
+        "rule": {
+          "id": "case-v15h",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{{user_name}}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["TEMPLATE_RAW"],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15i",
+        "label": "delimiter change",
+        "rule": {
+          "id": "case-v15i",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{=<% %>=}} <% user_name %>",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNSUPPORTED"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15j",
+        "label": "raw insertion ampersand",
+        "rule": {
+          "id": "case-v15j",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{& user_name}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["TEMPLATE_RAW"],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15k",
+        "label": "partial",
+        "rule": {
+          "id": "case-v15k",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{> header}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["TEMPLATE_RAW"],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15l",
+        "label": "triple mustache missing a brace",
+        "rule": {
+          "id": "case-v15l",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{{user_name}} entered",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["TEMPLATE_UNBALANCED"],
+        "warnings": ["TEMPLATE_RAW"],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V15m",
+        "label": "closed sections and a comment",
+        "rule": {
+          "id": "case-v15m",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "{{#zone_name}}in {{zone_name}}{{/zone_name}}{{^ zone_name }}out{{/ zone_name }}{{! note }}",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "V16a",
+        "label": "dotted user_data fact",
+        "rule": {
+          "id": "case-v16a",
+          "conditions": {
+            "all": [
+              {
+                "fact": "user_data.battery",
+                "operator": "lessThan",
+                "value": 20
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["FACT_DOTTED_USER_DATA"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-v16a"
+      },
+      {
+        "id": "V16b",
+        "label": "user_data fact with path",
+        "rule": {
+          "id": "case-v16b",
+          "conditions": {
+            "all": [
+              {
+                "fact": "user_data",
+                "operator": "lessThan",
+                "value": 20,
+                "path": "$.battery"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "V17",
+        "label": "unknown event type",
+        "rule": {
+          "id": "case-v17",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "send_sms",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["EVENT_TYPE_UNKNOWN"],
+        "firstPath": "rules[0].event.type",
+        "engine": "accepts",
+        "firstRuleId": "case-v17"
+      },
+      {
+        "id": "V18",
+        "label": "message without coalescence_group",
+        "rule": {
+          "id": "case-v18",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["COALESCENCE_MISSING"],
+        "firstPath": "rules[0].event.params",
+        "engine": "accepts",
+        "firstRuleId": "case-v18"
+      },
+      {
+        "id": "V19",
+        "label": "top-level decisions",
+        "set": {
+          "name": "",
+          "rules": [
+            {
+              "id": "case-v19",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            }
+          ],
+          "decisions": [
+            {
+              "id": "case-v19-legacy",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            }
+          ]
+        },
+        "errors": [],
+        "warnings": ["LEGACY_DECISIONS"],
+        "firstPath": "decisions",
+        "engine": "accepts"
+      },
+      {
+        "id": "V20a",
+        "label": "set is a string",
+        "set": "x",
+        "errors": ["SET_NOT_OBJECT"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V20b",
+        "label": "set is an array",
+        "set": [
+          {
+            "id": "case-v20b",
+            "conditions": {
+              "all": [
+                {
+                  "fact": "zone_name",
+                  "operator": "equal",
+                  "value": "Dock"
+                }
+              ]
+            },
+            "event": {
+              "type": "message",
+              "params": {
+                "title": "Example",
+                "text": "Example alert",
+                "style": "info",
+                "duration": 1000,
+                "coalescence": 60,
+                "coalescence_group": "example_group"
+              }
+            }
+          }
+        ],
+        "errors": ["SET_NOT_OBJECT"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V20c",
+        "label": "rules not an array",
+        "set": {
+          "name": "",
+          "rules": {
+            "0": {
+              "id": "case-v20c",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            }
+          }
+        },
+        "errors": ["SET_RULES_NOT_ARRAY"],
+        "warnings": [],
+        "firstPath": "rules",
+        "engine": "accepts"
+      },
+      {
+        "id": "V20d",
+        "label": "name missing",
+        "set": {
+          "rules": [
+            {
+              "id": "case-v20d",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            }
+          ]
+        },
+        "errors": ["SET_NAME_NOT_STRING"],
+        "warnings": [],
+        "firstPath": "name",
+        "engine": "accepts"
+      },
+      {
+        "id": "V20e",
+        "label": "set is null",
+        "set": null,
+        "errors": ["SET_NOT_OBJECT"],
+        "warnings": [],
+        "firstPath": "",
+        "engine": "accepts"
+      },
+      {
+        "id": "V20f",
+        "label": "numeric name",
+        "set": {
+          "name": 1,
+          "rules": []
+        },
+        "errors": ["SET_NAME_NOT_STRING"],
+        "warnings": [],
+        "firstPath": "name",
+        "engine": "accepts"
+      },
+      {
+        "id": "V21",
+        "label": "issues carry the rule id",
+        "set": {
+          "name": "",
+          "rules": [
+            {
+              "id": "case-v21-ok",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            },
+            {
+              "id": "case-v21",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            }
+          ]
+        },
+        "errors": ["CONDITION_VALUE_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[1].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-v21"
+      },
+      {
+        "id": "X1",
+        "label": "shared condition reference",
+        "rule": {
+          "id": "case-x1",
+          "conditions": {
+            "all": [
+              {
+                "condition": "shared"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_NOT_SUPPORTED"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-x1"
+      },
+      {
+        "id": "X2",
+        "label": "null condition node",
+        "rule": {
+          "id": "case-x2",
+          "conditions": {
+            "all": [null]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_NOT_SUPPORTED"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-x2"
+      },
+      {
+        "id": "X3",
+        "label": "string condition node",
+        "rule": {
+          "id": "case-x3",
+          "conditions": {
+            "all": ["x"]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_NOT_SUPPORTED"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "throws",
+        "firstRuleId": "case-x3"
+      },
+      {
+        "id": "X4",
+        "label": "nested any group",
+        "rule": {
+          "id": "case-x4",
+          "conditions": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  },
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Gate"
+                  }
+                ]
+              },
+              {
+                "fact": "battery_percent",
+                "operator": "lessThan",
+                "value": 20
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "X5",
+        "label": "nested group not an array",
+        "rule": {
+          "id": "case-x5",
+          "conditions": {
+            "all": [
+              {
+                "any": "x"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_GROUP_NOT_ARRAY"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0].any",
+        "engine": "throws",
+        "firstRuleId": "case-x5"
+      },
+      {
+        "id": "X6",
+        "label": "root any with a nested defect",
+        "rule": {
+          "id": "case-x6",
+          "conditions": {
+            "any": [
+              {
+                "fact": "zone_name",
+                "operator": "equal"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_VALUE_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.any[0]",
+        "engine": "throws",
+        "firstRuleId": "case-x6"
+      },
+      {
+        "id": "X7",
+        "label": "conditions a string",
+        "rule": {
+          "id": "case-x7",
+          "conditions": "x",
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "throws",
+        "firstRuleId": "case-x7"
+      },
+      {
+        "id": "X8",
+        "label": "conditions false",
+        "rule": {
+          "id": "case-x8",
+          "conditions": false,
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "rejects-at-run",
+        "firstRuleId": "case-x8"
+      },
+      {
+        "id": "X9",
+        "label": "conditions an array",
+        "rule": {
+          "id": "case-x9",
+          "conditions": [],
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITIONS_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions",
+        "engine": "throws",
+        "firstRuleId": "case-x9"
+      },
+      {
+        "id": "X10",
+        "label": "event a string",
+        "rule": {
+          "id": "case-x10",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": "x"
+        },
+        "errors": ["EVENT_MISSING"],
+        "warnings": [],
+        "firstPath": "rules[0].event",
+        "engine": "throws",
+        "firstRuleId": "case-x10"
+      },
+      {
+        "id": "X11",
+        "label": "event without params",
+        "rule": {
+          "id": "case-x11",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "delete_asset"
+          }
+        },
+        "errors": [],
+        "warnings": ["COALESCENCE_MISSING"],
+        "firstPath": "rules[0].event.params",
+        "engine": "accepts",
+        "firstRuleId": "case-x11"
+      },
+      {
+        "id": "X12",
+        "label": "coalescence 0",
+        "rule": {
+          "id": "case-x12",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 0,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["COALESCENCE_MISSING"],
+        "firstPath": "rules[0].event.params",
+        "engine": "accepts",
+        "firstRuleId": "case-x12"
+      },
+      {
+        "id": "X13",
+        "label": "coalescence a string",
+        "rule": {
+          "id": "case-x13",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": "60",
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": ["COALESCENCE_MISSING"],
+        "firstPath": "rules[0].event.params",
+        "engine": "accepts",
+        "firstRuleId": "case-x13"
+      },
+      {
+        "id": "X14",
+        "label": "operator not a string",
+        "rule": {
+          "id": "case-x14",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": 5,
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": ["CONDITION_OPERATOR_UNKNOWN"],
+        "warnings": [],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "rejects-at-run",
+        "firstRuleId": "case-x14"
+      },
+      {
+        "id": "X15",
+        "label": "fact not a string",
+        "rule": {
+          "id": "case-x15",
+          "conditions": {
+            "all": [
+              {
+                "fact": 5,
+                "operator": "equal",
+                "value": "Dock"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "X16",
+        "label": "value null with notEmpty",
+        "rule": {
+          "id": "case-x16",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "notEmpty",
+                "value": null
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          }
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "X17",
+        "label": "several defects in one rule",
+        "rule": {
+          "id": "case-x17",
+          "priority": -1,
+          "conditions": {
+            "all": [
+              {
+                "operator": "regex"
+              }
+            ]
+          }
+        },
+        "errors": [
+          "PRIORITY_INVALID",
+          "EVENT_MISSING",
+          "CONDITION_FACT_MISSING",
+          "CONDITION_OPERATOR_UNKNOWN",
+          "CONDITION_VALUE_MISSING"
+        ],
+        "warnings": [],
+        "firstPath": "rules[0].priority",
+        "engine": "throws",
+        "firstRuleId": "case-x17"
+      },
+      {
+        "id": "X18",
+        "label": "truthy non-boolean disabled",
+        "rule": {
+          "id": "case-x18",
+          "conditions": {
+            "all": [
+              {
+                "fact": "zone_name",
+                "operator": "equal"
+              }
+            ]
+          },
+          "event": {
+            "type": "message",
+            "params": {
+              "title": "Example",
+              "text": "Example alert",
+              "style": "info",
+              "duration": 1000,
+              "coalescence": 60,
+              "coalescence_group": "example_group"
+            }
+          },
+          "disabled": 1
+        },
+        "errors": [],
+        "warnings": ["CONDITION_VALUE_MISSING"],
+        "firstPath": "rules[0].conditions.all[0]",
+        "engine": "accepts",
+        "firstRuleId": "case-x18"
+      },
+      {
+        "id": "X19",
+        "label": "empty rule set",
+        "set": {
+          "name": "",
+          "rules": []
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      },
+      {
+        "id": "X20",
+        "label": "every event type",
+        "set": {
+          "name": "Example",
+          "rules": [
+            {
+              "id": "case-x20-message",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "message",
+                "params": {
+                  "title": "Example",
+                  "text": "Example alert",
+                  "style": "info",
+                  "duration": 1000,
+                  "coalescence": 60,
+                  "coalescence_group": "example_group"
+                }
+              }
+            },
+            {
+              "id": "case-x20-mail",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "post_to_email",
+                "params": {
+                  "title": "t",
+                  "text": "x",
+                  "receiver": "receiver-placeholder",
+                  "coalescence": 60,
+                  "coalescence_group": "g"
+                }
+              }
+            },
+            {
+              "id": "case-x20-callback",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "post_to_callback_url",
+                "params": {
+                  "title": "t",
+                  "callback_url": "callback-placeholder",
+                  "coalescence": 60,
+                  "coalescence_group": "g"
+                }
+              }
+            },
+            {
+              "id": "case-x20-variable",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "set_variable",
+                "params": {
+                  "title": "t",
+                  "property": {
+                    "key": "k",
+                    "model": "default"
+                  },
+                  "action": "set",
+                  "value": 1,
+                  "coalescence": 60,
+                  "coalescence_group": "g"
+                }
+              }
+            },
+            {
+              "id": "case-x20-delete",
+              "conditions": {
+                "all": [
+                  {
+                    "fact": "zone_name",
+                    "operator": "equal",
+                    "value": "Dock"
+                  }
+                ]
+              },
+              "event": {
+                "type": "delete_asset",
+                "params": {
+                  "title": "t",
+                  "coalescence": 60,
+                  "coalescence_group": "g"
+                }
+              }
+            }
+          ]
+        },
+        "errors": [],
+        "warnings": [],
+        "firstPath": null,
+        "engine": "accepts"
+      }
+    ]
+  }
+}

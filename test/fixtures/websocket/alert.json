@@ -1,0 +1,20 @@
+{
+  "_source": "server-code",
+  "_note": "Alert raised by an alert rule that a position triggered: the tag id and type are copied from the trigger, the zone is the trigger's zone and params are the rule's free-form event parameters. Alerts carry no timestamp.",
+  "_nonHttp": "WS-M4",
+  "_usi": ["USI-P8-7"],
+  "body": {
+    "action": "notifyEvent",
+    "event_type": "NOTIFICATION",
+    "app_namespace": "test_namespace",
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "user_udid": "025d4b000001",
+    "user_type": "forklift",
+    "zone": { "id": 3, "name": "Loading-Dock", "tags": ["dock"], "color": "#FF8800" },
+    "params": {
+      "title": "Restricted area",
+      "text": "Asset-001 entered the loading dock",
+      "style": "warning"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "_source": "server-code",
+  "_operation": "POST /assets/{namespace}/{mac_address}/documents",
+  "_usi": ["USI-P2-12"],
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.7, not re-recorded live: the spec declares 202 without a schema; jobId is a UUID v4, documentId is \"doc-\" + a UUID v4.",
+  "status": 202,
+  "body": {
+    "jobId": "6f1c2a4e-8b3d-4c5e-9f7a-1b2c3d4e5f60",
+    "documentId": "doc-3a7e9c1d-5b2f-4e8a-9c6d-7f0e1a2b3c4d",
+    "status": "pending",
+    "message": "Document upload accepted for processing"
+  }
+}

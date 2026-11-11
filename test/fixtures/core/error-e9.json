@@ -1,0 +1,7 @@
+{
+  "_source": "server-code",
+  "_note": "E9 proxy text without any Content-Type header (the empty contentType marks its absence): a 502/504 when the positions server cannot be reached; host and URL here are placeholders.",
+  "status": 504,
+  "contentType": "",
+  "text": "Error occurred while trying to proxy: upstream/x"
+}

@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://spec.invalid/manifest/schema.json",
+  "title": "Operation manifests (base.json and the phase manifests P1.json … P8.json)",
+  "definitions": {
+    "stringOrList": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      ]
+    },
+    "tier": { "enum": ["R", "W", "C", "S"] },
+    "usi": { "type": "array", "items": { "type": "string", "pattern": "^USI-P\\d+-\\d+$" } },
+    "excludeNeedsReason": {
+      "if": { "properties": { "decision": { "const": "exclude" } }, "required": ["decision"] },
+      "then": { "required": ["reason"] }
+    },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["specVersion", "operations"],
+      "properties": {
+        "specVersion": { "type": "string", "minLength": 1 },
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "tag", "phase", "decision"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^(GET|PUT|POST|DELETE|OPTIONS|HEAD|PATCH|TRACE) /"
+              },
+              "tag": { "type": "string", "minLength": 1 },
+              "phase": { "enum": ["P2", "P3", "P4", "P5", "P6", "P7", "P8", "none"] },
+              "decision": { "enum": ["wrap", "exclude"] },
+              "reason": { "type": "string", "minLength": 1 }
+            },
+            "allOf": [{ "$ref": "#/definitions/excludeNeedsReason" }]
+          }
+        }
+      }
+    },
+    "operationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "decision"],
+      "properties": {
+        "op": { "type": "string", "minLength": 1 },
+        "decision": { "enum": ["wrap", "exclude"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "sdk": { "$ref": "#/definitions/stringOrList" },
+        "unit": { "$ref": "#/definitions/stringOrList" },
+        "live": { "$ref": "#/definitions/stringOrList" },
+        "tier": { "$ref": "#/definitions/tier" },
+        "allowlist": { "type": "string", "minLength": 1 },
+        "realPath": { "type": "string", "pattern": "^/" },
+        "usi": { "$ref": "#/definitions/usi" }
+      },
+      "allOf": [{ "$ref": "#/definitions/excludeNeedsReason" }]
+    },
+    "nonHttpEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "decision"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["ws-endpoint", "ws-command", "ws-message"] },
+        "decision": { "enum": ["wrap", "exclude"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "sdk": { "$ref": "#/definitions/stringOrList" },
+        "unit": { "$ref": "#/definitions/stringOrList" },
+        "live": { "$ref": "#/definitions/stringOrList" },
+        "tier": { "$ref": "#/definitions/tier" },
+        "allowlist": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [{ "$ref": "#/definitions/excludeNeedsReason" }]
+    },
+    "sdkMethodEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "unit"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "unit": { "$ref": "#/definitions/stringOrList" },
+        "live": { "$ref": "#/definitions/stringOrList" },
+        "tier": { "$ref": "#/definitions/tier" },
+        "allowlist": { "type": "string", "minLength": 1 },
+        "deprecated": { "type": "boolean" }
+      }
+    },
+    "aliasEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sdk"],
+      "properties": {
+        "sdk": { "type": "string", "minLength": 1 },
+        "delegatesTo": { "type": "string", "minLength": 1 },
+        "op": { "type": "string", "minLength": 1 },
+        "deprecated": { "type": "boolean" },
+        "unit": { "$ref": "#/definitions/stringOrList" },
+        "live": { "$ref": "#/definitions/stringOrList" },
+        "tier": { "$ref": "#/definitions/tier" },
+        "allowlist": { "type": "string", "minLength": 1 }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase", "domain", "status", "operations"],
+      "properties": {
+        "phase": { "enum": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"] },
+        "domain": {
+          "enum": [
+            "core",
+            "assets",
+            "positions-spatial",
+            "venues-navigation",
+            "dashboards-rules",
+            "notifications",
+            "etl",
+            "websocket"
+          ]
+        },
+        "status": { "enum": ["draft", "complete"] },
+        "operations": { "type": "array", "items": { "$ref": "#/definitions/operationEntry" } },
+        "nonHttp": { "type": "array", "items": { "$ref": "#/definitions/nonHttpEntry" } },
+        "sdkMethods": { "type": "array", "items": { "$ref": "#/definitions/sdkMethodEntry" } },
+        "aliases": { "type": "array", "items": { "$ref": "#/definitions/aliasEntry" } },
+        "localMethods": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}

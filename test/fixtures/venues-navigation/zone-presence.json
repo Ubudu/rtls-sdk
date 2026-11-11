@@ -1,0 +1,24 @@
+{
+  "_source": "spec",
+  "_note": "Live capture (P4-T2, tier R), 3 of 13 slots of a 1 h window (interval 5m), zone names replaced; names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /es/zone_presence/{appNamespace}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": [
+    {
+      "id": 1314880767,
+      "name": "Zone 1",
+      "tags": ["operations", "testing"],
+      "color": "#77bb41",
+      "timestamp": 1794400200000
+    },
+    {
+      "id": 1314880767,
+      "name": "Zone 1",
+      "tags": ["operations", "testing"],
+      "color": "#77bb41",
+      "timestamp": 1794400500000
+    },
+    { "id": 0, "name": "OUTSIDE_ALL_ZONES", "tags": [], "color": null, "timestamp": 1794403800000 }
+  ]
+}

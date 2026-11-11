@@ -1,0 +1,55 @@
+{
+  "_source": "server-code",
+  "_note": "Written from the rtls-api 3.3.8 nearest-poi response shape: poi.type echoes the requested poiType, distance is straight-line metres, path is a route node list or null. Synthetic ids and coordinates; never captured live.",
+  "_operation": "GET /spatial/navigate/{namespace}/nearest-poi/{nodeId}",
+  "status": 200,
+  "body": {
+    "success": true,
+    "poi": {
+      "id": "poi_a1",
+      "name": "POI A",
+      "type": "all",
+      "level": 0,
+      "coordinates": [10.0004, 20.0002]
+    },
+    "distance": 30.2,
+    "path": [
+      {
+        "id": 101,
+        "name": "Node 101",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0001, 20.0001],
+        "x": 10.0001,
+        "y": 20.0001
+      },
+      {
+        "id": 102,
+        "name": "Node 102",
+        "type": "waypoint",
+        "level": 0,
+        "coordinates": [10.0002, 20.0001],
+        "x": 10.0002,
+        "y": 20.0001
+      },
+      {
+        "id": 103,
+        "name": "Corridor",
+        "type": "elevator",
+        "level": 0,
+        "coordinates": [10.0003, 20.0002],
+        "x": 10.0003,
+        "y": 20.0002
+      },
+      {
+        "id": null,
+        "name": "POI A",
+        "type": "poi",
+        "level": 0,
+        "coordinates": [10.0004, 20.0002],
+        "x": 10.0004,
+        "y": 20.0002
+      }
+    ]
+  }
+}

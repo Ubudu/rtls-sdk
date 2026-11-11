@@ -1,0 +1,9 @@
+{
+  "_source": "server-code",
+  "_note": "E4 envelope {error: 'Validation error', details: string[]} of the dashboard routes (POST /dashboards 400): validation messages without field names. The spec declares only {error}; the body validates against it only because extra keys are allowed, so no _operation is set (the override is needed for details).",
+  "status": 400,
+  "body": {
+    "error": "Validation error",
+    "details": ["Path `name` is required."]
+  }
+}

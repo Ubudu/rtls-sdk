@@ -1,0 +1,13 @@
+{
+  "_source": "server-code",
+  "_operation": "GET /assets/{namespace}/{mac_address}/documents/{documentId}/download",
+  "_usi": ["USI-P2-15"],
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.7: the thumbnail rendition of a PDF is its first page as a one-page PDF (application/pdf), not an image; the filename keeps the original name.",
+  "status": 200,
+  "contentType": "application/pdf",
+  "headers": {
+    "Content-Disposition": "attachment; filename=\"sdk-test.pdf\"",
+    "Content-Length": "329"
+  },
+  "base64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCAyMDAgMjAwXSA+PgplbmRvYmoKeHJlZgowIDQKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDExNSAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDQgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjE4NgolJUVPRgo="
+}

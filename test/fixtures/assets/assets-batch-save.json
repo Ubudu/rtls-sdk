@@ -1,0 +1,28 @@
+{
+  "_source": "server-code",
+  "_note": "Batch save answers the array of the saved assets after server hygiene (data {} added, server-owned fields set), not the spec's BatchSaveResult object (USI-P2-4). Written by hand; scrubbed.",
+  "_operation": "POST /assets/{app_namespace}",
+  "_usi": ["USI-P2-4"],
+  "status": 200,
+  "body": [
+    {
+      "createdBy": "test-namespace",
+      "data": {},
+      "dateChanged": 1745547700000,
+      "dateCreated": 1745547700000,
+      "user_name": "Batch 01",
+      "user_udid": "025d4b000011"
+    },
+    {
+      "createdBy": "test-namespace",
+      "data": {
+        "zone": "B"
+      },
+      "dateChanged": 1745547700001,
+      "dateCreated": 1744620101741,
+      "model": "BLE-TAG-B",
+      "user_name": "Batch 02",
+      "user_udid": "025d4b000012"
+    }
+  ]
+}

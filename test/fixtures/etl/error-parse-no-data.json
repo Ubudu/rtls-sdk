@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "400 of parse-excel-headers for a CSV part with a header only: {error: <sentence>}.",
+  "status": 400,
+  "body": {
+    "error": "CSV file contains no data"
+  }
+}

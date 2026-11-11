@@ -1,0 +1,24 @@
+{
+  "_source": "live",
+  "_note": "Scrubbed live body (P3 §8.5 substitutions) recorded by L-SP-13.",
+  "_operation": "POST /spatial/pois/{namespace}/analyze-custom",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "47fd5679" },
+  "status": 200,
+  "body": {
+    "reference_point": { "lat": 48.8, "lon": 2.3 },
+    "operation": "nearest",
+    "options": { "limit": 2 },
+    "total_custom_pois": 3,
+    "matching_pois": 2,
+    "pois": [
+      { "name": "Zone 1", "lat": 48.8, "lon": 2.3, "index": 0, "distance_meters": 0 },
+      {
+        "name": "Zone 2",
+        "lat": 48.8008983,
+        "lon": 2.3,
+        "index": 1,
+        "distance_meters": 99.8876452073037
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "_source": "spec",
+  "_operation": "POST /assets/{namespace}/bulk-declare",
+  "status": 200,
+  "body": {
+    "success": 1,
+    "failed": 1,
+    "created": 0,
+    "errors": [
+      {
+        "identifier": "sdk-test-unknown",
+        "error": "DL_011",
+        "message": "External ID not found: sdk-test-unknown"
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "_source": "spec",
+  "_note": "E7 envelope {status: <human text>}: the health route answers 503 with the database state when its MongoDB connection is not ready; valid against the HealthStatus schema the spec declares for 503.",
+  "_operation": "GET /health",
+  "status": 503,
+  "body": {
+    "status": "MongoDB connection not ready"
+  }
+}

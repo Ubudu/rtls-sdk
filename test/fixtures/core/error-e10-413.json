@@ -1,0 +1,8 @@
+{
+  "_source": "server-code",
+  "_note": "E10 Express default HTML error page: a JSON request body over 100 kB is rejected with 413 before any handler runs. Stack frames are placeholders; L-E13 records the shape of the live page in the P1 report.",
+  "_operation": "POST /spatial/zones/{namespace}/analyze-custom",
+  "status": 413,
+  "contentType": "text/html; charset=utf-8",
+  "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>PayloadTooLargeError: request entity too large<br> &nbsp; &nbsp;at readStream (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at getRawBody (&lt;anonymous&gt;)</pre>\n</body>\n</html>\n"
+}

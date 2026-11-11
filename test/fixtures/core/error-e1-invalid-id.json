@@ -1,0 +1,9 @@
+{
+  "_source": "spec",
+  "_note": "E1 envelope {error: <human text>}, exactly the Error schema the spec declares for this 400 (an id that is not an ObjectId).",
+  "_operation": "GET /dashboards/{id}",
+  "status": 400,
+  "body": {
+    "error": "Invalid dashboard ID"
+  }
+}

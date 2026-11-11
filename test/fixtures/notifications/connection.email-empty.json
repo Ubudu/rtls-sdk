@@ -1,0 +1,16 @@
+{
+  "_source": "spec",
+  "_operation": "POST /notifications/{namespace}/connections",
+  "status": 201,
+  "body": {
+    "_id": "65b000000000000000000003",
+    "app_namespace": "ns-test",
+    "user_id": "64f000000000000000000001",
+    "channel": "email",
+    "enabled": true,
+    "verified": false,
+    "credentials": {},
+    "created_at": 1730000000000,
+    "__v": 0
+  }
+}

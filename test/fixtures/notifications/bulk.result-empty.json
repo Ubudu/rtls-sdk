@@ -1,0 +1,9 @@
+{
+  "_source": "spec",
+  "_note": "Bulk that changed nothing: no undo_token.",
+  "_operation": "POST /notifications/{namespace}/bulk",
+  "status": 200,
+  "body": {
+    "affected": 0
+  }
+}

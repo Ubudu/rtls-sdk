@@ -1,0 +1,10 @@
+{
+  "_source": "spec",
+  "_note": "Bulk with changes: affected plus a single-use undo_token valid 300 s (undo_token is not declared).",
+  "_operation": "POST /notifications/{namespace}/bulk",
+  "status": 200,
+  "body": {
+    "affected": 2,
+    "undo_token": "undo-0f1e2d3c4b5a69788796a5b4c3d2e1f0"
+  }
+}

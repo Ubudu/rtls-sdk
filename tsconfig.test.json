@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["src/**/*", "test/**/*.ts", "*.config.ts", "scripts/types/*.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "coverage-live",
+    ".cache",
+    "test/contract/__fixtures__/**"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "_source": "spec",
+  "_note": "Default list mode (group_by=thread): group rows built from the current page only, newest group first. The spec declares Notification[] (USI-P6-2); the rows validate only because the Notification schema has no required keys.",
+  "_operation": "GET /notifications/{namespace}",
+  "status": 200,
+  "headers": {
+    "X-Total-Count": "2"
+  },
+  "body": [
+    {
+      "group_key": "dm:conv-1",
+      "group_by": "thread",
+      "item_ids": ["665f1c2e9b1d4a0012345601"],
+      "newest": {
+        "_id": "665f1c2e9b1d4a0012345601",
+        "title": "Cold room door open",
+        "severity": "info",
+        "created_at": 1718983070000,
+        "thread_key": "dm:conv-1"
+      },
+      "count": 1,
+      "unread_count": 1,
+      "max_severity": "info",
+      "needs_ack": false
+    },
+    {
+      "group_key": "mission:m-1",
+      "group_by": "thread",
+      "item_ids": ["665f1c2e9b1d4a0012345602"],
+      "newest": {
+        "_id": "665f1c2e9b1d4a0012345602",
+        "title": "Check freezer 3",
+        "severity": "warning",
+        "created_at": 1718983010000,
+        "thread_key": "mission:m-1"
+      },
+      "count": 1,
+      "unread_count": 1,
+      "max_severity": "warning",
+      "needs_ack": true
+    }
+  ]
+}

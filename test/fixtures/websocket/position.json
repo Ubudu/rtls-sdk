@@ -1,0 +1,32 @@
+{
+  "_source": "server-code",
+  "_note": "Processed position delivered by the broker: the publisher frame merged over the stored asset record, with zone, speed and distance fields added by the analysis engine. The key set equals the keys of the live REST cache positions (live probe).",
+  "_nonHttp": "WS-M1",
+  "_usi": ["USI-P8-7"],
+  "body": {
+    "app_namespace": "test_namespace",
+    "user_uuid": "025d4b000001",
+    "user_udid": "025d4b000001",
+    "user_name": "Asset-001",
+    "user_type": "forklift",
+    "user_motion": "moving",
+    "model": "GenericTag",
+    "color": "#0088FF",
+    "path": "Site/Building-A",
+    "tags": ["fleet"],
+    "external_id": "EXT-001",
+    "data": { "department": "logistics" },
+    "createdBy": "test_namespace",
+    "dateCreated": 1767225600000,
+    "dateChanged": 1767268800000,
+    "lat": 48.8566,
+    "lon": 2.3522,
+    "map_uuid": "11111111-2222-4333-8444-555555555555",
+    "timestamp": "2026-01-01T12:00:00Z",
+    "zone": { "id": 0, "name": "OUTSIDE_ALL_ZONES", "tags": [], "color": null },
+    "origin": 0,
+    "speed": 0.42,
+    "prev_pos_distance": 1.26,
+    "prev_pos_time_diff_seconds": 3
+  }
+}

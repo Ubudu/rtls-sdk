@@ -1,0 +1,347 @@
+{
+  "examples": [
+    {
+      "id": "01",
+      "name": "getting-started",
+      "title": "Getting started",
+      "summary": "createRtlsClient, health(), venues.list(), venues.listMaps(), assets.list(), positions.listCached(), isValidMac(), formatMac()",
+      "owner": "P9",
+      "guide": "docs/guides/getting-started.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "02",
+      "name": "assets",
+      "title": "Assets",
+      "summary": "assets.list() with filters, sort and key/value, assets.get(), getHistory(), assetTree.get(), dataModels.get(); write: create, update, batchSave, batchDelete, tagActions.send()",
+      "owner": "P2",
+      "guide": "docs/guides/assets.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "W",
+        "budget": {
+          "positions": 0,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "three sdk-test- assets (create, update, batch save), deleted in cleanup; a BLE action only with --tag and RTLS_IT_SIDE_EFFECTS=1 in your own run (the guarded pass passes no --tag, so the budget counts none)"
+      }
+    },
+    {
+      "id": "03",
+      "name": "positions-spatial",
+      "title": "Positions and spatial analysis",
+      "summary": "positions.listCached(), getCached(), getLast(), listLast(), getHistory(), query(); spatial.nearestZones(), zoneDistances(), analyzeCustomZones(), nearestAssets(), nearestAssetsRealtime(), poiStatistics(), analyzeCustomPois(); toEpochMs(); write: positions.publish()",
+      "owner": "P3",
+      "guide": "docs/guides/positions-spatial.md",
+      "readAllowedSkips": ["no-fixture"],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 1,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one position for a test MAC at a point outside every zone"
+      }
+    },
+    {
+      "id": "04",
+      "name": "navigation",
+      "title": "Indoor navigation",
+      "summary": "venues.listPathNodes(), listPathSegments(), navigation.shortestPath(), multiStop(), nearestPoi(), evacuationRoute()",
+      "owner": "P4",
+      "guide": "docs/guides/venues-navigation.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "05",
+      "name": "error-handling",
+      "title": "Error handling",
+      "summary": "typed errors: AuthenticationError, NotFoundError, ValidationError, ContextError, TimeoutError, AbortError, NetworkError; opt-in retry",
+      "owner": "P9",
+      "guide": "docs/guides/error-handling.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "06",
+      "name": "pagination-filtering",
+      "title": "Pagination and filtering",
+      "summary": "assets.list() with key/value and filters, applyFilters, venues.iterate() with collectAll, assetDocuments.listPage() with paginateOffset, zones.list() filters, serializeFilters",
+      "owner": "P9",
+      "guide": "docs/guides/pagination-filtering.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "07",
+      "name": "default-context",
+      "title": "Default context",
+      "summary": "setVenue, setContext, forNamespace, forVenue, forMap, withContext, clearContext, per-call overrides, per-call level, ContextError",
+      "owner": "P9",
+      "guide": "docs/guides/getting-started.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "08",
+      "name": "websocket-subscriber",
+      "title": "WebSocket subscriber",
+      "summary": "client.createWebSocket(), connect(), subscribe() by kind or tag, on(), getConnectionStatus(), getActiveSubscriptions(), unsubscribe(), getSubscription(), disconnect()",
+      "owner": "P8",
+      "guide": "docs/guides/websocket.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "09",
+      "name": "websocket-publisher",
+      "title": "WebSocket publisher",
+      "summary": "client.createWebSocket(), connect(), sendPosition() only with --write and --map/--lat/--lon",
+      "owner": "P8",
+      "guide": "docs/guides/websocket.md",
+      "readAllowedSkips": ["no-fixture"],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 0,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "nothing in the guarded pass (it passes --write only); one position for a test MAC only with --map, --lat and --lon in your own run (not counted in the budget)"
+      }
+    },
+    {
+      "id": "10",
+      "name": "websocket-unified",
+      "title": "WebSocket unified client",
+      "summary": "client.createWebSocket({ mapUuid }), isSubscriberConnected(), isPublisherConnected(), subscribe(), setTagFilter(), sendPosition(), publisher events",
+      "owner": "P8",
+      "guide": "docs/guides/websocket.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 1,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one position for a test MAC at a point outside every zone, read back through the subscriber"
+      }
+    },
+    {
+      "id": "11",
+      "name": "asset-documents",
+      "title": "Asset documents",
+      "summary": "assetDocuments.listPage(), list(); write: upload(), waitForJob(), download(), delete()",
+      "owner": "P2",
+      "guide": "docs/guides/assets.md",
+      "readAllowedSkips": ["no-fixture"],
+      "write": {
+        "tier": "W",
+        "budget": {
+          "positions": 0,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one sdk-test- asset with one uploaded image document, both deleted in cleanup"
+      }
+    },
+    {
+      "id": "12",
+      "name": "declared-location",
+      "title": "Declared location",
+      "summary": "assets.list() declared locations; write: declaredLocations.bulkDeclare(), bulkClear()",
+      "owner": "P2",
+      "guide": "docs/guides/assets.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 1,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one sdk-test- asset declared at a point outside every zone (one position), cleared and deleted in cleanup"
+      }
+    },
+    {
+      "id": "13",
+      "name": "venues-maps",
+      "title": "Venues and maps",
+      "summary": "venues.list(), get(), listMaps(), listPoisAsArray(), listPathNodes(), listPaths(), zones.listAsArray(), zones.getPresence()",
+      "owner": "P4",
+      "guide": "docs/guides/venues-navigation.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "14",
+      "name": "dashboards",
+      "title": "Dashboards",
+      "summary": "dashboards.listCreated(), listShared(), listSelected(), list(), get(); write: create(), update(), share(), unshare(), delete()",
+      "owner": "P5",
+      "guide": "docs/guides/dashboards-alert-rules.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "W",
+        "budget": {
+          "positions": 0,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one sdk-test- dashboard, shared and unshared, deleted in cleanup"
+      }
+    },
+    {
+      "id": "15",
+      "name": "alert-rules",
+      "title": "Alert rules",
+      "summary": "alertRules.get(), validateAlertRuleSet(), alerts.list(), settings.get(); write: upsertRule(), setRuleEnabled(), removeRule(), replace() to restore",
+      "owner": "P5",
+      "guide": "docs/guides/dashboards-alert-rules.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "C",
+        "budget": {
+          "positions": 0,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one disabled sdk-test- alert rule (setRuleEnabled keeps it disabled), removed; the rule set is checked equal to its backup"
+      }
+    },
+    {
+      "id": "16",
+      "name": "notifications",
+      "title": "Notifications",
+      "summary": "notifications.unreadCount(), list(), listPage(), iterate(), listGroups(), facets(), export(), rules, connections, saved views; write: sendToSelf(), updateMission(), acknowledge(), pin(), unpin(), snooze(), bulk(), undo()",
+      "owner": "P6",
+      "guide": "docs/guides/notifications.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 0,
+          "notifications": 1,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one mission sent to the key's own user (pinned, unpinned and snoozed), a disabled rule and a saved view, all removed in cleanup"
+      }
+    },
+    {
+      "id": "17",
+      "name": "notifications-stream",
+      "title": "Notifications stream",
+      "summary": "notifications.stream() events, unreadCount() refresh",
+      "owner": "P6",
+      "guide": "docs/guides/notifications.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "18",
+      "name": "etl-import",
+      "title": "ETL import",
+      "summary": "etl.mappingProfiles.list(), listAll(), get(), etl.parseHeaders(), etl.activities.listPage() with paginatePages(), iterate(); write: mappingProfiles create/update/delete, dry-run etl.upload()",
+      "owner": "P7",
+      "guide": "docs/guides/etl.md",
+      "readAllowedSkips": ["role"],
+      "write": {
+        "tier": "W",
+        "budget": {
+          "positions": 0,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one sdk-test- mapping profile and a dry-run upload (no asset written), profile deleted in cleanup"
+      }
+    },
+    {
+      "id": "20",
+      "name": "asset-tracking-view",
+      "title": "Asset tracking view",
+      "summary": "venues.list(), zones.listAsArray(), assets.list(), positions.listCached() joined by udid; live POSITIONS subscription",
+      "owner": "P9",
+      "guide": "docs/guides/positions-spatial.md",
+      "recipe": "docs/recipes/asset-tracking-view.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "21",
+      "name": "geofence-alert-to-notification",
+      "title": "Geofence alert to notification",
+      "summary": "alerts.list(), zone events over WebSocket, notifications.send() to the key's own user (sendToSelf() does it in one call), notifications.bulk() cleanup",
+      "owner": "P9",
+      "guide": "docs/guides/notifications.md",
+      "recipe": "docs/recipes/geofence-alert-to-notification.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 0,
+          "notifications": 1,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one notification sent to the key's own user, deleted in cleanup"
+      }
+    },
+    {
+      "id": "22",
+      "name": "zone-presence-report",
+      "title": "Zone presence report",
+      "summary": "positions.listCached(), zones.getPresence() per asset, dwell per zone as CSV",
+      "owner": "P9",
+      "guide": "docs/guides/venues-navigation.md",
+      "recipe": "docs/recipes/zone-presence-report.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "23",
+      "name": "indoor-routing",
+      "title": "Indoor routing",
+      "summary": "venues.listPathNodes(), navigation.shortestPath(), multiStop(), nearestPoi(), evacuationRoute()",
+      "owner": "P9",
+      "guide": "docs/guides/venues-navigation.md",
+      "recipe": "docs/recipes/indoor-routing.md",
+      "readAllowedSkips": [],
+      "write": null
+    },
+    {
+      "id": "24",
+      "name": "bulk-declared-location",
+      "title": "Bulk declared location",
+      "summary": "discover(), safePublishPoint(), assets.create(), declaredLocations.bulkDeclare() and bulkClear(), assets.delete()",
+      "owner": "P9",
+      "guide": "docs/guides/assets.md",
+      "recipe": "docs/recipes/bulk-declared-location.md",
+      "readAllowedSkips": [],
+      "write": {
+        "tier": "S",
+        "budget": {
+          "positions": 1,
+          "notifications": 0,
+          "bleActions": 0,
+          "etlWrites": 0
+        },
+        "creates": "one sdk-test- asset with a declared location (one synthetic position), cleared and deleted in cleanup"
+      }
+    }
+  ]
+}

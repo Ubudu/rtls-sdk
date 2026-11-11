@@ -1,0 +1,11 @@
+{
+  "_source": "spec",
+  "_note": "Live capture (P4-T2, tier R), unknown venue id 999999999: 200 stub {id, statistics} instead of 404 (USI-P4-2); names, address, context, uuid, tiles URL and coordinates scrubbed per P4 spec 8.6 before recording.",
+  "_operation": "GET /venues/{namespace}/{venueId}",
+  "_recorded": { "specVersion": "3.3.8-479b708", "runId": "e9e58cab" },
+  "status": 200,
+  "body": {
+    "id": 999999999,
+    "statistics": { "zones": 0, "pois": 0, "pathNodes": 0, "pathSegments": 0, "floors": [] }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "_source": "server-code",
+  "_operation": "GET /assets/{namespace}/{mac_address}/documents/{documentId}",
+  "_usi": ["USI-P2-12"],
+  "_note": "Hand-written in speed mode from the server behaviour of P2 spec \u00a75.7, not re-recorded live: no virus_scan_* fields (spec documents them); description is null when none was given (spec: string).",
+  "status": 200,
+  "body": {
+    "documentId": "doc-3a7e9c1d-5b2f-4e8a-9c6d-7f0e1a2b3c4d",
+    "docType": "photo",
+    "originalFilename": "sdk-test.png",
+    "description": null,
+    "tags": ["sdk", "test"],
+    "contentType": "image/png",
+    "sizeBytes": 67,
+    "availableVersions": ["original", "medium", "thumbnail"],
+    "uploadedBy": {
+      "userId": "test-user",
+      "username": "test-user"
+    },
+    "createdAt": "2026-11-10T09:15:02.481Z",
+    "namespaceId": "test-namespace",
+    "mac_address": "025d4b000001",
+    "updatedAt": "2026-11-10T09:15:03.912Z"
+  }
+}

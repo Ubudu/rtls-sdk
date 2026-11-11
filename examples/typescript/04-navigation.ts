@@ -1,356 +1,184 @@
+// Write section: tier none; budget positions=0 notifications=0 ble=0 etl=0; read skips none
 /**
- * 04 - Navigation & Wayfinding with Ubudu RTLS SDK
+ * 04 - Indoor navigation: "How do I get from here to there?"
  *
- * This example demonstrates:
- * - Listing POIs (Points of Interest)
- * - Working with navigation paths
- * - Path nodes and segments
- * - Indoor routing concepts
+ * Read-only (no `--write` section):
+ * - the first venue's path graph; the example keeps its node ids to resolve the nodes of each route
+ * - three nodes A, B, D picked by a breadth-first search on one level
+ * - a route by node ids, by coordinates and as a round trip, printed as a turn list with level changes
+ * - a multi-stop tour in input order versus the `twoOpt` optimised order (distance, time, saving)
+ * - the nearest POI by the first POI tag (or 'all') and the evacuation route from A
+ *
+ * The routes by ids and by coordinates print how many nodes they have. Every node id of a route is resolved from
+ * the venue's own node list before the route is printed; an id that does not resolve stops the example (exit 1).
+ * `accessiblePath` is never called (it gives no reliable accessibility guarantee).
+ *
+ * Run (unguarded, your own namespace): npm run ts -- typescript/04-navigation.ts
  */
-
-import { config } from 'dotenv';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, '../../.env') });
-
 import {
-  createRtlsClient,
+  NotFoundError,
   RtlsError,
-  extractPoisFromGeoJSON,
-  extractPathNodesFromGeoJSON,
-  extractPathSegmentsFromGeoJSON,
-  type POIFeatureCollection,
-  type PathFeatureCollection,
-} from '@ubudu/rtls-sdk';
+  type PathNode,
+  type PathSegment,
+  type RouteNode,
+} from 'ubudu-rtls-sdk';
+import { runExample } from '../shared/config.js';
 
-const NAMESPACE = process.env.APP_NAMESPACE!;
-const API_KEY = process.env.RTLS_API_KEY!;
-
-if (!NAMESPACE || !API_KEY) {
-  console.error('Missing APP_NAMESPACE or RTLS_API_KEY in .env');
-  process.exit(1);
+interface Picked {
+  A: PathNode;
+  B: PathNode;
+  D: PathNode;
 }
 
-// Create client with default namespace
-const client = createRtlsClient({
-  apiKey: API_KEY,
-  namespace: NAMESPACE, // Default namespace for all calls
-});
-
-console.log('Ubudu RTLS SDK - Navigation Example\n');
-console.log('====================================\n');
-
-let venueId: number | null = null;
-let venueCoords: { lat: number; lng: number } | null = null;
-
-// =============================================================================
-// Example 1: Get Venue
-// =============================================================================
-
-async function getFirstVenue(): Promise<void> {
-  console.log('1. Getting First Venue');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}\n`);
-
-  const venues = await client.venues.list();
-
-  if (venues.length === 0) {
-    console.log('   No venues found.\n');
-    return;
-  }
-
-  const venue = venues[0] as {
-    id: number;
-    name: string;
-    coordinates: { lat: number; lng: number };
+/** A = first active node with an edge; D = a farthest node on A's level (BFS); B = the 2nd node towards D. */
+function pickNodes(nodes: PathNode[], segments: PathSegment[]): Picked | null {
+  const byId = new Map(nodes.map((n) => [String(n.id), n]));
+  const adjacency = new Map<string, string[]>();
+  const link = (from: string, to: string): void => {
+    adjacency.set(from, [...(adjacency.get(from) ?? []), to]);
   };
-
-  venueId = venue.id;
-  venueCoords = venue.coordinates;
-
-  console.log(`   Venue: ${venue.name} (ID: ${venueId})\n`);
-}
-
-// =============================================================================
-// Example 2: List POIs as GeoJSON
-// =============================================================================
-
-async function listPoisGeoJSON(): Promise<POIFeatureCollection | null> {
-  if (!venueId) return null;
-
-  console.log('2. Listing POIs as GeoJSON');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}/${venueId}/pois\n`);
-
-  const geoJson = await client.venues.listPois({ venueId });
-
-  console.log(`   GeoJSON Type: ${geoJson.type}`);
-  console.log(`   Total Features: ${geoJson.features.length}`);
-
-  if (geoJson.features.length > 0) {
-    const first = geoJson.features[0];
-    console.log('\n   First POI (GeoJSON Feature):');
-    console.log(`   - Name: ${first.properties.name}`);
-    console.log(`   - Description: ${first.properties.description || 'N/A'}`);
-    console.log(`   - Level: ${first.properties.level}`);
-    console.log(`   - Coordinates: [${first.geometry.coordinates}]`);
+  for (const s of segments) {
+    const a = String(s.sourceNodeId);
+    const b = String(s.targetNodeId);
+    if (!byId.get(a)?.isActive || !byId.get(b)?.isActive) continue;
+    link(a, b);
+    if (s.bidirectional) link(b, a);
   }
-  console.log();
-
-  return geoJson;
+  const start = nodes.find((n) => n.isActive && (adjacency.get(String(n.id))?.length ?? 0) > 0);
+  if (!start) return null;
+  const parent = new Map<string, string | null>([[String(start.id), null]]);
+  const queue = [String(start.id)];
+  let last = String(start.id);
+  while (queue.length > 0) {
+    const current = queue.shift() as string;
+    last = current;
+    for (const next of adjacency.get(current) ?? []) {
+      if (parent.has(next) || byId.get(next)?.level !== start.level) continue;
+      parent.set(next, current);
+      queue.push(next);
+    }
+  }
+  const path: string[] = [];
+  for (let id: string | null = last; id !== null; id = parent.get(id) ?? null) path.unshift(id);
+  const B = byId.get(path[1] ?? '');
+  const D = byId.get(path[path.length - 1] ?? '');
+  return path.length >= 3 && B && D ? { A: start, B, D } : null;
 }
 
-// =============================================================================
-// Example 3: List POIs as Flat Array
-// =============================================================================
+/** Resolves every node id of the route from the venue's node list; throws when one does not resolve. */
+function checkNodeSet(path: RouteNode[] | null, nodeIds: Set<string>): void {
+  const unknown = (path ?? []).filter((n) => n.id !== null && !nodeIds.has(String(n.id))).length;
+  if (unknown > 0)
+    throw new Error(`${unknown} node id(s) of the route do not resolve from the venue's node list`);
+}
 
-async function listPoisArray(): Promise<void> {
-  if (!venueId) return;
-
-  console.log('3. Listing POIs as Flat Array');
-  console.log('   Method: client.venues.listPoisAsArray()\n');
-
-  const pois = await client.venues.listPoisAsArray({ venueId });
-
-  console.log(`   Total POIs: ${pois.length}`);
-
-  pois.slice(0, 3).forEach((poi, i) => {
-    console.log(`\n   POI ${i + 1}: ${poi.name}`);
-    console.log(`   - ID: ${poi.id}`);
-    console.log(`   - Location: (${poi.lat}, ${poi.lng})`);
-    console.log(`   - Level: ${poi.level}`);
-    console.log(`   - Tags: ${poi.tags.join(', ') || 'none'}`);
+function turnList(path: RouteNode[]): string[] {
+  const lines: string[] = [];
+  path.forEach((node, i) => {
+    const previous = path[i - 1];
+    if (i === 0) lines.push(`start at ${node.name} (level ${node.level})`);
+    else if (previous && previous.level !== node.level)
+      lines.push(`change level ${previous.level} -> ${node.level} at ${node.name}`);
+    else if (i === path.length - 1) lines.push(`arrive at ${node.name} (level ${node.level})`);
   });
-  console.log();
+  return lines;
 }
 
-// =============================================================================
-// Example 4: Nearest POIs (Spatial Query)
-// =============================================================================
+/** 404 → print class and status and go on; anything else stops the example. */
+function reportNotFound(label: string, error: unknown, log: (...a: unknown[]) => void): void {
+  if (!(error instanceof NotFoundError)) throw error;
+  log(`${label}: ${error.name} ${error.status}`);
+}
 
-async function nearestPois(): Promise<void> {
-  if (!venueCoords) {
-    console.log('4. Spatial Query: Nearest POIs');
-    console.log('   Skipped - no venue coordinates available\n');
-    return;
+await runExample('04-navigation', async ({ client, log }) => {
+  const [venue] = await client.venues.list();
+  if (!venue) throw new Error('no venue in the namespace');
+  const ctx = { venueId: venue.id };
+  const nodes = await client.venues.listPathNodes(ctx);
+  const segments = await client.venues.listPathSegments(ctx);
+  const nodeIds = new Set(nodes.map((n) => String(n.id)));
+  log(`Venue ${venue.name}: ${nodes.length} path nodes, ${segments.length} segments`);
+
+  const picked = pickNodes(nodes, segments);
+  if (!picked) throw new Error('the path graph has no route of three nodes on one level');
+  const { A, B, D } = picked;
+
+  const byIds = await client.navigation.shortestPath({ start: A.id, end: D.id }, ctx);
+  checkNodeSet(byIds.path, nodeIds);
+  log(
+    `\nRoute by ids: ${byIds.distance.toFixed(1)} m, ${byIds.estimatedTime.toFixed(0)} s, ${byIds.path.length} nodes`
+  );
+  for (const line of turnList(byIds.path)) log(`  ${line}`);
+
+  const request = {
+    start: { lat: A.lat, lon: A.lng, level: A.level },
+    end: { lat: D.lat, lon: D.lng, level: D.level },
+  };
+  const byPoint = await client.navigation
+    .shortestPath(request, ctx)
+    .catch((error: unknown) =>
+      error instanceof RtlsError && error.status >= 404
+        ? new Promise((resolve) => setTimeout(resolve, 1_000)).then(() =>
+            client.navigation.shortestPath(request, ctx)
+          )
+        : Promise.reject(error)
+    );
+  checkNodeSet(byPoint.path, nodeIds);
+  log(`Route by coordinates: ${byPoint.distance.toFixed(1)} m, ${byPoint.path.length} nodes`);
+
+  const roundTrip = await client.navigation.shortestPath(
+    { start: A.id, end: D.id, returnToStart: true },
+    ctx
+  );
+  checkNodeSet(roundTrip.path, nodeIds);
+  log(
+    `Round trip: ${roundTrip.distance.toFixed(1)} m (return ${roundTrip.roundTripInfo?.returnDistance.toFixed(1) ?? '-'} m)`
+  );
+
+  const stops = [D.id, B.id];
+  const sequential = await client.navigation.multiStop(
+    { start: A.id, stops, optimizeOrder: false },
+    { ...ctx, timeoutMs: 60_000 }
+  );
+  const optimised = await client.navigation.multiStop(
+    { start: A.id, stops, algorithm: 'twoOpt' },
+    { ...ctx, timeoutMs: 60_000 }
+  );
+  checkNodeSet(sequential.path, nodeIds);
+  checkNodeSet(optimised.path, nodeIds);
+  const saving = sequential.distance > 0 ? (1 - optimised.distance / sequential.distance) * 100 : 0;
+  log(
+    `\nMulti-stop in input order: ${sequential.distance.toFixed(1)} m, ${sequential.estimatedTime.toFixed(0)} s`
+  );
+  log(
+    `Multi-stop twoOpt: ${optimised.distance.toFixed(1)} m, ${optimised.estimatedTime.toFixed(0)} s, saving ${saving.toFixed(1)} %`
+  );
+  log(
+    `  visit order: ${optimised.path
+      .filter((n) => n.isStop)
+      .map((n) => n.stopIndex)
+      .join(' -> ')}`
+  );
+
+  const pois = await client.venues.listPoisAsArray(ctx);
+  const poiType = pois.find((p) => p.tags.length > 0)?.tags[0] ?? 'all';
+  try {
+    const nearest = await client.navigation.nearestPoi(A.id, { ...ctx, poiType });
+    checkNodeSet(nearest.path, nodeIds);
+    log(
+      `\nNearest POI (${poiType}): ${nearest.poi.name ?? nearest.poi.id}, ${nearest.distance.toFixed(1)} m`
+    );
+  } catch (error) {
+    reportNotFound(`\nNearest POI (${poiType})`, error, log);
   }
-
-  console.log('4. Spatial Query: Nearest POIs');
-  console.log(`   Endpoint: GET /spatial/pois/${NAMESPACE}/nearest-to-point\n`);
 
   try {
-    // Uses default namespace from client config
-    const result = await client.spatial.nearestPois({
-      lat: venueCoords.lat,
-      lon: venueCoords.lng,
-      limit: 5,
-    });
-
-    console.log(`   Reference Point: (${result.reference_point.lat}, ${result.reference_point.lon})`);
-    console.log(`   Total POIs: ${result.total_pois}`);
-    console.log(`   Has More: ${result.hasMore}`);
-
-    if (result.pois.length > 0) {
-      console.log('\n   Nearest POIs:');
-      result.pois.forEach((poi) => {
-        const distance = poi.distance_meters?.toFixed(1) ?? 'N/A';
-        console.log(`   - ${poi.name}: ${distance}m`);
-      });
-    }
+    const evacuation = await client.navigation.evacuationRoute(A.id, ctx);
+    checkNodeSet(evacuation.path, nodeIds);
+    log(
+      `Evacuation: ${evacuation.distance.toFixed(1)} m, about ${evacuation.estimatedEvacuationTime.toFixed(0)} s`
+    );
   } catch (error) {
-    if (error instanceof RtlsError) {
-      console.log(`   Query failed: ${error.message}`);
-    } else {
-      throw error;
-    }
+    reportNotFound('Evacuation', error, log);
   }
-  console.log();
-}
-
-// =============================================================================
-// Example 5: POIs Within Radius
-// =============================================================================
-
-async function poisWithinRadius(): Promise<void> {
-  if (!venueCoords) {
-    console.log('5. Spatial Query: POIs Within Radius');
-    console.log('   Skipped - no venue coordinates available\n');
-    return;
-  }
-
-  console.log('5. Spatial Query: POIs Within Radius');
-  console.log(`   Endpoint: GET /spatial/pois/${NAMESPACE}/within-radius\n`);
-
-  try {
-    // Uses default namespace from client config
-    const result = await client.spatial.poisWithinRadius({
-      lat: venueCoords.lat,
-      lon: venueCoords.lng,
-      radiusMeters: 200,
-    });
-
-    console.log(`   Radius: ${result.radius_meters}m`);
-    console.log(`   POIs found: ${result.total_pois}`);
-
-    if (result.pois.length > 0) {
-      console.log('\n   POIs in radius:');
-      result.pois.forEach((poi) => {
-        console.log(`   - ${poi.name}`);
-      });
-    }
-  } catch (error) {
-    if (error instanceof RtlsError) {
-      console.log(`   Query failed: ${error.message}`);
-    } else {
-      throw error;
-    }
-  }
-  console.log();
-}
-
-// =============================================================================
-// Example 6: List Navigation Paths (GeoJSON)
-// =============================================================================
-
-async function listPaths(): Promise<PathFeatureCollection | null> {
-  if (!venueId) return null;
-
-  console.log('6. Listing Navigation Paths (GeoJSON)');
-  console.log(`   Endpoint: GET /venues/${NAMESPACE}/${venueId}/paths\n`);
-
-  const geoJson = await client.venues.listPaths({ venueId });
-
-  console.log(`   GeoJSON Type: ${geoJson.type}`);
-  console.log(`   Total Features: ${geoJson.features.length}`);
-
-  // Count nodes vs segments
-  const nodes = geoJson.features.filter((f) => f.properties.type === 'path_node');
-  const segments = geoJson.features.filter((f) => f.properties.type === 'path_segment');
-
-  console.log(`   - Path Nodes: ${nodes.length}`);
-  console.log(`   - Path Segments: ${segments.length}`);
-
-  if (nodes.length > 0) {
-    const firstNode = nodes[0];
-    const props = firstNode.properties as { id: number; name?: string; node_type?: string; level: number };
-    console.log('\n   First Path Node:');
-    console.log(`   - ID: ${props.id}`);
-    console.log(`   - Name: ${props.name ?? 'N/A'}`);
-    console.log(`   - Node Type: ${props.node_type ?? 'N/A'}`);
-    console.log(`   - Level: ${props.level}`);
-  }
-  console.log();
-
-  return geoJson;
-}
-
-// =============================================================================
-// Example 7: Extract Path Nodes and Segments
-// =============================================================================
-
-async function extractPathData(): Promise<void> {
-  if (!venueId) return;
-
-  console.log('7. Extracting Path Nodes and Segments');
-  console.log('   Using: client.venues.listPathNodes() / listPathSegments()\n');
-
-  const nodes = await client.venues.listPathNodes({ venueId });
-  const segments = await client.venues.listPathSegments({ venueId });
-
-  console.log(`   Path Nodes: ${nodes.length}`);
-  console.log(`   Path Segments: ${segments.length}`);
-
-  if (nodes.length > 0) {
-    const node = nodes[0];
-    console.log('\n   Sample Node:');
-    console.log(`   - ID: ${node.id}`);
-    console.log(`   - Name: ${node.name}`);
-    console.log(`   - Type: ${node.nodeType}`);
-    console.log(`   - Location: (${node.lat}, ${node.lng})`);
-    console.log(`   - Level: ${node.level}`);
-    console.log(`   - Active: ${node.isActive}`);
-  }
-
-  if (segments.length > 0) {
-    const segment = segments[0];
-    console.log('\n   Sample Segment:');
-    console.log(`   - ID: ${segment.id}`);
-    console.log(`   - Start Node: ${segment.startNodeId}`);
-    console.log(`   - End Node: ${segment.endNodeId}`);
-    console.log(`   - Bidirectional: ${segment.isBidirectional}`);
-    console.log(`   - Weight: ${segment.weight}`);
-  }
-  console.log();
-}
-
-// =============================================================================
-// Example 8: Navigation API (Concept)
-// =============================================================================
-
-async function navigationConcept(): Promise<void> {
-  console.log('8. Navigation API (Concept Overview)');
-  console.log('   Available methods for indoor routing:\n');
-
-  console.log('   client.navigation.shortestPath(namespace, request)');
-  console.log('   - Find shortest path between two points');
-  console.log('   - Request: { from: { lat, lon }, to: { lat, lon } }\n');
-
-  console.log('   client.navigation.accessiblePath(namespace, request)');
-  console.log('   - Find wheelchair-accessible path');
-  console.log('   - Avoids stairs and inaccessible areas\n');
-
-  console.log('   client.navigation.multiStop(namespace, request)');
-  console.log('   - Plan route with multiple waypoints');
-  console.log('   - Optimizes visit order\n');
-
-  console.log('   Note: These require path data to be configured for the venue.\n');
-}
-
-// =============================================================================
-// Example 9: Extract Utilities Demo
-// =============================================================================
-
-async function extractUtilitiesDemo(): Promise<void> {
-  if (!venueId) return;
-
-  console.log('9. GeoJSON Extraction Utilities');
-  console.log('   Using: extractPoisFromGeoJSON(), extractPathNodesFromGeoJSON()\n');
-
-  const poisGeoJson = await client.venues.listPois({ venueId });
-  const pathsGeoJson = await client.venues.listPaths({ venueId });
-
-  const pois = extractPoisFromGeoJSON(poisGeoJson);
-  const pathNodes = extractPathNodesFromGeoJSON(pathsGeoJson);
-  const pathSegments = extractPathSegmentsFromGeoJSON(pathsGeoJson);
-
-  console.log('   Extracted from GeoJSON:');
-  console.log(`   - POIs: ${pois.length}`);
-  console.log(`   - Path Nodes: ${pathNodes.length}`);
-  console.log(`   - Path Segments: ${pathSegments.length}\n`);
-}
-
-// =============================================================================
-// Main Execution
-// =============================================================================
-
-async function main(): Promise<void> {
-  try {
-    await getFirstVenue();
-    await listPoisGeoJSON();
-    await listPoisArray();
-    await nearestPois();
-    await poisWithinRadius();
-    await listPaths();
-    await extractPathData();
-    await navigationConcept();
-    await extractUtilitiesDemo();
-
-    console.log('====================================');
-    console.log('Navigation example completed!');
-  } catch (error) {
-    console.error('Example failed:', error);
-    process.exit(1);
-  }
-}
-
-main();
+});

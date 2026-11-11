@@ -1,0 +1,72 @@
+{
+  "_source": "spec",
+  "_operation": "GET /data_filters_taxonomy/{app_namespace}",
+  "_note": "Three field entries in the Demo Factory shape (label and enabledForLLM are undocumented) plus a data_models entry written from the server code (its presence on Demo Factory is checked by the P2-T0 c probe).",
+  "status": 200,
+  "body": [
+    {
+      "key": "user_name",
+      "type": "string",
+      "label": "Name",
+      "visible": true,
+      "showInFilters": true,
+      "validation": {},
+      "enabledForLLM": true
+    },
+    {
+      "key": "data.battery",
+      "type": "number",
+      "label": "Battery",
+      "visible": true,
+      "showInFilters": false,
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      },
+      "enabledForLLM": false
+    },
+    {
+      "key": "tags",
+      "type": "array",
+      "label": "Tags",
+      "visible": false,
+      "showInFilters": true,
+      "validation": {},
+      "enabledForLLM": true
+    },
+    {
+      "key": "data_models",
+      "type": "array",
+      "data": [
+        {
+          "id": 1,
+          "key": "forklift",
+          "name": "Forklift",
+          "displayKey": "user_name",
+          "primaryKey": null,
+          "defaults": {
+            "user_type": "forklift"
+          },
+          "properties": [
+            {
+              "key": "data.load_kg",
+              "type": "number",
+              "label": "Load (kg)"
+            }
+          ],
+          "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "load_kg": {
+                "type": "number"
+              }
+            }
+          },
+          "dateAdded": 1744620101741,
+          "dateChanged": null
+        }
+      ]
+    }
+  ]
+}

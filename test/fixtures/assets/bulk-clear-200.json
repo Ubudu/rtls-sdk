@@ -1,0 +1,21 @@
+{
+  "_source": "spec",
+  "_operation": "POST /assets/{namespace}/bulk-clear-declared",
+  "status": 200,
+  "body": {
+    "success": 1,
+    "failed": 1,
+    "results": [
+      {
+        "mac_address": "025d4b000001",
+        "status": "cleared"
+      },
+      {
+        "mac_address": "025d4b000002",
+        "status": "error",
+        "error": "DL_017",
+        "message": "Failed to clear declared location for 025d4b000002"
+      }
+    ]
+  }
+}
