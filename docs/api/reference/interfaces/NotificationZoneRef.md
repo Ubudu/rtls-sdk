@@ -10,8 +10,8 @@ Zone reference of an engine-produced item (never set by `/send`).
 
 ## Remarks
 
-Spec: `zone` is a property-less object. Shape from server code; no engine item exists on the test
-  namespace, so the shape is not verified live.
+Spec: `zone` is a property-less object. Every field is optional: an item can carry only `tags`,
+  without `id` or `name`.
 
 ## Properties
 

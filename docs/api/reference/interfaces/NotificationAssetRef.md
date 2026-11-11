@@ -10,7 +10,7 @@ Asset reference of an engine-produced item (never set by `/send`).
 
 ## Remarks
 
-Spec: `asset` is a property-less object. Shape from server code, not verified live.
+Spec: `asset` is a property-less object. Every field is optional.
 
 ## Properties
 

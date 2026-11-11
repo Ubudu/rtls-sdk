@@ -1,7 +1,8 @@
 /**
  * Notifications, tier R (P6 §9.1): every read of the domain once, the serializer on an impossible selection, the
- * client guards whose request is excluded live (cleanup-policy and tenant-config PUTs), and the engine-item shape
- * check of UNVERIFIED-4. Response bodies are never logged; observations go to the run facts.
+ * client guards whose request is excluded live (cleanup-policy and tenant-config PUTs), and the shape check of
+ * the zone and asset references of engine-produced alerts. Response bodies are never logged; observations go to
+ * the run facts.
  */
 import { beforeAll } from 'vitest';
 import {
@@ -232,24 +233,37 @@ describeLive(
       );
 
       it(
-        '11 engine-produced alerts, if any, have the documented references (UNVERIFIED-4)',
+        '11 engine-produced alerts, if any, have the documented references',
         { timeout: 30_000 },
         async () => {
           const items = await client.notifications.list({ state: 'all', kind: 'alert', limit: 5 });
           expect(Array.isArray(items)).toBe(true);
           expect(items.every((i) => typeof i._id === 'string')).toBe(true);
+          // Every field of a reference is optional: an alert can carry a zone with `tags` only.
+          const optional = (v: unknown, type: 'number' | 'string'): boolean =>
+            v === undefined || typeof v === type;
+          const optionalArray = (v: unknown): boolean => v === undefined || Array.isArray(v);
           expect(
             items.every(
               (i) =>
                 i.zone === undefined ||
-                (typeof i.zone === 'object' && typeof i.zone.id === 'number')
+                (typeof i.zone === 'object' &&
+                  i.zone !== null &&
+                  optional(i.zone.id, 'number') &&
+                  optional(i.zone.name, 'string') &&
+                  optionalArray(i.zone.tags))
             )
           ).toBe(true);
           expect(
             items.every(
               (i) =>
                 i.asset === undefined ||
-                (typeof i.asset === 'object' && typeof i.asset.udid === 'string')
+                (typeof i.asset === 'object' &&
+                  i.asset !== null &&
+                  optional(i.asset.udid, 'string') &&
+                  optional(i.asset.name, 'string') &&
+                  optional(i.asset.type, 'string') &&
+                  optionalArray(i.asset.tags))
             )
           ).toBe(true);
           recordFact('notifications.engineItems.present', items.length);

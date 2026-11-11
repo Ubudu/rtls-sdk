@@ -70,8 +70,8 @@ export type NotificationBulkAction =
 
 /**
  * Zone reference of an engine-produced item (never set by `/send`).
- * @remarks Spec: `zone` is a property-less object. Shape from server code; no engine item exists on the test
- *   namespace, so the shape is not verified live.
+ * @remarks Spec: `zone` is a property-less object. Every field is optional: an item can carry only `tags`,
+ *   without `id` or `name`.
  */
 export interface NotificationZoneRef {
   id?: number;
@@ -81,7 +81,7 @@ export interface NotificationZoneRef {
 
 /**
  * Asset reference of an engine-produced item (never set by `/send`).
- * @remarks Spec: `asset` is a property-less object. Shape from server code, not verified live.
+ * @remarks Spec: `asset` is a property-less object. Every field is optional.
  */
 export interface NotificationAssetRef {
   udid?: string;
