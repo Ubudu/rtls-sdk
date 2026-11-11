@@ -178,18 +178,22 @@ describe('coverage:live:check names methods from the source (AST-aware remapping
     lineEntry('P4-5', THINGS, [23, 25], 'export const named', functions),
   ];
 
-  it('the provider names every method (anonymous_<n>) and counts the uncalled static method 1', () => {
+  it('the provider names every method (anonymous_<n>); the uncalled static method counts 0 or 1', () => {
     const fns = Object.entries(things.fnMap).map(([id, fn]) => [fn.loc.start.line, things.f[id]]);
     expect(Object.values(things.fnMap).every((fn) => /^\(anonymous_\d+\)$/.test(fn.name))).toBe(
       true
     );
-    expect(fns).toEqual([
+    expect(fns.map(([line]) => line)).toEqual([4, 8, 12, 18, 23]);
+    expect(fns.filter(([line]) => line !== 12)).toEqual([
       [4, 1],
       [8, 0],
-      [12, 1],
       [18, 0],
       [23, 0],
     ]);
+    // The static method on line 12 is never called. Recent Node versions report it with count 1, older ones
+    // (Node 20 and 22) with count 0; the check below names it from the source either way.
+    const staticCount = fns.find(([line]) => line === 12)?.[1];
+    expect([0, 1]).toContain(staticCount);
   });
 
   it('an uncalled method, static method, object method or named arrow fails inside an unreachable-live range', () => {
