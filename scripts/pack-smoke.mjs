@@ -387,6 +387,25 @@ function parseJson(text) {
 }
 
 /**
+ * The document `npm pack --json` prints. npm 10 writes the output of lifecycle scripts to stdout before it, so when
+ * stdout as a whole is not JSON the document is read from the last line that opens a top-level array.
+ *
+ * @param {string} stdout
+ * @returns {{ filename: string; files: { path: string }[] }[] | null}
+ */
+export function parsePackJson(stdout) {
+  const whole = parseJson(stdout);
+  if (whole !== null) return Array.isArray(whole) ? whole : null;
+  const lines = stdout.split('\n');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    if (lines[i].trimEnd() !== '[') continue;
+    const value = parseJson(lines.slice(i).join('\n'));
+    if (Array.isArray(value)) return value;
+  }
+  return null;
+}
+
+/**
  * publint messages → one check per finding (`publint:<code>`).
  *
  * @param {readonly { code: string; type: string; text: string }[]} messages
@@ -725,8 +744,7 @@ export async function runChecks({ log = (line) => console.log(line), strict = fa
     [...npm.prefix, 'pack', '--json', '--ignore-scripts', '--pack-destination', PACK_DIR],
     { cwd: REPO_ROOT }
   );
-  /** @type {{ filename: string; files: { path: string }[] }[] | null} */
-  const packInfo = parseJson(packed.stdout);
+  const packInfo = parsePackJson(packed.stdout);
   const info = packInfo?.[0];
   if (packed.status !== 0 || !info)
     throw new UsageError(

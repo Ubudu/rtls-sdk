@@ -20,6 +20,7 @@ import {
   formatRow,
   loadKnown,
   main,
+  parsePackJson,
   parseSmokeLine,
   parseVersion,
   publintChecks,
@@ -609,5 +610,34 @@ describe('pack-smoke Bun consumer runtime (P0 §5.9 step 7)', () => {
     );
     expect(build.indexOf('oven-sh/setup-bun@')).toBeLessThan(build.indexOf('npm run ci:offline'));
     expect(section(github, '\n  publish-dry-run:')).not.toMatch(/\bbun\b/i);
+  });
+});
+
+describe('pack-smoke: the npm pack document', () => {
+  const doc = [{ filename: 'ubudu-rtls-sdk-0.3.0.tgz', files: [{ path: 'package.json' }] }];
+  const pretty = JSON.stringify(doc, null, 2);
+
+  it('reads stdout that is the document alone', () => {
+    expect(parsePackJson(pretty)).toEqual(doc);
+    expect(parsePackJson(JSON.stringify(doc))).toEqual(doc);
+  });
+
+  it('reads the document after lifecycle script output on stdout (npm 10)', () => {
+    const noisy = [
+      '',
+      '> ubudu-rtls-sdk@0.3.0 prepare',
+      '> npm run generate',
+      '',
+      '[info] spec/rtls-api.swagger.json → src/generated/schema.ts [176ms]',
+      pretty,
+      '',
+    ].join('\n');
+    expect(parsePackJson(noisy)).toEqual(doc);
+  });
+
+  it('gives null when stdout holds no document', () => {
+    expect(parsePackJson('')).toBeNull();
+    expect(parsePackJson('> prepare\nnpm error something failed\n')).toBeNull();
+    expect(parsePackJson('{"filename":"x"}')).toBeNull();
   });
 });
